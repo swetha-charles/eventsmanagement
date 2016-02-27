@@ -12,6 +12,10 @@ import javax.swing.SpringLayout;
 
 public class LoginPanel extends JPanel{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JTextField username = new JTextField();
 	JTextField password = new JTextField();
 	JPanel mainPanel = new JPanel();

@@ -6,6 +6,11 @@ import javax.swing.JLayeredPane;
 
 public class Login extends JLayeredPane{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Login() throws IOException{
 		
 		Background background = new Background();
