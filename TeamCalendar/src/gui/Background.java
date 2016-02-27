@@ -12,12 +12,21 @@ import javax.swing.JPanel;
 
 public class Background extends JPanel{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel background;
+	
 	
 	public Background() throws IOException{
 		
 		background = new JPanel() {
-			private Image backgroundImage = ImageIO.read(new File("/Users/nataliemcdonnell/Dropbox/CS/Java/calendar.jpg"));
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			private Image backgroundImage = ImageIO.read(new File("calendar-icon.png"));
 			public void paint( Graphics g ) { 
 			    super.paint(g);
 			    g.drawImage(backgroundImage, 0, 0, null);
