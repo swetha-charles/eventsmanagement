@@ -15,7 +15,8 @@ public class LoginPanel extends JPanel{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2535316040411018240L;
+	
 	JTextField username = new JTextField();
 	JTextField password = new JTextField();
 	JPanel mainPanel = new JPanel();
