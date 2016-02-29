@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.io.IOException;
 
@@ -12,12 +11,12 @@ public class MainView {
 		
 		Login login = new Login();
 		JFrame frame = new JFrame("Calendar");
-		frame.setLayout(new BorderLayout());
+//		frame.setLayout(new BorderLayout());
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(login);
-		frame.setSize(1000,650);
+		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		frame.setResizable(true);
 		frame.setVisible(true);
 	}
