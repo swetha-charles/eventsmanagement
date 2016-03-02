@@ -19,55 +19,56 @@ public class Database {
 	private Statement stmt;
 
 	public Statement open() {
-		String protocol = Main.settings.getProperty("DBProtocol");
-		if (protocol == null)
-			protocol = "postgresql";
-		String driverName = Main.settings.getProperty("DBDriver");
-		if (driverName == null)
-			driverName = "org.postgresql.Driver";
-		String server = Main.settings.getProperty("DBServer");
-		if (server == null)
-			server = "bro.cs.bham.ac.uk";
-		String port = Main.settings.getProperty("DBPort");
-		if (port == null)
-			port = "5432";
-		String db = Main.settings.getProperty("DBName");
-		if (db == null)
-			db = "udr";
-		String user = Main.settings.getProperty("DBUser");
-		if (user == null)
-			user = "udr";
-		String passwd = Main.settings.getProperty("DBPassword");
-		if (passwd == null)
-			passwd = "";
-
+		String protocol = "postgresql";
+		String driverName = "org.postgresql.Driver";
+		String server = "tinky-winky.cs.bham.ac.uk";
+		String port = "5432";
+		String db = "dbteach2";
+		String user = "mxw589";
+		String passwd = "ilovedatabases";
+	
 		String URL =
 			"jdbc:" + protocol + "://" + server + ":" + port + "/" + db;
-
+	
 		Class driver = null;
+		
+		System.out.println("-------- PostgreSQL "
+				+ "JDBC Connection Testing ------------");
+	
 		try {
-			driver = Class.forName(driverName);
-			DriverManager.registerDriver((Driver) driver.newInstance());
+	
+			Class.forName("org.postgresql.Driver");
+	
 		} catch (ClassNotFoundException e) {
-			System.err.println("Database driver not found");
-			System.out.println(e);
-			System.exit(1);
-		} catch (Exception e) {
-			System.err.println("Driver could not be registered");
-			System.exit(1);
+	
+			System.out.println("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!");
+			e.printStackTrace();
+			return;
+	
 		}
-
+	
+		System.out.println("PostgreSQL JDBC Driver Registered!");
+	
+		Connection connection = null;
+	
 		try {
-			con = DriverManager.getConnection(URL, user, passwd);
-
-			stmt = con.createStatement();
-
+	
+			connection = DriverManager.getConnection(URL, user, passwd);
+	
 		} catch (SQLException e) {
-			System.err.println("SQL Exception");
-			System.err.println(e);
-			System.exit(1);
+	
+			System.out.println("Connection Failed! Check output console");
+			e.printStackTrace();
+	
 		}
-
+	
+		if (connection != null) {
+			System.out.println("You made it, take control your database now!");
+		} else {
+			System.out.println("Failed to make connection!");
+		}
+	
 		return stmt;
 	}
 
