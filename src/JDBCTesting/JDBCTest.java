@@ -3,13 +3,41 @@ package JDBCTesting;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 
 public class JDBCTest {
 
 	public static void main(String[] args) {
+		try
+		{
+			JSch jsch=new JSch();
+
+			String user = "mxw589";
+			String host = "tinky-winky.cs.bham.ac.uk";
+
+			Session session=jsch.getSession(user, host, 22);
+
+			String passwd = "Mo0money!";
+			session.setPassword(passwd);
+
+			session.setConfig("StrictHostKeyChecking", "no");
+
+			session.connect(30000);			
+
+			System.out.println("Connected to SSH");
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
 		String protocol = "postgresql";
 		String driverName = "org.postgresql.Driver";
-		String server = "tinky-winky.cs.bham.ac.uk";
+		String server = "localhost";
 		String port = "5432";
 		String db = "dbteach2";
 		String user = "mxw589";
@@ -52,4 +80,5 @@ public class JDBCTest {
 			System.out.println("Failed to make connection!");
 		}
 	}
+
 }
