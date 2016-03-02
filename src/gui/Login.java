@@ -28,7 +28,7 @@ public class Login extends JLayeredPane{
 		background = new JPanel() {
 			
 			private static final long serialVersionUID = 1L;
-			private Image backgroundImage = ImageIO.read(new File("calendar-icon.png"));
+			private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
 			public void paint( Graphics g ) { 
 			    super.paint(g);
 			    g.drawImage(backgroundImage, 0, 0, null);
@@ -42,7 +42,7 @@ public class Login extends JLayeredPane{
 		add(loginPanel);
 		add(background);
 		setBounds(0, 0, 1500, 750);
-		loginPanel.setBounds(250, 75, 470, 450);
+		loginPanel.setBounds(400, 75, 470, 450);
 		loginPanel.setOpaque(true);
 		background.setBounds(0, 0, 1500, 700);
 		background.setOpaque(true);
