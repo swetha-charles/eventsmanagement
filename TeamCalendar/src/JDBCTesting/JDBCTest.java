@@ -1,8 +1,6 @@
 package JDBCTesting;
 
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 import com.jcraft.jsch.JSch;
@@ -12,38 +10,40 @@ import com.jcraft.jsch.Session;
 public class JDBCTest {
 
 	public static void main(String[] args) {
+		
+		String protocol = "postgresql";
+		String driverName = "org.postgresql.Driver";
+		String server = "localhost";
+		int localport = 3307;
+		int uniport = 5432;
+		String db = "team_chennai_calendar";
+		String user = "mxw589";
+		String dbpasswd = "ilovedatabases";
+
+		String URL ="jdbc:" + protocol + "://" + server + ":" + localport + "/" + db;
+		
 		try
 		{
 			JSch jsch=new JSch();
 
-			String user = "mxw589";
 			String host = "tinky-winky.cs.bham.ac.uk";
 
 			Session session=jsch.getSession(user, host, 22);
 
-			String passwd = "Mo0money!";
-			session.setPassword(passwd);
+			String sshpasswd = "Mo0money!";
+			session.setPassword(sshpasswd);
 
 			session.setConfig("StrictHostKeyChecking", "no");
 
-			session.connect(30000);			
-
+			session.connect(30000);
+			
+			session.setPortForwardingL(localport, "dbteach2", uniport);
 			System.out.println("Connected to SSH");
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
 		}
-
-		String protocol = "postgresql";
-		String driverName = "org.postgresql.Driver";
-		String server = "localhost";
-		String port = "5432";
-		String db = "dbteach2";
-		String user = "mxw589";
-		String passwd = "ilovedatabases";
-
-		String URL ="jdbc:" + protocol + "://" + server + ":" + port + "/" + db;
 
 		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
@@ -65,7 +65,7 @@ public class JDBCTest {
 
 		try {
 
-			connection = DriverManager.getConnection(URL, user, passwd);
+			connection = DriverManager.getConnection(URL, user, dbpasswd);
 
 		} catch (SQLException e) {
 
@@ -79,6 +79,28 @@ public class JDBCTest {
 		} else {
 			System.out.println("Failed to make connection!");
 		}
+		
+		Statement stmt;
+		
+		try {
+			stmt = connection.createStatement();
+			System.out.println("Setting schema");
+			stmt.executeQuery("SET search_path TO calendar");
+			
+			System.out.println("Running Query");
+			ResultSet rs = stmt.executeQuery("SELECT userName FROM users");
+			
+			while (rs.next()) {
+				  String lastName = rs.getString("userName");
+				  System.out.println(lastName + "\n");
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		
 	}
+	
+
 
 }
