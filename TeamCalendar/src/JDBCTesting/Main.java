@@ -27,7 +27,7 @@ public class Main {
     public static void main(String[] args) {
 	// Load properties
 	try {
-	    FileInputStream stream = new FileInputStream(".properties");
+	    FileInputStream stream = new FileInputStream("test.properties");
 	    settings.load(stream);
 	}
 	catch (FileNotFoundException e) {
