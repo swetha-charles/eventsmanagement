@@ -17,7 +17,6 @@ public class JDBCTest {
 
 		String URL ="jdbc:" + protocol + "://" + server + ":" + port + "/" + db;
 
-		
 		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
 		try {
