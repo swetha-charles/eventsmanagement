@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -66,7 +67,7 @@ public class RegistrationPanel extends JPanel{
 		confirm.setPreferredSize(size1);
 		
 		//sets the dimension of the user and password panels
-		Dimension size2 = new Dimension(400, 40);
+		Dimension size2 = new Dimension(400, 70);
 		firstPanel.setPreferredSize(size2);
 		lastPanel.setPreferredSize(size2);
 		userPanel.setPreferredSize(size2);
@@ -89,6 +90,8 @@ public class RegistrationPanel extends JPanel{
 		emailPanel.setBackground(Color.DARK_GRAY);
 		passwordPanel.setBackground(Color.DARK_GRAY);
 		confirmPanel.setBackground(Color.DARK_GRAY);
+		submit.setBackground(Color.lightGray);
+		cancel.setBackground(Color.lightGray);
 		
 		//sets colour of text in JLabels
 		firstLabel.setForeground(Color.WHITE);
@@ -98,7 +101,8 @@ public class RegistrationPanel extends JPanel{
 		emailLabel.setForeground(Color.WHITE);
 		passwordLabel.setForeground(Color.WHITE);
 		confirmLabel.setForeground(Color.WHITE);
-		
+		submit.setForeground(Color.WHITE);
+		cancel.setForeground(Color.WHITE);
 		
 		//sets fonts of JLabels and JButton
 		firstLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
@@ -108,8 +112,8 @@ public class RegistrationPanel extends JPanel{
 		emailLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		passwordLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		confirmLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
-		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
+		submit.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 15));
+		cancel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 15));
 		
 		//sets dimension of button
 		submit.setPreferredSize(new Dimension(100,40));
@@ -151,17 +155,36 @@ public class RegistrationPanel extends JPanel{
 //		         SpringLayout.WEST, this);
 //		layout.putConstraint(SpringLayout.NORTH, logoPanel,40,
 //		         SpringLayout.NORTH, this);
+		
+		layout.putConstraint(SpringLayout.NORTH, emailPanel,20,
+		         SpringLayout.NORTH, this);
+		layout.putConstraint(SpringLayout.WEST, emailPanel,50,
+		         SpringLayout.WEST, this);
+		
 //		
+		layout.putConstraint(SpringLayout.NORTH, passwordPanel,20,
+		         SpringLayout.NORTH, emailPanel);
+		layout.putConstraint(SpringLayout.WEST, passwordPanel,50,
+		         SpringLayout.WEST, this);
+		
+		
+		layout.putConstraint(SpringLayout.NORTH, confirmPanel,20,
+		         SpringLayout.NORTH, passwordPanel);
+		layout.putConstraint(SpringLayout.WEST, confirmPanel,50,
+		         SpringLayout.WEST, this);
+		
+		
 //		//sets position of userPanel
 		layout.putConstraint(SpringLayout.NORTH, firstPanel,20,
-		         SpringLayout.NORTH, this);
-		layout.putConstraint(SpringLayout.WEST, firstPanel,35,
+		         SpringLayout.NORTH, confirmPanel);
+		layout.putConstraint(SpringLayout.WEST, firstPanel,50,
 		         SpringLayout.WEST, this);
 //		
+		
 //		//sets position of passwordPanel
 		layout.putConstraint(SpringLayout.NORTH, lastPanel,25,
 		         SpringLayout.SOUTH, firstPanel);
-		layout.putConstraint(SpringLayout.WEST, lastPanel,36,
+		layout.putConstraint(SpringLayout.WEST, lastPanel,50,
 		         SpringLayout.WEST, this);
 		
 //		//sets position of passwordPanel
@@ -175,6 +198,17 @@ public class RegistrationPanel extends JPanel{
 		         SpringLayout.SOUTH, userPanel);
 		layout.putConstraint(SpringLayout.WEST, dobPanel,36,
 		         SpringLayout.WEST, this);
+		
+		layout.putConstraint(SpringLayout.NORTH, submit,25,
+		         SpringLayout.SOUTH, dobPanel);
+		layout.putConstraint(SpringLayout.WEST, submit,50,
+		         SpringLayout.WEST, this);
+		
+		layout.putConstraint(SpringLayout.NORTH, cancel,25,
+		         SpringLayout.SOUTH, dobPanel);
+		layout.putConstraint(SpringLayout.WEST, cancel,150,
+		         SpringLayout.WEST, submit);
+	
 //		
 //		//sets position on login button
 //		layout.putConstraint(SpringLayout.WEST, login,190,
@@ -189,15 +223,15 @@ public class RegistrationPanel extends JPanel{
 	
 	public static void main(String[] args) {
 		
-		/*JFrame frame = new JFrame();
-		
-		RegistrationPanel loginPanel = new RegistrationPanel();
+		JFrame frame = new JFrame();
+		Controller controller = new Controller();
+		RegistrationPanel loginPanel = new RegistrationPanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(loginPanel);
 		frame.setSize(1000,650);
 		frame.setResizable(true);
-		frame.setVisible(true);*/
+		frame.setVisible(true);
 	}
 }
