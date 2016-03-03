@@ -32,9 +32,7 @@ public class Client2 {
 		controller.addModel(model);
 		controller.addView(view);
 		
-		while(true){
-			
-		}
+	
 
 	}
 
