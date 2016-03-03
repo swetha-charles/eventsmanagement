@@ -16,7 +16,7 @@ public class MainView extends JFrame implements Observer {
 	Model model = null;
 	Controller controller = null;
 
-	JLayeredPane login = null;
+	JPanel login = null;
 	JPanel registration = null;
 
 	public MainView(Controller controller, Model model) throws IOException {
