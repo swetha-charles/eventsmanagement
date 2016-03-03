@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,6 +14,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import controller.Controller;
+
 public class LoginPanel extends JPanel{
 	
 	/**
@@ -22,6 +23,7 @@ public class LoginPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = -2535316040411018240L;
 	
+	Controller controller;
 	JTextField username = new JTextField();
 	JPasswordField password = new JPasswordField();
 	JLabel userLabel = new JLabel("Username");
@@ -30,11 +32,13 @@ public class LoginPanel extends JPanel{
 	JPanel passwordPanel = new JPanel();
 	JPanel logoPanel = new JPanel();
 	JButton login = new JButton("Login");
+	JButton register = new JButton("Register");
 	
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	public LoginPanel(){
+	public LoginPanel(Controller controller){
+		this.controller= controller;
 		
 		password.setEchoChar('*');
 		//sets the dimension of the login panel
@@ -71,9 +75,11 @@ public class LoginPanel extends JPanel{
 		userLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		passwordLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		login.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
+		register.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		
 		//sets dimension of button
 		login.setPreferredSize(new Dimension(100,40));
+		register.setPreferredSize(new Dimension(100,40));
 		
 		//adds Labels and text fields to user and password panels
 		userPanel.add(userLabel);
@@ -85,6 +91,10 @@ public class LoginPanel extends JPanel{
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		GridBagConstraints gbc = new GridBagConstraints();
+		
+		//add listener to fucking register button
+		register.setActionCommand("register");
+		register.addActionListener(this.controller);
 		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
@@ -99,6 +109,7 @@ public class LoginPanel extends JPanel{
 		gbc.gridx = 2;
 		gbc.gridy = 4;
 		add(login);
+		add(register);
 		
 //		//sets position of logoPanel
 //		layout.putConstraint(SpringLayout.WEST, logoPanel,35,
@@ -132,7 +143,7 @@ public class LoginPanel extends JPanel{
 	 */
 	public static void main(String[] args) {
 		
-		JFrame frame = new JFrame();
+		/*JFrame frame = new JFrame();
 		
 		LoginPanel loginPanel = new LoginPanel();
 		
@@ -141,6 +152,6 @@ public class LoginPanel extends JPanel{
 		frame.add(loginPanel);
 		frame.setSize(1000,650);
 		frame.setResizable(true);
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 	}
 }
