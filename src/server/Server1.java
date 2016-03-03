@@ -28,9 +28,9 @@ public class Server1 {
 			//System.out.println("Server: how is in?" + in.ready());
 			while((inputNumber = in.readLine()) != null){
 				//System.out.println("Server: Within while loop and input was" + inputNumber);
-				outputNumber = ""+np.processInput(Integer.parseInt(inputNumber));
+			//outputNumber = ""+np.processInput(Integer.parseInt(inputNumber));
 				//System.out.println("Server: Protocol finished, output was" + outputNumber);
-				out.println(outputNumber);
+				//out.println(outputNumber);
 				
 			}
 			
