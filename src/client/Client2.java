@@ -31,6 +31,10 @@ public class Client2 {
 		model.addObserver(view);
 		controller.addModel(model);
 		controller.addView(view);
+		
+		while(true){
+			
+		}
 
 	}
 
