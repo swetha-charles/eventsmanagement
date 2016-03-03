@@ -12,8 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-
 import controller.Controller;
 
 public class LoginPanel extends JPanel{
@@ -42,7 +40,8 @@ public class LoginPanel extends JPanel{
 		
 		password.setEchoChar('*');
 		//sets the dimension of the login panel
-//		setPreferredSize(new Dimension(400,400));
+		setPreferredSize(new Dimension(420,410));
+		setMinimumSize(new Dimension(420,410));
 		
 		//Sets dimension of textFields
 		Dimension size1 = new Dimension(300,18);

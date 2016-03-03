@@ -9,19 +9,22 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import controller.Controller;
 import gui.LoginPanel;
+import gui.Login;
 
-public class Login extends JLayeredPane{
+public class Login extends JPanel{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JPanel background;
+	JLabel background;
 	Controller controller;
 
 	/**Constructor to create a Login
@@ -42,10 +45,10 @@ public class Login extends JLayeredPane{
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 //		gbc.anchor = GridBagConstraints.BASELINE;
-		gbc.fill = GridBagConstraints.BOTH;
+//		gbc.fill = GridBagConstraints.BOTH;
 		
 		//method that reads picture from file to set as background
-		background = new JPanel() {
+		background = new JLabel() {
 		
 			private static final long serialVersionUID = 1L;
 			private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
@@ -66,6 +69,21 @@ public class Login extends JLayeredPane{
 		
 		loginPanel.setOpaque(true);
 		background.setOpaque(true);
+	}
+	
+	public static void main(String[] args) throws IOException {
+		
+		JFrame frame = new JFrame();
+		Controller controller = new Controller();
+		
+		Login loginPanel = new Login(controller);
+		
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(loginPanel);
+		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		frame.setResizable(true);
+		frame.setVisible(true);
 	}
 }
 
