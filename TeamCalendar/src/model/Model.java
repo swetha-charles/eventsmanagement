@@ -21,10 +21,15 @@ public class Model extends Observable{
 		
 	}
 	
-	public void changeCurrentState(State state){
+	public synchronized void changeCurrentState(State state){
+		System.out.println("Model: has how many observers?"+this.countObservers());
 		this.currentstate = state;
+		System.out.println("Model: Model's state changed to " + this.currentstate);
 		this.setChanged();
-		this.notifyObservers();
+		System.out.println("Model: About to notify observers!");
+		super.notifyObservers();
+		System.out.println("Model: Notified observers!");
+		
 	}
 
 	
