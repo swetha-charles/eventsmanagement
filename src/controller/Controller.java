@@ -25,11 +25,13 @@ public class Controller implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public synchronized void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()){
 		case "register":
-			
+			System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
 			model.changeCurrentState(State.REGISTRATION);
+			System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+			
 		
 		}
 		
