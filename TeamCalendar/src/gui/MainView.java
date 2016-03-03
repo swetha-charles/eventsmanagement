@@ -18,15 +18,16 @@ public class MainView extends JFrame implements Observer {
 
 	JPanel login = null;
 	JPanel registration = null;
+	JFrame frame;
 
 	public MainView(Controller controller, Model model) throws IOException {
 		this.controller = controller;
 
 		this.login = new Login(this.controller);
-		this.registration = new RegistrationPanel(this.controller);
+	//	this.registration = new RegistrationPanel(this.controller);
 		this.model = model;
 		
-		JFrame frame = new JFrame("Calendar");
+		frame = new JFrame("Calendar");
 		// frame.setLayout(new BorderLayout());
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
@@ -43,17 +44,26 @@ public class MainView extends JFrame implements Observer {
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public synchronized void update(Observable o, Object arg) {
+		System.out.println("View: Update method has been called");
 		switch (model.getCurrentState()) {
 		case REGISTRATION:
-			System.out.println("registration state");
-			this.getContentPane().removeAll();
-			this.setContentPane(registration);
-			this.setVisible(true);
+			RegistrationPanel reg = new RegistrationPanel(this.controller);
 			
+			System.out.println("Main view: registration state entered");
+			frame.getContentPane().removeAll();
+			System.out.println("Main view: Removed all panes");
+			frame.add(reg);
+			System.out.println("Main view: Added registration panel");
+			frame.getContentPane().invalidate();
+			frame.getContentPane().validate();
+			reg.repaint();
+			System.out.println("Main view: Done");
+			this.registration = reg;
+			break;
 
 		case LOGIN:
-			this.setContentPane(this.login);
+			frame.setContentPane(this.login);
 			break;
 
 		}
