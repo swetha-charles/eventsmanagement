@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,17 @@ public class Login extends JLayeredPane{
 	 */
 	public Login() throws IOException{
 		
+		GridBagLayout layout = new GridBagLayout();
+		setLayout(layout);
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = 3;
+		gbc.gridheight = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.anchor = GridBagConstraints.BASELINE;
+		gbc.fill = GridBagConstraints.BOTH;
+		
 		//method that reads picture from file to set as background
 		background = new JPanel() {
 			
@@ -34,17 +47,15 @@ public class Login extends JLayeredPane{
 			    g.drawImage(backgroundImage, 0, 0, null);
 			  }
 			};
-			
-		background.setPreferredSize(new Dimension(1500, 700));
 		
+		add(background, gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = 1;
 		LoginPanel loginPanel = new LoginPanel();
+		add(loginPanel, gbc);
 		
-		add(loginPanel);
-		add(background);
-		setBounds(0, 0, 1500, 750);
-		loginPanel.setBounds(400, 75, 470, 450);
 		loginPanel.setOpaque(true);
-		background.setBounds(0, 0, 1500, 700);
 		background.setOpaque(true);
 	
 	}

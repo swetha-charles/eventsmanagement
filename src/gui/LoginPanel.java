@@ -4,11 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -20,7 +23,7 @@ public class LoginPanel extends JPanel{
 	private static final long serialVersionUID = -2535316040411018240L;
 	
 	JTextField username = new JTextField();
-	JTextField password = new JTextField();
+	JPasswordField password = new JPasswordField();
 	JLabel userLabel = new JLabel("Username");
 	JLabel passwordLabel = new JLabel("Password");
 	JPanel userPanel = new JPanel();
@@ -33,11 +36,12 @@ public class LoginPanel extends JPanel{
 	 */
 	public LoginPanel(){
 		
+		password.setEchoChar('*');
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(400,400));
 		
 		//Sets dimension of textFields
-		Dimension size1 = new Dimension(300,20);
+		Dimension size1 = new Dimension(300,18);
 		username.setPreferredSize(size1);
 		password.setPreferredSize(size1);
 		
@@ -78,39 +82,48 @@ public class LoginPanel extends JPanel{
 		passwordPanel.add(password);
 		
 		//sets layout of loginPanel 
-		SpringLayout layout = new SpringLayout();
+		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
+		GridBagConstraints gbc = new GridBagConstraints();
 		
 		//adds all panels and button to loginPanel
-		add(logoPanel);
-		add(userPanel);
-		add(passwordPanel);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		add(logoPanel, gbc);
+		gbc.gridx = 1;
+		gbc.gridy = 2;
+		add(userPanel, gbc);
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		add(passwordPanel, gbc);
+		gbc.gridx = 2;
+		gbc.gridy = 4;
 		add(login);
 		
-		//sets position of logoPanel
-		layout.putConstraint(SpringLayout.WEST, logoPanel,35,
-		         SpringLayout.WEST, this);
-		layout.putConstraint(SpringLayout.NORTH, logoPanel,40,
-		         SpringLayout.NORTH, this);
-		
-		//sets position of userPanel
-		layout.putConstraint(SpringLayout.NORTH, userPanel,20,
-		         SpringLayout.SOUTH, logoPanel);
-		layout.putConstraint(SpringLayout.WEST, userPanel,35,
-		         SpringLayout.WEST, this);
-		
-		//sets position of passwordPanel
-		layout.putConstraint(SpringLayout.NORTH, passwordPanel,25,
-		         SpringLayout.SOUTH, userPanel);
-		layout.putConstraint(SpringLayout.WEST, passwordPanel,36,
-		         SpringLayout.WEST, this);
-		
-		//sets position on login button
-		layout.putConstraint(SpringLayout.WEST, login,190,
-		         SpringLayout.WEST, this);
-		layout.putConstraint(SpringLayout.NORTH, login,370,
-		         SpringLayout.NORTH, this);
-	
+//		//sets position of logoPanel
+//		layout.putConstraint(SpringLayout.WEST, logoPanel,35,
+//		         SpringLayout.WEST, this);
+//		layout.putConstraint(SpringLayout.NORTH, logoPanel,40,
+//		         SpringLayout.NORTH, this);
+//		
+//		//sets position of userPanel
+//		layout.putConstraint(SpringLayout.NORTH, userPanel,20,
+//		         SpringLayout.SOUTH, logoPanel);
+//		layout.putConstraint(SpringLayout.WEST, userPanel,35,
+//		         SpringLayout.WEST, this);
+//		
+//		//sets position of passwordPanel
+//		layout.putConstraint(SpringLayout.NORTH, passwordPanel,25,
+//		         SpringLayout.SOUTH, userPanel);
+//		layout.putConstraint(SpringLayout.WEST, passwordPanel,36,
+//		         SpringLayout.WEST, this);
+//		
+//		//sets position on login button
+//		layout.putConstraint(SpringLayout.WEST, login,190,
+//		         SpringLayout.WEST, this);
+//		layout.putConstraint(SpringLayout.NORTH, login,370,
+//		         SpringLayout.NORTH, this);
+//	
 	}
 
 	/** Main method to veiw the logoPanel
