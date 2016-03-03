@@ -32,8 +32,8 @@ public class MainView extends JFrame implements Observer {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(login);
-//		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-//		frame.setSize(700, 700);
+		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+	//	frame.setSize(700, 700);
 		frame.setResizable(true);
 		frame.setVisible(true);
 	}
