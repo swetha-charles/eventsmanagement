@@ -1,8 +1,12 @@
 package JDBCTesting;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.*;
 import java.util.Properties;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -22,7 +26,7 @@ public class JDBCTest {
 
 		String URL ="jdbc:" + protocol + "://" + server + ":" + localport + "/" + db;
 		Session session = null;
-		
+
 		try {
 			JSch jsch=new JSch();
 
@@ -35,14 +39,12 @@ public class JDBCTest {
 
 			session.setConfig("StrictHostKeyChecking", "no");
 
-
-			session.connect(30000);
-
 			System.out.println("Connecting to SSH...");
+			session.connect(5000);
+
 			session.setPortForwardingL(localport, "dbteach2", uniport);
 			System.out.println("Connected to SSH");
 		} catch (JSchException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			System.exit(-1);
 		}
@@ -72,11 +74,11 @@ public class JDBCTest {
 
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
-			  System.exit(-1);
+			System.exit(-1);
 		}
 
 		if (connection != null) {
-			System.out.println("You made it, take control your database now!");
+			System.out.println("Made it! Can now submit SQL queries");
 		} else {
 			System.out.println("Failed to make connection!");
 			System.exit(-1);
@@ -89,26 +91,31 @@ public class JDBCTest {
 			System.out.println("Setting schema");
 			stmt.execute("SET search_path TO calendar");
 
-			System.out.println("Running Query");
-			ResultSet rs = stmt.executeQuery("SELECT m.meetingTitle, m.meetingStartTime, m.meetingEndTime, m.meetingDescription " + 
-											"FROM users u, meetings m " + 
-											"WHERE u.userID = m.creatorID AND u.userName = 'mwizzle' AND m.meetingDate = '2016-03-24'");
+			System.out.println("Running Query:");
+
+			String query = "SELECT m.meetingTitle, m.meetingStartTime, m.meetingEndTime, m.meetingDescription " + 
+					"FROM users u, meetings m " + 
+					"WHERE u.userID = m.creatorID AND u.userName = 'mwizzle' AND m.meetingDate = '2016-03-24'";
+
+			System.out.println(query);
+
+			ResultSet rs = stmt.executeQuery(query);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnsNumber = rsmd.getColumnCount();
-			
-		    for (int i = 1; i <= columnsNumber; i++) {
-		        if (i > 1) System.out.print("|  ");
-		        System.out.print(rsmd.getColumnName(i));
-		    }
-		    System.out.println("");
-			
+
+			for (int i = 1; i <= columnsNumber; i++) {
+				if (i > 1) System.out.print("|  ");
+				System.out.print(rsmd.getColumnName(i));
+			}
+			System.out.println("");
+
 			while (rs.next()) {
-			    for (int i = 1; i <= columnsNumber; i++) {
-			        if (i > 1) System.out.print("|  ");
-			        String columnValue = rs.getString(i);
-			        System.out.print(columnValue);
-			    }
-			    System.out.println("");
+				for (int i = 1; i <= columnsNumber; i++) {
+					if (i > 1) System.out.print("|  ");
+					String columnValue = rs.getString(i);
+					System.out.print(columnValue);
+				}
+				System.out.println("");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -117,19 +124,37 @@ public class JDBCTest {
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		try {
 			System.out.println("Closing!");
 			if (connection != null) {connection.close();}
-			session.disconnect();
-			System.exit(-1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		try{
+			String command="exit";
+			Channel channel=session.openChannel("exec");
+			((ChannelExec)channel).setCommand(command);
+
+			OutputStream out=channel.getOutputStream();
+
+			channel.connect();
+			out.write(command.getBytes()); out.flush();
+			
+			try{Thread.sleep(1000);}catch(Exception e){System.out.println(e);}
+
+			channel.disconnect();
+			session.disconnect();
+
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+
+
 
 	}
 
