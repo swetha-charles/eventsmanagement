@@ -1,15 +1,7 @@
 package JDBCTesting;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.*;
-import java.util.Properties;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import java.util.*;
 
 public class JDBCTest {
 
@@ -22,7 +14,6 @@ public class JDBCTest {
 		String user = "mxw589";
 		String dbpasswd = "ilovedatabases";
 		String URL ="jdbc:" + protocol + "://" + server + "/" + db;
-		Session session = null;
 
 		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
