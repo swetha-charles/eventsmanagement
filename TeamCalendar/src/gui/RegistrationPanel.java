@@ -54,7 +54,7 @@ public class RegistrationPanel extends JPanel{
 		this.controller = controller;
 		
 		//sets the dimension of the login panel
-		setPreferredSize(new Dimension(400,400));
+		setPreferredSize(new Dimension(500, 600));
 		
 		//Sets dimension of textFields
 		Dimension size1 = new Dimension(300,20);
