@@ -2,18 +2,18 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import controller.Controller;
+
 public class RegistrationPanel extends JPanel{
-	
+	private Controller controller = null;
 	/**
 	 * 
 	 */
@@ -49,7 +49,8 @@ public class RegistrationPanel extends JPanel{
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	public RegistrationPanel(){
+	public RegistrationPanel(Controller controller){
+		this.controller = controller;
 		
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(400,400));
@@ -181,15 +182,14 @@ public class RegistrationPanel extends JPanel{
 //		layout.putConstraint(SpringLayout.NORTH, login,370,
 //		         SpringLayout.NORTH, this);
 	
+		
+		
 	}
 
-	/** Main method to veiw the logoPanel
-	 * 
-	 * @param args
-	 */
+	
 	public static void main(String[] args) {
 		
-		JFrame frame = new JFrame();
+		/*JFrame frame = new JFrame();
 		
 		RegistrationPanel loginPanel = new RegistrationPanel();
 		
@@ -198,6 +198,6 @@ public class RegistrationPanel extends JPanel{
 		frame.add(loginPanel);
 		frame.setSize(1000,650);
 		frame.setResizable(true);
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 	}
 }
