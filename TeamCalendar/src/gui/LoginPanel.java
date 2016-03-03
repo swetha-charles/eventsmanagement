@@ -37,8 +37,7 @@ public class LoginPanel extends JPanel{
 	 */
 	public LoginPanel(Controller controller){
 		this.controller= controller;
-		
-		password.setEchoChar('*');
+
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(420,410));
 		setMinimumSize(new Dimension(420,410));
