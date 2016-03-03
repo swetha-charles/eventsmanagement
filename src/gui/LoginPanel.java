@@ -42,7 +42,7 @@ public class LoginPanel extends JPanel{
 		
 		password.setEchoChar('*');
 		//sets the dimension of the login panel
-		setPreferredSize(new Dimension(400,400));
+//		setPreferredSize(new Dimension(400,400));
 		
 		//Sets dimension of textFields
 		Dimension size1 = new Dimension(300,18);
@@ -106,35 +106,13 @@ public class LoginPanel extends JPanel{
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		add(passwordPanel, gbc);
-		gbc.gridx = 2;
+		gbc.gridx = 1;
 		gbc.gridy = 4;
-		add(login);
-		add(register);
-		
-//		//sets position of logoPanel
-//		layout.putConstraint(SpringLayout.WEST, logoPanel,35,
-//		         SpringLayout.WEST, this);
-//		layout.putConstraint(SpringLayout.NORTH, logoPanel,40,
-//		         SpringLayout.NORTH, this);
-//		
-//		//sets position of userPanel
-//		layout.putConstraint(SpringLayout.NORTH, userPanel,20,
-//		         SpringLayout.SOUTH, logoPanel);
-//		layout.putConstraint(SpringLayout.WEST, userPanel,35,
-//		         SpringLayout.WEST, this);
-//		
-//		//sets position of passwordPanel
-//		layout.putConstraint(SpringLayout.NORTH, passwordPanel,25,
-//		         SpringLayout.SOUTH, userPanel);
-//		layout.putConstraint(SpringLayout.WEST, passwordPanel,36,
-//		         SpringLayout.WEST, this);
-//		
-//		//sets position on login button
-//		layout.putConstraint(SpringLayout.WEST, login,190,
-//		         SpringLayout.WEST, this);
-//		layout.putConstraint(SpringLayout.NORTH, login,370,
-//		         SpringLayout.NORTH, this);
-//	
+		add(login, gbc);
+		gbc.gridx = 1;
+		gbc.gridy = 5;
+		add(register, gbc);
+	
 	}
 
 	/** Main method to veiw the logoPanel
@@ -143,15 +121,16 @@ public class LoginPanel extends JPanel{
 	 */
 	public static void main(String[] args) {
 		
-		/*JFrame frame = new JFrame();
+		JFrame frame = new JFrame();
+		Controller controller = new Controller();
 		
-		LoginPanel loginPanel = new LoginPanel();
+		LoginPanel loginPanel = new LoginPanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(loginPanel);
 		frame.setSize(1000,650);
 		frame.setResizable(true);
-		frame.setVisible(true);*/
+		frame.setVisible(true);
 	}
 }
