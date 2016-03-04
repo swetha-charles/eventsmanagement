@@ -1,6 +1,6 @@
 package server;
 
-public class ObjectTransferrable implements Runnable {
+public class ObjectTransferrable{
 
 	private static final long serialVersionUID = 85731937678276152L;
 	private String opCode;
@@ -11,8 +11,5 @@ public class ObjectTransferrable implements Runnable {
 
 	public void setOpCode(String opCode){
 		this.opCode = opCode;
-	}
-
-	public void run() {
 	}
 }
