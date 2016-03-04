@@ -13,7 +13,9 @@ public class ObjectServer {
 		ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 		
 		while(true){
-			clientThreads.add(new Thread(new ThreadForClient(ss.accept())));
+			Thread newClientThread = new Thread(new ThreadForClient(ss.accept()));
+			newClientThread.start();
+			clientThreads.add(newClientThread);
 		}
 	}
 }
