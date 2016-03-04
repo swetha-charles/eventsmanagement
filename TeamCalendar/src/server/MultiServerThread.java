@@ -21,11 +21,11 @@ public class MultiServerThread extends Thread{
 	                    this.socket.getInputStream()));
 	        ) {
 	            String inputLine, outputLine;
-	            Protocol p = new Protocol();
+	          //  Protocol p = new Protocol();
 	            
 
 	            while ((inputLine = in.readLine()) != null) {
-	                outputLine = p.processInput(inputLine);
+	              outputLine = "";
 	                out.println(outputLine);
 	                if (outputLine.equals("exit"))
 	                    break;
