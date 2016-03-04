@@ -25,6 +25,9 @@ public class ThreadForClient implements Runnable{
 			ObjectTransferrable receivedOperation = null;
 			try {
 				receivedOperation = (ObjectTransferrable) fromClient.readObject();
+				JDBCForThread runQuery = new JDBCForThread(receivedOperation);
+				runQuery.runOperation();
+				toClient.writeObject(runQuery.getOperation());
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -33,9 +36,6 @@ public class ThreadForClient implements Runnable{
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public void operationClassification(ObjectTransferrable receivedOperation){
 	}
 
 }	
