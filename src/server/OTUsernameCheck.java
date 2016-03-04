@@ -26,9 +26,4 @@ public class OTUsernameCheck extends ObjectTransferrable {
 		this.alreadyExists = alreadyExists;
 	}
 	
-	@Override
-	public void run(){
-		
-	}
-	
 }

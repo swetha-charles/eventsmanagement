@@ -35,7 +35,6 @@ public class ThreadForClient implements Runnable{
 			ObjectTransferrable classifiedOperation;
 			classifiedOperation = operationClassification(receivedOperation);
 			
-			classifiedOperation.run();
 		}
 	}
 	
