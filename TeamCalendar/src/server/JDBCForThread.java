@@ -28,24 +28,7 @@ public class JDBCForThread {
 		this.stmnt = stmnt;
 	}
 
-	public ObjectTransferrable runOperation(){
-		ObjectTransferrable currentOperation = getOperation();
-		String query = null;
-		
-		if(currentOperation.getOpCode().equals("0001")){
-			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
-			query = "SELECT count(u.userName) " + 
-					"FROM users u " +
-					"GROUP BY u.userName " +
-					"HAVING u.userName = '" + classifiedOperation.getUsername() + "'" ;
-			return classifiedOperation;
-		}
-		
-		return null;
-	}
-	
-	public static void main(String[] args) {
-
+	public void runOperation(){
 		
 		String protocol = "postgresql";
 		String driverName = "org.postgresql.Driver";
@@ -55,7 +38,7 @@ public class JDBCForThread {
 		String dbpasswd = "ilovedatabases";
 		String URL ="jdbc:" + protocol + "://" + server + "/" + db;
 
-		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
+		//System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
 		try {
 
@@ -68,7 +51,7 @@ public class JDBCForThread {
 			System.exit(-1);
 		}
 
-		System.out.println("PostgreSQL JDBC Driver Registered!");
+		//System.out.println("PostgreSQL JDBC Driver Registered!");
 
 		Connection connection = null;
 
@@ -89,52 +72,42 @@ public class JDBCForThread {
 			System.out.println("Failed to make connection!");
 			System.exit(-1);
 		}
-
-		Statement stmt;
-
+		
 		try {
-			stmt = connection.createStatement();
-			System.out.println("Setting schema");
-			stmt.execute("SET search_path TO calendar");
-
-			System.out.println("Running Query:");
-
-			String query = "SELECT m.meetingTitle, m.meetingStartTime, m.meetingEndTime, m.meetingDescription " + 
-					"FROM users u, meetings m " + 
-					"WHERE u.userID = m.creatorID AND u.userName = 'mwizzle' AND m.meetingDate = '2016-03-24'";
-
-			System.out.println(query);
-
-			ResultSet rs = stmt.executeQuery(query);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int columnsNumber = rsmd.getColumnCount();
-			int columnWidth = 20;
-			
-			
-			for (int i = 1; i <= columnsNumber; i++) {
-				if (i > 1) System.out.print("|  ");
-				String columnName = rsmd.getColumnName(i);
-				
-				while(columnName.length() <20){ columnName = columnName + " ";}
-				System.out.print(columnName);
-			}
-			System.out.println("");
-			
-			while (rs.next()) {
-				for (int i = 1; i <= columnsNumber; i++) {
-					if (i > 1) System.out.print("|  ");
-					String columnValue = rs.getString(i);
-					while(columnValue.length() <20){ columnValue = columnValue + " ";}
-					System.out.print(columnValue);
-				}
-				System.out.println("");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			setStmnt(connection.createStatement());
+//			System.out.println("Setting schema");
+			getStmnt().execute("SET search_path TO calendar");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
+		ObjectTransferrable currentOperation = getOperation();
+		String query = null;
+		
+		if(currentOperation.getOpCode().equals("0001")){
+			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
+			query = "SELECT count(u.userName) " + 
+					"FROM users u " +
+					"GROUP BY u.userName " +
+					"HAVING u.userName = '" + classifiedOperation.getUsername() + "'" ;
+			try {
+				ResultSet rs = getStmnt().executeQuery(query);
+				
+				if(rs.next()){
+					classifiedOperation.setAlreadyExists(true);
+				} else {
+					classifiedOperation.setAlreadyExists(false);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setOperation(classifiedOperation);
+		} 
+		
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -145,7 +118,6 @@ public class JDBCForThread {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
