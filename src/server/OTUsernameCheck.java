@@ -18,7 +18,7 @@ public class OTUsernameCheck extends ObjectTransferrable {
 		this.username = username;
 	}
 
-	public boolean isAlreadyExists() {
+	public boolean getAlreadyExists() {
 		return alreadyExists;
 	}
 

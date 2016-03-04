@@ -1,12 +1,52 @@
-package JDBCTesting;
+package server;
 
 import java.sql.*;
 import java.util.*;
 
-public class JDBCTest {
+public class JDBCForThread {
 
+	private ObjectTransferrable operation;
+	private Statement stmnt = null;
+
+	public JDBCForThread(ObjectTransferrable operation){
+		this.operation = operation;
+	}	
+	
+	public ObjectTransferrable getOperation() {
+		return operation;
+	}
+
+	public void setOperation(ObjectTransferrable operation) {
+		this.operation = operation;
+	}
+	
+	public Statement getStmnt() {
+		return stmnt;
+	}
+
+	public void setStmnt(Statement stmnt) {
+		this.stmnt = stmnt;
+	}
+
+	public ObjectTransferrable runOperation(){
+		ObjectTransferrable currentOperation = getOperation();
+		String query = null;
+		
+		if(currentOperation.getOpCode().equals("0001")){
+			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
+			query = "SELECT count(u.userName) " + 
+					"FROM users u " +
+					"GROUP BY u.userName " +
+					"HAVING u.userName = '" + classifiedOperation.getUsername() + "'" ;
+			return classifiedOperation;
+		}
+		
+		return null;
+	}
+	
 	public static void main(String[] args) {
 
+		
 		String protocol = "postgresql";
 		String driverName = "org.postgresql.Driver";
 		String server = "dbteach2.cs.bham.ac.uk";
@@ -59,10 +99,9 @@ public class JDBCTest {
 
 			System.out.println("Running Query:");
 
-			String query = "SELECT count(u.userName) " + 
-					"FROM users u " +
-					"GROUP BY u.userName " +
-					"HAVING u.userName = 'derp'" ;
+			String query = "SELECT m.meetingTitle, m.meetingStartTime, m.meetingEndTime, m.meetingDescription " + 
+					"FROM users u, meetings m " + 
+					"WHERE u.userID = m.creatorID AND u.userName = 'mwizzle' AND m.meetingDate = '2016-03-24'";
 
 			System.out.println(query);
 
