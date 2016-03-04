@@ -32,19 +32,10 @@ public class ThreadForClient implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ObjectTransferrable classifiedOperation;
-			classifiedOperation = operationClassification(receivedOperation);
-			
 		}
 	}
 	
-	public ObjectTransferrable operationClassification(ObjectTransferrable receivedOperation){
-		ObjectTransferrable classifiedOperation = null;
-		
-		if(receivedOperation.getOpCode().equals("0001")){
-			classifiedOperation = (OTUsernameCheck) receivedOperation;
-		}
-		return classifiedOperation;
+	public void operationClassification(ObjectTransferrable receivedOperation){
 	}
 
 }	
