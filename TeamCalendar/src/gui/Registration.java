@@ -4,37 +4,31 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import controller.Controller;
-import gui.LoginPanel;
 
-public class Login extends JPanel {
+public class Registration extends JPanel{
 
+	private Controller controller = null;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JLabel background;
-	Controller controller;
-	TestController Tcontroller;
+	JPanel background;
 
-	/**
-	 * Constructor to create a Login
+	/**Constructor to create a Login
 	 * 
 	 * @throws IOException
 	 */
-	public Login(Controller controller) throws IOException {
-		this.controller = controller;
-
+	public Registration(Controller controller) throws IOException{
+		
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
@@ -45,14 +39,9 @@ public class Login extends JPanel {
 		gbc.gridy = 0;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-//		gbc.anchor = GridBagConstraints.BASELINE;
-//		gbc.fill = GridBagConstraints.BOTH;
 		
-		
-//		ImageIcon backgroundImage = new ImageIcon("calendar.jpg");
-		
-		//method that reads picture from file to set as background
-		background = new JLabel() {
+//		method that reads picture from file to set as background
+		background = new JPanel() {
 			
 			private static final long serialVersionUID = 1L;
 			private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
@@ -62,30 +51,35 @@ public class Login extends JPanel {
 			  }
 			};
 //		background.setPreferredSize(new Dimension(1000, 750));
+//		Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
+//		background = new BackgroundPanel(backgroundImage);
 		add(background, gbc);
 		
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		LoginPanel loginPanel = new LoginPanel(this.controller);
-		add(loginPanel, gbc);
+		RegistrationPanel rp = new RegistrationPanel(this.controller);
+		add(rp, gbc);
 		
-		loginPanel.setOpaque(true);
+		rp.setOpaque(true);
+		background.setOpaque(true);
+	
 	}
-
+	
 	public static void main(String[] args) throws IOException {
-
+		
 		JFrame frame = new JFrame();
 		Controller controller = new Controller();
-
-		Login loginPanel = new Login(controller);
-
+		
+		Registration r = new Registration(controller);
+		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(loginPanel);
+		frame.setContentPane(r);
 		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		frame.setResizable(true);
 		frame.setVisible(true);
 	}
 }
+
