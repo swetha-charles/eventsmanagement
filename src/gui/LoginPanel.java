@@ -5,7 +5,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
+import javax.swing.ActionMap;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +35,8 @@ public class LoginPanel extends JPanel{
 	JPanel passwordPanel = new JPanel();
 	JPanel logoPanel = new JPanel();
 	JButton login = new JButton("Login");
-	JButton register = new JButton("Register");
+	public static JLabel signup = new JLabel("Sign Up");
+	JPanel input = new JPanel();
 	
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
@@ -41,12 +47,16 @@ public class LoginPanel extends JPanel{
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(420,410));
 		setMinimumSize(new Dimension(420,410));
-		
+				
 		//Sets dimension of textFields
 		Dimension size1 = new Dimension(300,18);
 		username.setPreferredSize(size1);
 		password.setPreferredSize(size1);
-		
+		username.setMinimumSize(size1);
+		password.setMinimumSize(size1);
+		username.setMaximumSize(size1);
+		password.setMaximumSize(size1);
+				
 		//sets the dimension of the user and password panels
 		Dimension size2 = new Dimension(400, 40);
 		userPanel.setMaximumSize(size2);
@@ -64,26 +74,38 @@ public class LoginPanel extends JPanel{
 		userPanel.setBackground(Color.DARK_GRAY);
 		passwordPanel.setBackground(Color.DARK_GRAY);
 		logoPanel.setBackground(Color.DARK_GRAY);
+		input.setBackground(Color.DARK_GRAY);
 		
 		//sets colour of text in JLabels
 		userLabel.setForeground(Color.WHITE);
 		passwordLabel.setForeground(Color.WHITE);
+		signup.setForeground(Color.WHITE);
 		
 		//sets fonts of JLabels and JButton
 		userLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		passwordLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		login.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		register.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
+		signup.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
+		Font font = signup.getFont();
+		Map attributes = font.getAttributes();
+		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		signup.setFont(font.deriveFont(attributes));
 		
 		//sets dimension of button
 		login.setPreferredSize(new Dimension(100,40));
-		register.setPreferredSize(new Dimension(100,40));
 		
 		//adds Labels and text fields to user and password panels
+		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.X_AXIS));
+		passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.X_AXIS));
+		GridLayout grid = new GridLayout(2,1);
+		grid.setVgap(10);
+		input.setLayout(grid);
 		userPanel.add(userLabel);
 		passwordPanel.add(passwordLabel);
 		userPanel.add(username);
 		passwordPanel.add(password);
+		input.add(passwordPanel);
+		input.add(userPanel);
 		
 		//sets layout of loginPanel 
 		GridBagLayout layout = new GridBagLayout();
@@ -91,8 +113,7 @@ public class LoginPanel extends JPanel{
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		//add listener to fucking register button
-		register.setActionCommand("register");
-		register.addActionListener(this.controller);
+		signup.addMouseListener(this.controller);
 		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
@@ -109,7 +130,7 @@ public class LoginPanel extends JPanel{
 		add(login, gbc);
 		gbc.gridx = 1;
 		gbc.gridy = 5;
-		add(register, gbc);
+		add(signup, gbc);
 	
 	}
 
