@@ -13,12 +13,15 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import controller.Controller;
+
 public class EditPanel extends JPanel{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Controller controller = null;
 	JLabel hello = new JLabel("Want to change your details?");
 	JPanel detailsPanel = new JPanel();
 	JLabel firstName = new JLabel("First Name");
@@ -39,7 +42,9 @@ public class EditPanel extends JPanel{
 	JButton cancel = new JButton("Cancel");
 	
 	
-	public EditPanel(){
+	public EditPanel(Controller controller){
+		
+		this.controller = controller;
 		
 		setPreferredSize(new Dimension(Integer.MAX_VALUE, 500));
 	
@@ -105,8 +110,9 @@ public class EditPanel extends JPanel{
 public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
+		Controller controller = new Controller();
 		
-		EditPanel menu = new EditPanel();
+		EditPanel menu = new EditPanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

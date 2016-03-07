@@ -11,28 +11,38 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import controller.Controller;
+
 public class ProfilePanel extends JPanel{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JLabel hello = new JLabel("Hello NatalieMcD!");
+	private Controller controller = null;
+	JLabel hello;
 	JPanel detailsPanel = new JPanel();
 	JLabel details = new JLabel("Details");
 	JLabel name = new JLabel("Name");
 	JLabel email = new JLabel("Email");
 	JLabel dob = new JLabel("Date of Birth");
 
-	JLabel nameA = new JLabel("Natalie McDonnell");
-	JLabel emailA = new JLabel("natalie.mcdonnell1@hotmail.co.uk");
-	JLabel dobA = new JLabel("08/05/1994");
+	JLabel nameA;
+	JLabel emailA;
+	JLabel dobA;
 	
 	JButton editDetails = new JButton("Edit Details");
 	JButton editPassword = new JButton("Change Pasword");
 	
 	
-	public ProfilePanel(){
+	public ProfilePanel(Controller controller){
+		
+		this.controller = controller;
+		//here we need it to get the information from the database
+		nameA = new JLabel("Natalie McDonnell");
+		emailA = new JLabel("natalie.mcdonnell1@hotmail.co.uk");
+		dobA = new JLabel("08/05/1994");
+		hello = new JLabel("Hello NatalieMcD!");
 		
 		setPreferredSize(new Dimension(Integer.MAX_VALUE, 500));
 	
@@ -90,11 +100,12 @@ public class ProfilePanel extends JPanel{
 		layout.putConstraint(SpringLayout.NORTH, editPassword, 20, SpringLayout.SOUTH, detailsPanel);
 	}
 	
-public static void main(String[] args) {
+	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
+		Controller controller = new Controller();
 		
-		ProfilePanel menu = new ProfilePanel();
+		ProfilePanel menu = new ProfilePanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
