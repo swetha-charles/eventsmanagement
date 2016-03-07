@@ -9,8 +9,7 @@ public class ObjectServer {
 
 	public static void main(String[] args) {
 		try {
-			DatabaseConnection dbinstance = null;
-			//= new DatabaseConnection(); TODO
+			DatabaseConnection dbinstance = new DatabaseConnection();
 
 			ServerSocket ss;
 
@@ -20,9 +19,7 @@ public class ObjectServer {
 
 			while(true){
 				Socket newConnection = ss.accept();
-				Connection bait = null;
-				Thread newClientThread = new Thread(new ThreadForClient(newConnection, bait)); 
-						//dbinstance.getConnection())); TODO
+				Thread newClientThread = new Thread(new ThreadForClient(newConnection, dbinstance.getConnection()));
 				newClientThread.start();
 				clientThreads.add(newClientThread);
 			}
