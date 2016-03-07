@@ -12,18 +12,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import controller.Controller;
+
 public class MenuPanel extends JPanel{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Controller controller = null;
 	JPanel menuBar = new JPanel();
 	JLabel home = new JLabel("Home");
 	JLabel profile = new JLabel("Profile");
 	JLabel logout = new JLabel("Logout");
 
-	public MenuPanel(){
+	public MenuPanel(Controller controller){
+		
+		this.controller = controller;
 		
 		setPreferredSize(new Dimension(Integer.MAX_VALUE, 70));
 		setMinimumSize(new Dimension(Integer.MAX_VALUE, 70));
@@ -66,8 +71,9 @@ public class MenuPanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
+		Controller controller = new Controller();
 		
-		MenuPanel menu = new MenuPanel();
+		MenuPanel menu = new MenuPanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

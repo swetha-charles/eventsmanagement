@@ -29,6 +29,7 @@ public class Registration extends JPanel{
 	 */
 	public Registration(Controller controller) throws IOException{
 		
+		this.controller = controller;
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		

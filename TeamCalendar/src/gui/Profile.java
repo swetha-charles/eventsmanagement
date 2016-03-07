@@ -6,16 +6,23 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import controller.Controller;
+
 public class Profile extends JPanel{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	MenuPanel bar = new MenuPanel();
-	ProfilePanel profile = new ProfilePanel();
+	private Controller controller = null;
+	MenuPanel bar;
+	ProfilePanel profile;
 	
-	public Profile(){
+	public Profile(Controller controller){
+		
+		this.controller = controller;
+		bar = new MenuPanel(controller);
+		profile = new ProfilePanel(controller);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -26,8 +33,9 @@ public class Profile extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
+		Controller controller = new Controller();
 		
-		Profile menu = new Profile();
+		Profile menu = new Profile(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
