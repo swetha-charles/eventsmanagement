@@ -16,7 +16,7 @@ public class DatabaseConnection {
 		String dbpasswd = "ilovedatabases";
 		String URL ="jdbc:" + protocol + "://" + server + "/" + db;
 
-		//System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
+		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
 		try {
 
@@ -29,7 +29,7 @@ public class DatabaseConnection {
 			System.exit(-1);
 		}
 
-		//System.out.println("PostgreSQL JDBC Driver Registered!");
+		System.out.println("PostgreSQL JDBC Driver Registered!");
 
 		this.connection = null;
 
@@ -55,10 +55,9 @@ public class DatabaseConnection {
 		
 		try {
 			stmnt = this.connection.createStatement();
-//			System.out.println("Setting schema");
+			System.out.println("Setting schema");
 			stmnt.execute("SET search_path TO calendar");
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

@@ -1,6 +1,6 @@
 package server;
 
-public class ObjectTransferrable{
+public class ObjectTransferrable implements java.io.Serializable{
 
 	private static final long serialVersionUID = 85731937678276152L;
 	private String opCode;

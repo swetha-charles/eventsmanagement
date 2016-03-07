@@ -1,23 +1,34 @@
 package server;
 
 import java.net.*;
+import java.sql.Connection;
 import java.util.*;
 import java.io.*;
 
 public class ObjectServer {
 
-	public static void main(String[] args) throws Exception {
-		
-		DatabaseConnection dbinstance = new DatabaseConnection();
-		
-		ServerSocket ss = new ServerSocket(4444);
+	public static void main(String[] args) {
+		try {
+			DatabaseConnection dbinstance = null;
+			//= new DatabaseConnection(); TODO
 
-		ArrayList<Thread> clientThreads = new ArrayList<Thread>();
-		
-		while(true){
-			Thread newClientThread = new Thread(new ThreadForClient(ss.accept(), dbinstance.getConnection()));
-			newClientThread.start();
-			clientThreads.add(newClientThread);
+			ServerSocket ss;
+
+			ss = new ServerSocket(4444);
+
+			ArrayList<Thread> clientThreads = new ArrayList<Thread>();
+
+			while(true){
+				Socket newConnection = ss.accept();
+				Connection bait = null;
+				Thread newClientThread = new Thread(new ThreadForClient(newConnection, bait)); 
+						//dbinstance.getConnection())); TODO
+				newClientThread.start();
+				clientThreads.add(newClientThread);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 	}
 }

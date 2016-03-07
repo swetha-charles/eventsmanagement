@@ -27,12 +27,19 @@ public class ObjectClient {
 
 		toServer.writeObject(new OTUsernameCheck("mwizzle"));
 
+		try {
+			OTUsernameCheck p = (OTUsernameCheck) fromServer.readObject();
+			System.out.println(p.getAlreadyExists());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		toServer.writeObject(new OTUsernameCheck("dave"));
 
 		try {
 			OTUsernameCheck p = (OTUsernameCheck) fromServer.readObject();
 			System.out.println(p.getAlreadyExists());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
