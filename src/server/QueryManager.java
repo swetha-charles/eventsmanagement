@@ -34,38 +34,27 @@ public class QueryManager {
 		ObjectTransferrable currentOperation = getOperation();
 		String query = null;
 		Connection dbconnection = getConnection();
-//		Statement stmnt = dbconnection.createStatement(); TODO
+		Statement stmnt = dbconnection.createStatement();
 		
 		if(currentOperation.getOpCode().equals("0001")){
 			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
-//			query = "SELECT count(u.userName) " +  TODO
-//					"FROM users u " +
-//					"GROUP BY u.userName " +
-//					"HAVING u.userName = '" + classifiedOperation.getUsername() + "'" ;
-//			try {
-//				ResultSet rs = stmnt.executeQuery(query);
-//				
-//				if(rs.next()){
-//					classifiedOperation.setAlreadyExists(true);
-//				} else {
-//					classifiedOperation.setAlreadyExists(false);
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-			if (classifiedOperation.getUsername().equals("mwizzle")){
-				classifiedOperation.setAlreadyExists(false);
-			} else {
-				classifiedOperation.setAlreadyExists(true);
+			query = "SELECT count(u.userName) " + 
+					"FROM users u " +
+					"GROUP BY u.userName " +
+					"HAVING u.userName = '" + classifiedOperation.getUsername() + "'" ;
+			try {
+				ResultSet rs = stmnt.executeQuery(query);
+				
+				if(rs.next()){
+					classifiedOperation.setAlreadyExists(true);
+				} else {
+					classifiedOperation.setAlreadyExists(false);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 			setOperation(classifiedOperation);
 		} 
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 	}
 
