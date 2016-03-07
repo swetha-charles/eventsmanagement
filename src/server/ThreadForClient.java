@@ -2,15 +2,19 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ThreadForClient implements Runnable{
 
-	Socket clientSocket;
-	ObjectInputStream fromClient;
-	ObjectOutputStream toClient;
+	private Socket clientSocket;
+	private Connection connection;
+	private ObjectInputStream fromClient;
+	private ObjectOutputStream toClient;
 	
-	public ThreadForClient(Socket clientSocket){
+	public ThreadForClient(Socket clientSocket, Connection connection){
 		this.clientSocket = clientSocket;
+		this.connection = connection;
 		try {
 			fromClient = new ObjectInputStream(clientSocket.getInputStream());
 			toClient = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -19,20 +23,44 @@ public class ThreadForClient implements Runnable{
 		}
 	}
 	
+	public Socket getClientSocket() {
+		return clientSocket;
+	}
+
+	public void setClientSocket(Socket clientSocket) {
+		this.clientSocket = clientSocket;
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
 	@Override
 	public void run() {
 		while(true){
 			ObjectTransferrable receivedOperation = null;
 			try {
 				receivedOperation = (ObjectTransferrable) fromClient.readObject();
-				JDBCForThread runQuery = new JDBCForThread(receivedOperation);
-				runQuery.runOperation();
+				QueryManager runQuery = new QueryManager(receivedOperation, getConnection());
+				try {
+					runQuery.runOperation();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				toClient.writeObject(runQuery.getOperation());
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			} catch (EOFException e) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			} catch (IOException e){
 				e.printStackTrace();
 			}
 		}
