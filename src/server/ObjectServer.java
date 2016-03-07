@@ -19,9 +19,11 @@ public class ObjectServer {
 
 			while(true){
 				Socket newConnection = ss.accept();
+				System.out.println("Recieved a new client connection. Assigning port: " + newConnection.getPort());
 				Thread newClientThread = new Thread(new ThreadForClient(newConnection, dbinstance.getConnection()));
 				newClientThread.start();
 				clientThreads.add(newClientThread);
+				System.out.println("Currently " + clientThreads.size() + " thread(s) running.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

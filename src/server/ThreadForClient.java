@@ -45,6 +45,7 @@ public class ThreadForClient implements Runnable{
 			ObjectTransferrable receivedOperation = null;
 			try {
 				receivedOperation = (ObjectTransferrable) fromClient.readObject();
+				System.out.println("Recieved Object with opCode: " + receivedOperation.getOpCode());
 				QueryManager runQuery = new QueryManager(receivedOperation, getConnection());
 				try {
 					runQuery.runOperation();

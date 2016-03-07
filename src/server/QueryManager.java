@@ -38,6 +38,7 @@ public class QueryManager {
 		
 		if(currentOperation.getOpCode().equals("0001")){
 			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
+			System.out.println("Checking to see if " + classifiedOperation.getUsername() + " is in the database...");
 			query = "SELECT count(u.userName) " + 
 					"FROM users u " +
 					"GROUP BY u.userName " +
@@ -46,8 +47,10 @@ public class QueryManager {
 				ResultSet rs = stmnt.executeQuery(query);
 				
 				if(rs.next()){
+					System.out.println("Found matching username, returning true.");
 					classifiedOperation.setAlreadyExists(true);
 				} else {
+					System.out.println("Found no such user, returning false.");
 					classifiedOperation.setAlreadyExists(false);
 				}
 			} catch (SQLException e) {
