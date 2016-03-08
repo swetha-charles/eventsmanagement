@@ -2,14 +2,14 @@ package model;
 
 import java.util.Observable;
 
-import controller.Controller;
+import server.ObjectClientController;
 
 public class Model extends Observable{
 	private State currentstate;
-	private Controller controller;
+	private ObjectClientController controller;
 	
-	public Model(Controller controller){
-		this.controller = controller;
+	public Model(ObjectClientController controller2){
+		this.controller = controller2;
 		
 		this.currentstate = State.LOGIN;
 	}
