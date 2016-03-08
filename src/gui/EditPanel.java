@@ -13,7 +13,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import controller.Controller;
+import server.ObjectClientController;
 
 public class EditPanel extends JPanel{
 	
@@ -21,7 +21,7 @@ public class EditPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Controller controller = null;
+	private ObjectClientController controller = null;
 	JLabel hello = new JLabel("Want to change your details?");
 	JPanel detailsPanel = new JPanel();
 	JLabel firstName = new JLabel("First Name");
@@ -42,7 +42,7 @@ public class EditPanel extends JPanel{
 	JButton cancel = new JButton("Cancel");
 	
 	
-	public EditPanel(Controller controller){
+	public EditPanel(ObjectClientController controller){
 		
 		this.controller = controller;
 		
@@ -110,7 +110,7 @@ public class EditPanel extends JPanel{
 public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		ObjectClientController controller = new ObjectClientController();
 		
 		EditPanel menu = new EditPanel(controller);
 		
