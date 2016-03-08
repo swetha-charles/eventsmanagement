@@ -1,5 +1,8 @@
 package gui;
 
+import java.awt.Container;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -8,21 +11,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import controller.Controller;
+
 import model.Model;
+import model.State;
+import server.ObjectClientController;
 
 public class MainView extends JFrame implements Observer {
 
 	Model model = null;
-	Controller controller = null;
+	ObjectClientController controller = null;
 
 	JPanel login = null;
 	Registration registration = null;
 	JPanel loggedIn = null;
 	JFrame frame;
 
-	public MainView(Controller controller, Model model) throws IOException {
-		this.controller = controller;
+	public MainView(ObjectClientController objectClientController, Model model) throws IOException {
+		this.controller = objectClientController;
 
 		this.login = new Login(this.controller);
 		// this.registration = new RegistrationPanel(this.controller);
@@ -32,15 +37,61 @@ public class MainView extends JFrame implements Observer {
 		// frame.setLayout(new BorderLayout());
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setContentPane(login);
 		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		// frame.setSize(700, 700);
 		frame.setResizable(true);
 		frame.setVisible(true);
+		frame.addWindowListener(new WindowListener(){
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				MainView.this.model.changeCurrentState(State.EXIT);
+				
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 	}
 
-	public void addController(Controller controller) {
+	public void addController(ObjectClientController controller) {
 		this.controller = controller;
 	}
 	
@@ -77,6 +128,9 @@ public class MainView extends JFrame implements Observer {
 			this.registration.repaint();
 		case REGISTRATIONUSEROK:
 			break;
+			
+		case EXIT:
+			frame.dispose();
 		default:
 			break;
 
