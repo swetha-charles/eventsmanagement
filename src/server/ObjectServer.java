@@ -6,14 +6,16 @@ import java.util.*;
 import java.io.*;
 
 public class ObjectServer {
+	static DatabaseConnection dbinstance;
+	static ServerSocket ss;
 
 	public static void main(String[] args) {
 		try {
-			DatabaseConnection dbinstance = new DatabaseConnection();
+			dbinstance = new DatabaseConnection();
 
-			ServerSocket ss;
+			
 
-			ss = new ServerSocket(4444);
+			ss = new ServerSocket(5006);
 
 			ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 
@@ -27,6 +29,12 @@ public class ObjectServer {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				ss.close();
+			} catch (IOException e) {
+				System.out.println("Closing");
+			}
 		}
 
 	}
