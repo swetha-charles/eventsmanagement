@@ -13,10 +13,10 @@ public class ObjectServer {
 		try {
 			dbinstance = new DatabaseConnection();
 
-			
+			int portnumber = 5013;
 
-			ss = new ServerSocket(5006);
-
+			ss = new ServerSocket(portnumber);
+			System.out.println("ObjectServer: Listening on port " + portnumber);
 			ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 
 			while(true){
