@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 import model.Model;
 import model.State;
 import server.ObjectClientController;
@@ -43,59 +42,58 @@ public class MainView extends JFrame implements Observer {
 		// frame.setSize(700, 700);
 		frame.setResizable(true);
 		frame.setVisible(true);
-		frame.addWindowListener(new WindowListener(){
+		frame.addWindowListener(new WindowListener() {
 
 			@Override
 			public void windowOpened(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowClosing(WindowEvent e) {
 				MainView.this.model.changeCurrentState(State.EXIT);
-				
-				
+
 			}
 
 			@Override
 			public void windowClosed(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowIconified(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 	}
 
 	public void addController(ObjectClientController controller) {
 		this.controller = controller;
 	}
-	
-	//Observer
+
+	// Observer
 	@Override
 	public synchronized void update(Observable o, Object arg) {
 		System.out.println("View: Update method has been called");
@@ -117,18 +115,23 @@ public class MainView extends JFrame implements Observer {
 			frame.setContentPane(this.login);
 			break;
 
-		case REGISTRATIONUSEREXISTS:
-			this.registration.getRegistrationPanel().setUserLabel(new JLabel("Username already exists!*"));
-			frame.getContentPane().removeAll();
-			// System.out.println("Main view: Removed all panes");
-			frame.add(this.registration);
-			// System.out.println("Main view: Added registration panel");
-			frame.getContentPane().invalidate();
-			frame.getContentPane().validate();
+		case REGISTRATIONUPDATE:
+			if (model.getRegUsernameExists()) {
+				this.registration.getRegistrationPanel().setUserLabel("Username already exists!*");
+			} else {
+				this.registration.getRegistrationPanel().setUserLabel("Username*");
+			}
+
+			if (model.getRegEmailExists()) {
+				this.registration.getRegistrationPanel().setEmailLabel("Email already exists!*");
+			} else {
+				this.registration.getRegistrationPanel().setEmailLabel("Email*");
+			}
 			this.registration.repaint();
-		case REGISTRATIONUSEROK:
+			System.out.println("email exists or username exists!");
 			break;
-			
+		// this.registration.repaint();
+
 		case EXIT:
 			frame.dispose();
 		default:
