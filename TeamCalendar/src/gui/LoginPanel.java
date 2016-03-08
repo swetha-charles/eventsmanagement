@@ -17,7 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import controller.Controller;
+
+import server.ObjectClientController;
 
 public class LoginPanel extends JPanel{
 	
@@ -26,7 +27,7 @@ public class LoginPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = -2535316040411018240L;
 	
-	Controller controller;
+	ObjectClientController controller;
 	JTextField username = new JTextField();
 	JPasswordField password = new JPasswordField();
 	JLabel userLabel = new JLabel("Username");
@@ -41,8 +42,8 @@ public class LoginPanel extends JPanel{
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	public LoginPanel(Controller controller){
-		this.controller= controller;
+	public LoginPanel(ObjectClientController controller2){
+		this.controller= controller2;
 
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(420,410));
@@ -141,7 +142,7 @@ public class LoginPanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		ObjectClientController controller = new ObjectClientController();
 		
 		LoginPanel loginPanel = new LoginPanel(controller);
 		
