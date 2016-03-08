@@ -12,11 +12,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import controller.Controller;
+
+import server.ObjectClientController;
 
 public class Registration extends JPanel{
 
-	private Controller controller = null;
+	private ObjectClientController controller = null;
 	/**
 	 * 
 	 */
@@ -28,9 +29,9 @@ public class Registration extends JPanel{
 	 * 
 	 * @throws IOException
 	 */
-	public Registration(Controller controller){
+	public Registration(ObjectClientController controller2){
 		
-		this.controller = controller;
+		this.controller = controller2;
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
@@ -83,7 +84,7 @@ public class Registration extends JPanel{
 	public static void main(String[] args) throws IOException {
 		
 		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		ObjectClientController controller = new ObjectClientController();
 		
 		Registration r = new Registration(controller);
 		

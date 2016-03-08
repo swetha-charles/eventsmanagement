@@ -14,8 +14,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import controller.Controller;
+
 import controller.FocusLostListener;
+import server.ObjectClientController;
 
 public class RegistrationPanel extends JPanel{
 	
@@ -23,7 +24,7 @@ public class RegistrationPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = -2535316040411018240L;
-	private Controller controller = null;
+	private ObjectClientController controller = null;
 	JTextField firstName = new JTextField();
 	JTextField lastName = new JTextField();
 	JTextField username = new JTextField();
@@ -58,8 +59,8 @@ public class RegistrationPanel extends JPanel{
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	public RegistrationPanel(Controller controller){
-		this.controller = controller;
+	public RegistrationPanel(ObjectClientController controller2){
+		this.controller = controller2;
 		
 		//sets the dimension of the login panel
 				setPreferredSize(new Dimension(800,500));
@@ -182,14 +183,14 @@ public class RegistrationPanel extends JPanel{
 						SpringLayout.EAST, submit);
 				
 				cancel.setActionCommand("cancel");
-				cancel.addActionListener(controller);
+				cancel.addActionListener(controller2);
 				
 				//ugly workaround but this way is better than using a bunch 
 				//of anonymous classes w. higher overhead. 
 				email.addFocusListener((FocusLostListener) (e) -> 
-					controller.checkEmail(email.getText()));
+					controller2.checkEmail(email.getText()));
 				username.addFocusListener((FocusLostListener)(e) -> 
-				controller.checkUsername(username.getText()));
+				controller2.checkUsername(username.getText()));
 				
 				
 	}
@@ -219,7 +220,7 @@ public class RegistrationPanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		ObjectClientController controller = new ObjectClientController();
 		RegistrationPanel loginPanel = new RegistrationPanel(controller);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
