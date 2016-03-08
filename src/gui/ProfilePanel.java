@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-import controller.Controller;
+import server.ObjectClientController;
 
 public class ProfilePanel extends JPanel{
 	
@@ -19,7 +19,7 @@ public class ProfilePanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Controller controller = null;
+	private ObjectClientController controller = null;
 	JLabel hello;
 	JPanel detailsPanel = new JPanel();
 	JLabel details = new JLabel("Details");
@@ -35,7 +35,7 @@ public class ProfilePanel extends JPanel{
 	JButton editPassword = new JButton("Change Pasword");
 	
 	
-	public ProfilePanel(Controller controller){
+	public ProfilePanel(ObjectClientController controller){
 		
 		this.controller = controller;
 		//here we need it to get the information from the database
@@ -103,7 +103,7 @@ public class ProfilePanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		ObjectClientController controller = new ObjectClientController();
 		
 		ProfilePanel menu = new ProfilePanel(controller);
 		
