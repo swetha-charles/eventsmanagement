@@ -22,12 +22,13 @@ public class Registration extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	JPanel background;
+	RegistrationPanel rp;
 
 	/**Constructor to create a Login
 	 * 
 	 * @throws IOException
 	 */
-	public Registration(Controller controller) throws IOException{
+	public Registration(Controller controller){
 		
 		this.controller = controller;
 		GridBagLayout layout = new GridBagLayout();
@@ -42,31 +43,42 @@ public class Registration extends JPanel{
 		gbc.weighty = 1;
 		
 //		method that reads picture from file to set as background
-		background = new JPanel() {
-			
-			private static final long serialVersionUID = 1L;
-			private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
-			public void paint( Graphics g ) { 
-			    super.paint(g);
-			    g.drawImage(backgroundImage, 0, 0, null);
-			  }
-			};
+		try {
+			background = new JPanel() {
+				
+				private static final long serialVersionUID = 1L;
+				private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
+				public void paint( Graphics g ) { 
+				    super.paint(g);
+				    g.drawImage(backgroundImage, 0, 0, null);
+				  }
+				};
+				this.add(background, gbc);
+		} catch (IOException e) {
+			//File could not be found
+			background = null;
+		}
 //		background.setPreferredSize(new Dimension(1000, 750));
 //		Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
 //		background = new BackgroundPanel(backgroundImage);
-		add(background, gbc);
+		
 		
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		RegistrationPanel rp = new RegistrationPanel(this.controller);
+		rp = new RegistrationPanel(this.controller);
 		add(rp, gbc);
 		
 		rp.setOpaque(true);
 		background.setOpaque(true);
 	
 	}
+	
+	public RegistrationPanel getRegistrationPanel(){
+		return this.rp;
+	}
+	
 	
 	public static void main(String[] args) throws IOException {
 		

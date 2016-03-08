@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.FocusEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import controller.Controller;
+import controller.FocusLostListener;
 
 public class RegistrationPanel extends JPanel{
 	
@@ -32,6 +34,8 @@ public class RegistrationPanel extends JPanel{
 	
 	JLabel firstLabel = new JLabel("First Name*");
 	JLabel lastLabel = new JLabel("Last Name*");
+	
+
 	JLabel userLabel = new JLabel("Username*");
 	JLabel dobLabel = new JLabel("Date of Birth*");
 	JLabel emailLabel = new JLabel("Email*");
@@ -179,9 +183,38 @@ public class RegistrationPanel extends JPanel{
 				
 				cancel.setActionCommand("cancel");
 				cancel.addActionListener(controller);
-		
+				
+				//ugly workaround but this way is better than using a bunch 
+				//of anonymous classes w. higher overhead. 
+				email.addFocusListener((FocusLostListener) (e) -> 
+					controller.checkEmail(email.getText()));
+				username.addFocusListener((FocusLostListener)(e) -> 
+				controller.checkUsername(username.getText()));
+				
+				
 	}
 
+	///////////////////////////Getters and Setters for user/email label//////////////////////////
+	public JLabel getUserLabel() {
+		return userLabel;
+	}
+
+
+	public JLabel getEmailLabel() {
+		return emailLabel;
+	}
+
+
+	public void setUserLabel(JLabel userLabel) {
+		this.userLabel = userLabel;
+	}
+
+
+	public void setEmailLabel(JLabel emailLabel) {
+		this.emailLabel = emailLabel;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
 	
 	public static void main(String[] args) {
 		
