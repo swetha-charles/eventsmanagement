@@ -188,9 +188,9 @@ public class RegistrationPanel extends JPanel{
 				//ugly workaround but this way is better than using a bunch 
 				//of anonymous classes w. higher overhead. 
 				email.addFocusListener((FocusLostListener) (e) -> 
-					controller2.checkEmail(email.getText()));
+					this.controller.checkEmail(email.getText()));
 				username.addFocusListener((FocusLostListener)(e) -> 
-				controller2.checkUsername(username.getText()));
+				this.controller.checkUsername(username.getText()));
 				
 				
 	}
@@ -206,13 +206,23 @@ public class RegistrationPanel extends JPanel{
 	}
 
 
-	public void setUserLabel(JLabel userLabel) {
-		this.userLabel = userLabel;
+	public void setUserLabel(String userLabel) {
+		this.userLabel.setText(userLabel);
+		if(userLabel.contains("exists")){
+			this.userLabel.setForeground(Color.RED);
+		} else {
+			this.userLabel.setForeground(Color.WHITE);
+		}
 	}
 
 
-	public void setEmailLabel(JLabel emailLabel) {
-		this.emailLabel = emailLabel;
+	public void setEmailLabel(String emailLabel) {
+		this.emailLabel.setText(emailLabel);
+		if(emailLabel.contains("exists")){
+			this.emailLabel.setForeground(Color.RED);
+		} else {
+			this.emailLabel.setForeground(Color.WHITE);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
