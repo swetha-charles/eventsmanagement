@@ -14,8 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import controller.Controller;
 import gui.LoginPanel;
+import server.ObjectClientController;
 
 public class Login extends JPanel {
 
@@ -24,7 +24,7 @@ public class Login extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	JLabel background;
-	Controller controller;
+	ObjectClientController controller;
 	TestController Tcontroller;
 
 	/**
@@ -32,8 +32,8 @@ public class Login extends JPanel {
 	 * 
 	 * @throws IOException
 	 */
-	public Login(Controller controller) throws IOException {
-		this.controller = controller;
+	public Login(ObjectClientController controller2) throws IOException {
+		this.controller = controller2;
 
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
@@ -74,18 +74,20 @@ public class Login extends JPanel {
 		loginPanel.setOpaque(true);
 	}
 
+
+
 	public static void main(String[] args) throws IOException {
 
-		JFrame frame = new JFrame();
-		Controller controller = new Controller();
+		/*JFrame frame = new JFrame();
+		ObjectClientController c1 = new ObjectClientController();
 
-		Login loginPanel = new Login(controller);
+		Login loginPanel = new Login(c1);
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(loginPanel);
 		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		frame.setResizable(true);
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 	}
 }
