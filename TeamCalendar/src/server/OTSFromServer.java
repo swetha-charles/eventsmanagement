@@ -44,10 +44,21 @@ public class OTSFromServer implements Runnable{
 		case "0001":
 			OTUsernameCheck otuc = (OTUsernameCheck) receivedOperation;
 			if(otuc.getAlreadyExists()){
-				this.model.setRegUsernameExists(true);
+				this.model.setUsername(otuc.getUsername());
+				this.model.setUsernameExists(true);
 			} else if(!otuc.getAlreadyExists()){
 				this.model.setUsername(otuc.getUsername());
-				this.model.setRegEmailExists(false);
+				this.model.setUsernameExists(false);
+			}
+			
+		case "0002":
+			OTEmailCheck otec = (OTEmailCheck) receivedOperation;
+			if(otec.getAlreadyExists()){
+				this.model.setEmail(otec.getEmail());
+				this.model.setEmailExists(true);
+			} else if(!otec.getAlreadyExists()){
+				this.model.setEmail(otec.getEmail());
+				this.model.setEmailExists(false);
 			}
 		}
 	}
