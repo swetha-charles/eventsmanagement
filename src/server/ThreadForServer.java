@@ -40,7 +40,9 @@ public class ThreadForServer implements Runnable{
 	}
 	
 	private void runOT(ObjectTransferrable receivedOperation){
+		System.out.println(receivedOperation.getOpCode());
 		switch(receivedOperation.getOpCode()){
+		
 		case "0001":
 			OTUsernameCheck otuc = (OTUsernameCheck) receivedOperation;
 			if(otuc.getAlreadyExists()){
@@ -50,7 +52,7 @@ public class ThreadForServer implements Runnable{
 				this.model.setUsername(otuc.getUsername());
 				this.model.setUsernameExists(false);
 			}
-			
+			break;
 		case "0002":
 			OTEmailCheck otec = (OTEmailCheck) receivedOperation;
 			if(otec.getAlreadyExists()){
@@ -60,6 +62,7 @@ public class ThreadForServer implements Runnable{
 				this.model.setEmail(otec.getEmail());
 				this.model.setEmailExists(false);
 			}
+			break;
 		}
 	}
 	
