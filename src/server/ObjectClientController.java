@@ -13,9 +13,6 @@ import gui.LoginPanel;
 import gui.MainView;
 import model.Model;
 import model.State;
-import server.OTEmailCheck;
-import server.OTUsernameCheck;
-import server.ObjectTransferrable;
 
 public class ObjectClientController implements ActionListener, MouseListener {
 	private ObjectOutputStream toServer;
@@ -58,7 +55,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			this.addModel(model);
 			this.addView(view);
 			
-			poolOfOTs = new Thread(new OTSFromServer(this, this.fromServer, this.toServer, this.model));
+			poolOfOTs = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
 			poolOfOTs.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
