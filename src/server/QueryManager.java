@@ -34,6 +34,7 @@ public class QueryManager {
 		ObjectTransferrable currentOperation = getOperation();
 		String query = null;
 		Connection dbconnection = getConnection();
+		//Prepared st?
 		Statement stmnt = dbconnection.createStatement();
 		
 		if(currentOperation.getOpCode().equals("0001")){
