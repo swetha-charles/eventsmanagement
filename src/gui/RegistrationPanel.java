@@ -15,6 +15,7 @@ import javax.swing.SpringLayout;
 
 import controller.FocusLostListener;
 import model.Model;
+import model.State;
 import server.ObjectClientController;
 
 public class RegistrationPanel extends JPanel {
@@ -178,12 +179,22 @@ public class RegistrationPanel extends JPanel {
 		cancel.setActionCommand("cancel");
 		cancel.addActionListener(controller2);
 
+		///////////////////////////Adding Listeners!!///////////////////////////////////////////////////////////
+		
 		// ugly workaround but this way is better than using a bunch
 		// of anonymous classes w. higher overhead.
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
 
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
-
+		
+		cancel.addActionListener((e) -> this.model.changeCurrentState(State.LOGIN));
+		
+		submit.addActionListener((e) -> 
+			this.model.checkRegistrationInformation(firstName.getText(), lastName.getText(),				
+				dob.getText(),				
+				password.getSelectedText(), 
+				confirm.getSelectedText()
+				));
 	}
 
 	/////////////////////////// Getters and Setters for user/email
@@ -207,7 +218,7 @@ public class RegistrationPanel extends JPanel {
 
 	public void setEmailLabel(String emailLabel) {
 		this.emailLabel.setText(emailLabel);
-		if (emailLabel.contains("exists")) {
+		if (emailLabel.contains("exists") || emailLabel.contains("incorrect")) {
 			this.emailLabel.setForeground(Color.RED);
 		} else {
 			this.emailLabel.setForeground(Color.WHITE);
