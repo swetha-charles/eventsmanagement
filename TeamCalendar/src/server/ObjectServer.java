@@ -13,7 +13,7 @@ public class ObjectServer {
 		try {
 			dbinstance = new DatabaseConnection();
 
-			int portnumber = 5024;
+			int portnumber = 5046;
 
 			ss = new ServerSocket(portnumber);
 			System.out.println("ObjectServer: Listening on port " + portnumber);

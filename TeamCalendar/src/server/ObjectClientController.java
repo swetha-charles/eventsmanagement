@@ -24,7 +24,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 
 	public ObjectClientController() {
 		try {
-			int portnumber = 5024;
+			int portnumber = 5046;
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client: Listening on port " + portnumber);
 		} catch (IOException e) {
@@ -78,9 +78,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	public synchronized void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "cancel":
-			System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
+			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
 			model.changeCurrentState(State.LOGIN);
-			System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
 		}
 
 	}
@@ -90,9 +90,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getComponent() == LoginPanel.signup) {
-			System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
+			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
 			model.changeCurrentState(State.REGISTRATION);
-			System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
 		}
 
 	}
