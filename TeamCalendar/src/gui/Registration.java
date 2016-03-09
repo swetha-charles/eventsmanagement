@@ -9,18 +9,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
+import model.Model;
 import server.ObjectClientController;
 
 public class Registration extends JPanel{
 
 	private ObjectClientController controller = null;
-	/**
-	 * 
-	 */
+	private Model model;
 	private static final long serialVersionUID = 1L;
 	JPanel background;
 	RegistrationPanel rp;
@@ -29,9 +26,10 @@ public class Registration extends JPanel{
 	 * 
 	 * @throws IOException
 	 */
-	public Registration(ObjectClientController controller2){
+	public Registration(ObjectClientController controller2, Model model){
 		
 		this.controller = controller2;
+		this.model = model;
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
@@ -68,7 +66,7 @@ public class Registration extends JPanel{
 		gbc.weighty = 0;
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		rp = new RegistrationPanel(this.controller);
+		rp = new RegistrationPanel(this.controller,this.model );
 		add(rp, gbc);
 		
 		rp.setOpaque(true);
@@ -86,11 +84,12 @@ public class Registration extends JPanel{
 		JFrame frame = new JFrame();
 		ObjectClientController controller = new ObjectClientController();
 		
-		Registration r = new Registration(controller);
+		
+		//Registration r = new Registration(controller, model);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(r);
+		//frame.setContentPane(r);
 		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
 		frame.setResizable(true);
 		frame.setVisible(true);
