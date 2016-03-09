@@ -100,7 +100,7 @@ public class MainView extends JFrame implements Observer {
 		switch (model.getCurrentState()) {
 		case REGISTRATION:
 
-			this.registration = new Registration(this.controller);
+			this.registration = new Registration(this.controller, this.model);
 			frame.getContentPane().removeAll();
 			// System.out.println("Main view: Removed all panes");
 			frame.add(this.registration);
