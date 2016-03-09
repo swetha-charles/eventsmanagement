@@ -34,7 +34,7 @@ public class MainView extends JFrame implements Observer {
 
 		frame = new JFrame("Calendar");
 		// frame.setLayout(new BorderLayout());
-
+		frame.add(login);
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setContentPane(login);
@@ -96,26 +96,36 @@ public class MainView extends JFrame implements Observer {
 	// Observer
 	@Override
 	public synchronized void update(Observable o, Object arg) {
-		System.out.println("View: Update method has been called");
+		//System.out.println("View: Update method has been called");
 		switch (model.getCurrentState()) {
 		case REGISTRATION:
 
 			this.registration = new Registration(this.controller, this.model);
 			frame.getContentPane().removeAll();
-			// System.out.println("Main view: Removed all panes");
 			frame.add(this.registration);
-			// System.out.println("Main view: Added registration panel");
 			frame.getContentPane().invalidate();
 			frame.getContentPane().validate();
-			this.registration.repaint();
-			// System.out.println("Main view: Done");
+		 	frame.repaint();
 			break;
 
 		case LOGIN:
-			frame.setContentPane(this.login);
+			////////FRAME!!!!!!!/////////////////
+			frame.getContentPane().removeAll();
+			login = new Login(controller);
+			frame.add(login);
+			frame.getContentPane().invalidate();
+			frame.getContentPane().validate();
+			frame.repaint();
 			break;
 
 		case REGISTRATIONUPDATE:
+			if(!model.getEmailMatchesRegex()){
+				this.registration.getRegistrationPanel().setEmailLabel("Email incorrect format*");
+				frame.repaint();
+				break;
+			} else {
+				this.registration.getRegistrationPanel().setEmailLabel("Email*");
+			}
 			if (model.getUsernameExists()) {
 				this.registration.getRegistrationPanel().setUserLabel("Username already exists!*");
 			} else {
@@ -127,8 +137,8 @@ public class MainView extends JFrame implements Observer {
 			} else {
 				this.registration.getRegistrationPanel().setEmailLabel("Email*");
 			}
-			this.registration.repaint();
-			System.out.println("email exists or username exists!");
+			frame.repaint();
+			//System.out.println("email exists or username exists!");
 			break;
 		// this.registration.repaint();
 

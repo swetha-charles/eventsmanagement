@@ -25,14 +25,14 @@ public class Login extends JPanel {
 	private static final long serialVersionUID = 1L;
 	JLabel background;
 	ObjectClientController controller;
-	TestController Tcontroller;
+	//TestController Tcontroller;
 
 	/**
 	 * Constructor to create a Login
 	 * 
 	 * @throws IOException
 	 */
-	public Login(ObjectClientController controller2) throws IOException {
+	public Login(ObjectClientController controller2) {
 		this.controller = controller2;
 
 		GridBagLayout layout = new GridBagLayout();
@@ -52,15 +52,20 @@ public class Login extends JPanel {
 //		ImageIcon backgroundImage = new ImageIcon("calendar.jpg");
 		
 		//method that reads picture from file to set as background
-		background = new JLabel() {
-			
-			private static final long serialVersionUID = 1L;
-			private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
-			public void paint( Graphics g ) { 
-			    super.paint(g);
-			    g.drawImage(backgroundImage, 0, 0, null);
-			  }
-			};
+		try {
+			background = new JLabel() {
+				
+				private static final long serialVersionUID = 1L;
+				private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
+				public void paint( Graphics g ) { 
+				    super.paint(g);
+				    g.drawImage(backgroundImage, 0, 0, null);
+				  }
+				};
+		} catch (IOException e) {
+			// no biggie, just couldn't find a file. 
+			e.printStackTrace();
+		}
 //		background.setPreferredSize(new Dimension(1000, 750));
 		add(background, gbc);
 		
