@@ -116,13 +116,13 @@ public class MainView extends JFrame implements Observer {
 			break;
 
 		case REGISTRATIONUPDATE:
-			if (model.getRegUsernameExists()) {
+			if (model.getUsernameExists()) {
 				this.registration.getRegistrationPanel().setUserLabel("Username already exists!*");
 			} else {
 				this.registration.getRegistrationPanel().setUserLabel("Username*");
 			}
 
-			if (model.getRegEmailExists()) {
+			if (model.getEmailExists()) {
 				this.registration.getRegistrationPanel().setEmailLabel("Email already exists!*");
 			} else {
 				this.registration.getRegistrationPanel().setEmailLabel("Email*");
