@@ -27,7 +27,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 
 	public ObjectClientController() {
 		try {
-			int portnumber = 5022;
+			int portnumber = 5024;
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client: Listening on port " + portnumber);
 		} catch (IOException e) {

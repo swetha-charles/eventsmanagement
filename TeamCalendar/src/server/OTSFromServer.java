@@ -46,6 +46,7 @@ public class OTSFromServer implements Runnable{
 			if(otuc.getAlreadyExists()){
 				this.model.setRegUsernameExists(true);
 			} else if(!otuc.getAlreadyExists()){
+				this.model.setUsername(otuc.getUsername());
 				this.model.setRegEmailExists(false);
 			}
 		}
