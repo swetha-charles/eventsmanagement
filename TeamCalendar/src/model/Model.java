@@ -1,6 +1,8 @@
 package model;
 
 import java.util.Observable;
+import java.util.regex.Pattern;
+
 import server.ObjectClientController;
 
 public class Model extends Observable {
@@ -10,9 +12,11 @@ public class Model extends Observable {
 	private String username;
 	private String email;
 	
-
+	private Pattern emailRegex = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");	
+	//from: http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
 	private boolean usernameExists = false;
 	private boolean emailExists = false;
+	private boolean emailMatchesRegex = true;
 
 	public Model(ObjectClientController controller2) {
 		this.controller = controller2;
@@ -27,7 +31,23 @@ public class Model extends Observable {
 
 	public void checkEmail(String email) {
 		this.email = email;
-		this.controller.checkEmail(email);
+		if(emailRegex.matcher(email).matches()){
+			this.emailMatchesRegex = true;
+			this.changeCurrentState(State.REGISTRATIONUPDATE);
+			this.controller.checkEmail(email);
+		} else {
+			System.out.println("Email failed Regex");
+			
+			this.emailMatchesRegex = false;
+			this.changeCurrentState(State.REGISTRATIONUPDATE);
+		}
+		
+	}
+	
+	public void checkRegistrationInformation(
+			String firstname, String lastname,
+			String dob, String password, String confirm){
+		
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -69,7 +89,9 @@ public class Model extends Observable {
 
 	}
 	
-	
+	public boolean getEmailMatchesRegex(){
+		return this.emailMatchesRegex;
+	}
 
 	public String getUsername() {
 		return username;
@@ -79,10 +101,10 @@ public class Model extends Observable {
 		return email;
 	}
 
-	
+
 
 	public synchronized void changeCurrentState(State state) {
-		System.out.println("Model: has how many observers?" + this.countObservers());
+		//System.out.println("Model: has how many observers?" + this.countObservers());
 		this.currentstate = state;
 		// System.out.println("Model: Model's state changed to " +
 		// this.currentstate);
@@ -92,5 +114,6 @@ public class Model extends Observable {
 		// System.out.println("Model: Notified observers!");
 
 	}
+	
 
 }
