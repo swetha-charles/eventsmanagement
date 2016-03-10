@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -23,17 +24,18 @@ public class MenuPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private ObjectClientController controller = null;
 	JPanel menuBar = new JPanel();
-	JLabel home = new JLabel("Home");
-	JLabel profile = new JLabel("Profile");
-	JLabel logout = new JLabel("Logout");
+	public static JLabel home = new JLabel("Home");
+	public static JLabel profile = new JLabel("Profile");
+	public static JLabel logout = new JLabel("Logout");
 
 	public MenuPanel(ObjectClientController controller){
 		
 		this.controller = controller;
 		
-		setPreferredSize(new Dimension(Integer.MAX_VALUE, 70));
-		setMinimumSize(new Dimension(Integer.MAX_VALUE, 70));
-		setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int)dimension.getWidth(), 70));
+		setMinimumSize(new Dimension((int)dimension.getWidth(), 70));
+		setMaximumSize(new Dimension((int)dimension.getWidth(), 70));
 		
 		menuBar.setBackground(Color.DARK_GRAY);
 
@@ -43,6 +45,10 @@ public class MenuPanel extends JPanel{
 		home.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		profile.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		logout.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
+		
+		home.addMouseListener(controller);
+		profile.addMouseListener(controller);
+		logout.addMouseListener(controller);
 		
 		GridBagLayout grid = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();

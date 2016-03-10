@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,7 +45,8 @@ public class ProfilePanel extends JPanel{
 		dobA = new JLabel("08/05/1994");
 		hello = new JLabel("Hello NatalieMcD!");
 		
-		setPreferredSize(new Dimension(Integer.MAX_VALUE, 500));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
 	
 		hello.setForeground(Color.DARK_GRAY);
 		details.setForeground(Color.GRAY);
