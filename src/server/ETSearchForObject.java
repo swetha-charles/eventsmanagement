@@ -33,12 +33,12 @@ public class ETSearchForObject implements ExecutableTask {
 			getMasterServer().getThreadPool().execute(newQueryToRun);
 			
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			
 		} catch (EOFException e) {
 
 		} catch (IOException e){
-			e.printStackTrace();
-		}
+			//Nothing incoming from client
+		} 
 
 		if(receivedOperation == null){
 			//create a new ETSearchForObject task with the same info and place it in the ExecutorService
