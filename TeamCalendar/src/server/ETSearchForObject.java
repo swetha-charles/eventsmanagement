@@ -2,6 +2,7 @@ package server;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import objectTransferrable.ObjectTransferrable;
 import objectTransferrable.OTUsernameCheck;
@@ -39,6 +40,7 @@ public class ETSearchForObject implements ExecutableTask {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
+			} catch (SocketTimeoutException e){
 			} catch (IOException e){	
 				//Nothing incoming from client
 				e.printStackTrace();
