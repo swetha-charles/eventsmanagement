@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,14 +12,9 @@ import java.net.Socket;
 import gui.Login;
 import gui.LoginPanel;
 import gui.MainView;
-import gui.MenuPanel;
-import gui.Profile;
 import gui.Registration;
-import gui.RegistrationPanel;
 import model.Model;
 import model.State;
-import objectTransferrable.OTEmailCheck;
-import objectTransferrable.OTUsernameCheck;
 
 public class ObjectClientController implements ActionListener, MouseListener {
 	private ObjectOutputStream toServer;
@@ -32,8 +26,8 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	private boolean running;
 
 	public ObjectClientController() {
-		try {
-			int portnumber = 5046;
+	try {
+			int portnumber = 4446;
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client: Listening on port " + portnumber);
 		} catch (IOException e) {
@@ -56,14 +50,14 @@ public class ObjectClientController implements ActionListener, MouseListener {
 		}
 
 		model = new Model(this);
-//		MainView view;
+
 		try {
 			// this is what causes the exception
 			view = new MainView(this, model);
 			model.addObserver(view);
 			this.addModel(model);
 			this.addView(view);
-			
+
 			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
 			threadForServer.start();
 		} catch (IOException e) {
@@ -71,7 +65,6 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			e.printStackTrace();
 		}
 
-		// add an observer (view) to the model
 
 	}
 
@@ -87,13 +80,8 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	public synchronized void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "cancel":
-			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
-//			model.changeCurrentState(State.LOGIN);
-			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+
 			model.setPanel(view, new Login(this));
-			break;
-		case "login":
-			model.setPanel(view, new gui.List(this));
 		}
 
 	}
@@ -103,63 +91,31 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getComponent() == LoginPanel.signup) {
-//			System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
 			model.changeCurrentState(State.REGISTRATION);
-//			System.out.println("Controller: Model's state changed to" + model.getCurrentState());
-			model.setPanel(view, new Registration(this, model));
-		} else if (e.getComponent() == MenuPanel.home) {
-			model.setPanel(view, new gui.List(this));
-		} else if (e.getComponent() == MenuPanel.profile) {
-			model.setPanel(view, new Profile(this));
-		} else if (e.getComponent() == MenuPanel.logout) {
-			model.setPanel(view, new Login(this));
 		}
 
 	}
 
 	public void checkUsername(String username) {
 		OTUsernameCheck otuc = new OTUsernameCheck(username);
-		try{
+		try {
 			this.toServer.writeObject(otuc);
 			System.out.println("Client: Sent OT with opcode" + otuc.getOpCode());
-		}catch(IOException e){
-			//toserver isn't working
+		} catch (IOException e) {
+			// toserver isn't working
 		}
 	}
 
 	public void checkEmail(String email) {
 		OTEmailCheck otec = new OTEmailCheck(email);
 		try {
-			
+
 			this.toServer.writeObject(otec);
 			System.out.println("Client: Sent OT with opcode" + otec.getOpCode());
 
 		} catch (IOException e) {
 
 		}
-		// ObjectTransferrable OT = (ObjectTransferrable)
-		// this.fromServer.readObject();
-		// if(OT.getOpCode().equals("0002")){
-		// if(!((OTUsernameCheck) OT).getAlreadyExists()){
-		// this.model.changeCurrentState(State.REGISTRATIONEMAILOK);
-		// } else {
-		// this.model.changeCurrentState(State.REGISTRATIONEMAILEXISTS);
-		// }
-		// } else {
-		// System.out.println("ERROR: Server needs to communicate an
-		// UsernameCheckObject back to Client");
-		// this.model.changeCurrentState(State.ERRORSERVERCOMMUNICATION);
-		// }
-		// } catch (IOException e) {
-		// //run this block of code if the toServer OR fromServer do not work
-		// System.out.println("Connection down, sorry");
-		// this.model.changeCurrentState(State.ERRORCONNECTIONDOWN);
-		// } catch (ClassNotFoundException e) {
-		// //Communication from the server is not what's expected!
-		// System.out.println("Server is not communicating an Object of type
-		// ObjectTransferrable");
-		// this.model.changeCurrentState(State.ERRORCONNECTIONDOWN);
-		// }
 
 	}
 
@@ -187,17 +143,17 @@ public class ObjectClientController implements ActionListener, MouseListener {
 
 	}
 
-	public boolean getRunning(){
+	public boolean getRunning() {
 		return this.running;
 	}
-	
-	public void setRunning(boolean running){
+
+	public void setRunning(boolean running) {
 		this.running = running;
-		if(!running){
+		if (!running) {
 			threadForServer.interrupt();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		ObjectClientController occ = new ObjectClientController();
 	}
