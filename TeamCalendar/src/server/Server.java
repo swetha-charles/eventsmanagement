@@ -39,7 +39,7 @@ public class Server extends Thread{
 				try{
 				newConnection = getServerSocket().accept();
 				//set the timeout time to 50 milliseconds
-				newConnection.setSoTimeout(50);
+//				newConnection.setSoTimeout(100);
 				getServerModel().addToText("Received a new client connection. Assigning port: " + newConnection.getPort() + "\n");
 				//create input and output streams
 				ObjectInputStream clientInputStream = new ObjectInputStream(newConnection.getInputStream());
