@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
@@ -10,7 +9,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -27,7 +25,6 @@ public class MainView extends JFrame implements Observer {
 	Registration registration = null;
 	JScrollPane scroll;
 	JPanel loggedIn = null;
-	JFrame frame;
 
 	public MainView(ObjectClientController objectClientController, Model model) throws IOException {
 		this.controller = objectClientController;
@@ -38,17 +35,17 @@ public class MainView extends JFrame implements Observer {
 		
 		scroll = new JScrollPane(login);
 
-		frame = new JFrame("Calendar");
-		// frame.setLayout(new BorderLayout());
+//		frame = new JFrame("Calendar");
+//		frame.setLayout(new BorderLayout());
 //		frame.add(login);
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(scroll);
-		frame.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+		setDefaultLookAndFeelDecorated(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setContentPane(scroll);
+		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		// frame.setSize(700, 700);
-		frame.setResizable(true);
-		frame.setVisible(true);
-		frame.addWindowListener(new WindowListener() {
+		setResizable(true);
+		setVisible(true);
+		addWindowListener(new WindowListener() {
 
 			@Override
 			public void windowOpened(WindowEvent e) {
@@ -94,6 +91,22 @@ public class MainView extends JFrame implements Observer {
 
 		});
 	}
+	
+	public JPanel getLogin() {
+		return login;
+	}
+
+	public JScrollPane getScroll() {
+		return scroll;
+	}
+
+	public void setLogin(JPanel login) {
+		this.login = login;
+	}
+	
+	public void setScroll(JScrollPane scroll) {
+		this.scroll = scroll;
+	}
 
 	public void addController(ObjectClientController controller) {
 		this.controller = controller;
@@ -104,30 +117,33 @@ public class MainView extends JFrame implements Observer {
 	public synchronized void update(Observable o, Object arg) {
 		//System.out.println("View: Update method has been called");
 		switch (model.getCurrentState()) {
-		case REGISTRATION:
+//		case REGISTRATION:
 
-			this.registration = new Registration(this.controller, this.model);
-			frame.getContentPane().removeAll();
-			frame.add(this.registration);
-			frame.getContentPane().invalidate();
-			frame.getContentPane().validate();
-		 	frame.repaint();
-			break;
+//			setLogin(new Registration(this.controller, this.model));
+//			scroll = new JScrollPane(new Registration(this.controller, this.model));
+////			this.registration = new Registration(this.controller, this.model);
+//			getContentPane().removeAll();
+////			add(this.registration);
+//			setContentPane(scroll);
+//			getContentPane().invalidate();
+//			getContentPane().validate();
+//		 	repaint();
+//			break;
 
 		case LOGIN:
 			////////FRAME!!!!!!!/////////////////
-			frame.getContentPane().removeAll();
+			getContentPane().removeAll();
 			login = new Login(controller);
-			frame.add(login);
-			frame.getContentPane().invalidate();
-			frame.getContentPane().validate();
-			frame.repaint();
+			add(login);
+			getContentPane().invalidate();
+			getContentPane().validate();
+			repaint();
 			break;
 
 		case REGISTRATIONUPDATE:
 			if(!model.getEmailMatchesRegex()){
 				this.registration.getRegistrationPanel().setEmailLabel("Email incorrect format*");
-				frame.repaint();
+				repaint();
 				break;
 			} else {
 				this.registration.getRegistrationPanel().setEmailLabel("Email*");
@@ -143,19 +159,22 @@ public class MainView extends JFrame implements Observer {
 			} else {
 				this.registration.getRegistrationPanel().setEmailLabel("Email*");
 			}
-			frame.repaint();
+			repaint();
 			//System.out.println("email exists or username exists!");
 			break;
 		// this.registration.repaint();
 
 		case EXIT:
-			frame.dispose();
+			dispose();
 		default:
 			break;
 
 		}
 
 	}
+	
+	
+
 
 	/*
 	 * public static void main(String[] args) throws HeadlessException,
