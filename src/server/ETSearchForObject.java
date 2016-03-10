@@ -4,8 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
-import objectTransferrable.ObjectTransferrable;
-import objectTransferrable.OTUsernameCheck;
+import objectTransferrable.*;
 
 public class ETSearchForObject implements ExecutableTask {
 
@@ -31,7 +30,7 @@ public class ETSearchForObject implements ExecutableTask {
 		ObjectTransferrable receivedOperation = null;
 		if(getMasterServer().isServerActive() == true){
 			try {
-				receivedOperation = (objectTransferrable.ObjectTransferrable) getClientInfo().getClientInput().readObject();
+				receivedOperation = (ObjectTransferrable) getClientInfo().getClientInput().readObject();
 				if(receivedOperation != null){
 					getMasterServer().getServerModel().addToText("Received Object with opCode: " + receivedOperation.getOpCode() + " from client with port " + getClientInfo().getClientSocket().getPort() +"\n");
 					//Create and ETRunTask object, and place it in the ExecutorService
