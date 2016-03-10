@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import model.Model;
 
-public class ThreadForServer implements Runnable{
+public class ThreadForServer extends Thread{
 	LinkedBlockingQueue<ObjectTransferrable> OT;
 	private ObjectClientController occ;
 	private ObjectInputStream fromServer;
@@ -33,7 +33,8 @@ public class ThreadForServer implements Runnable{
 				// When the ObjectTransferrable isn't the right class
 				e.printStackTrace();
 			} catch (IOException e) {
-				// When the fromServer is not working ;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			} 
 		}
 		
