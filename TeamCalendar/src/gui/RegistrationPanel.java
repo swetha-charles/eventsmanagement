@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -15,7 +16,7 @@ import javax.swing.SpringLayout;
 
 import controller.FocusLostListener;
 import model.Model;
-import model.State;
+import model.ModelState;
 import server.ObjectClientController;
 
 public class RegistrationPanel extends JPanel {
@@ -179,26 +180,38 @@ public class RegistrationPanel extends JPanel {
 		cancel.setActionCommand("cancel");
 		cancel.addActionListener(controller2);
 
-		///////////////////////////Adding Listeners!!///////////////////////////////////////////////////////////
-		
+		/////////////////////////// Adding
+		/////////////////////////// Listeners!!///////////////////////////////////////////////////////////
+
 		// ugly workaround but this way is better than using a bunch
 		// of anonymous classes w. higher overhead.
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
 
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
+
+		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
 		
-		cancel.addActionListener((e) -> this.model.changeCurrentState(State.LOGIN));
-		
-		submit.addActionListener((e) -> 
-			this.model.checkRegistrationInformation(firstName.getText(), lastName.getText(),				
-				dob.getText(),				
-				password.getSelectedText(), 
-				confirm.getSelectedText()
-				));
+		// sanitize before handing in 
+		submit.addActionListener((e) -> {
+			if (this.model.getEmailExists()) {
+				JOptionPane.showMessageDialog(this, "email exists, i already TOLD your bitch ass");
+
+			} else if (this.model.getUsernameExists()) {
+				JOptionPane.showMessageDialog(this, "username exists, i already TOLD your bitch ass");
+			} else if (!this.model.getEmailMatchesRegex()) {
+				JOptionPane.showMessageDialog(this, "write a proper email dumbo. i'm tired of you");
+			} else {
+				//email is OK and matches regex, username is OK. our user is a genius. 
+				this.model.checkRegistrationInformation(firstName.getText(), lastName.getText(), dob.getText(),
+						password.getSelectedText(), confirm.getSelectedText());
+			}
+
+		});// end Lamda
+
 	}
 
-	/////////////////////////// Getters and Setters for user/email
-	/////////////////////////// label//////////////////////////
+	/////////////////////////// Getters and Setters for user/email labels////////////////////////////////////
+	
 	public JLabel getUserLabel() {
 		return userLabel;
 	}
@@ -231,11 +244,11 @@ public class RegistrationPanel extends JPanel {
 
 		JFrame frame = new JFrame();
 		ObjectClientController controller = new ObjectClientController();
-		// RegistrationPanel loginPanel = new RegistrationPanel(controller);
+	
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.add(loginPanel);
+		
 		frame.setSize(1000, 650);
 		frame.setResizable(true);
 		frame.setVisible(true);
