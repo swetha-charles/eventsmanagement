@@ -3,6 +3,10 @@ package model;
 import java.util.Observable;
 import java.util.regex.Pattern;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import server.ObjectClientController;
 
 public class Model extends Observable {
@@ -116,6 +120,12 @@ public class Model extends Observable {
 		super.notifyObservers();
 		// System.out.println("Model: Notified observers!");
 
+	}
+	
+	public void setPanel(JFrame frame, JPanel panel){
+		JScrollPane scroll = new JScrollPane(panel);
+		frame.setContentPane(scroll);
+		frame.validate();
 	}
 	
 
