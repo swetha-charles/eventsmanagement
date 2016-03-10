@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -46,7 +47,8 @@ public class EditPanel extends JPanel{
 		
 		this.controller = controller;
 		
-		setPreferredSize(new Dimension(Integer.MAX_VALUE, 500));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
 	
 		hello.setForeground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
