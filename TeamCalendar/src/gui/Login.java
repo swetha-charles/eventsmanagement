@@ -1,16 +1,15 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -35,23 +34,11 @@ public class Login extends JPanel {
 	public Login(ObjectClientController controller2) {
 		this.controller = controller2;
 
+		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		GridBagLayout layout = new GridBagLayout();
+		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(layout);
 		
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = 3;
-		gbc.gridheight = 3;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-//		gbc.anchor = GridBagConstraints.BASELINE;
-//		gbc.fill = GridBagConstraints.BOTH;
-		
-		
-//		ImageIcon backgroundImage = new ImageIcon("calendar.jpg");
-		
-		//method that reads picture from file to set as background
 		try {
 			background = new JLabel() {
 				
@@ -66,17 +53,25 @@ public class Login extends JPanel {
 			// no biggie, just couldn't find a file. 
 			e.printStackTrace();
 		}
-//		background.setPreferredSize(new Dimension(1000, 750));
-		add(background, gbc);
+
+		background.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
-		gbc.weightx = 0;
-		gbc.weighty = 0;
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		LoginPanel loginPanel = new LoginPanel(this.controller);
+		LoginPanel loginPanel = new LoginPanel(controller2);
+
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.gridx = 2;
+		gbc.gridy = 2;
 		add(loginPanel, gbc);
-		
-		loginPanel.setOpaque(true);
+
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		add(background, gbc);
 	}
 
 
