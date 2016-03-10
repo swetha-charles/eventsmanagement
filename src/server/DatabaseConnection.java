@@ -5,8 +5,10 @@ import java.sql.*;
 public class DatabaseConnection {
 
 	private Connection connection;
+	private Server creatorServer;
 	
-	public DatabaseConnection(){
+	public DatabaseConnection(Server creatorServer){
+		this.creatorServer = creatorServer;
 		
 		String protocol = "postgresql";
 		String driverName = "org.postgresql.Driver";
@@ -15,8 +17,8 @@ public class DatabaseConnection {
 		String user = "mxw589";
 		String dbpasswd = "ilovedatabases";
 		String URL ="jdbc:" + protocol + "://" + server + "/" + db;
-
-		System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
+		
+		getCreatorServer().getServerModel().addToText("-------- PostgreSQL JDBC Connection Testing ------------\n");
 
 		try {
 
@@ -24,12 +26,12 @@ public class DatabaseConnection {
 
 		} catch (ClassNotFoundException e) {
 
-			System.out.println("Where is your PostgreSQL JDBC Driver? Include in your library path!");
+			getCreatorServer().getServerModel().addToText("Where is your PostgreSQL JDBC Driver? Include in your library path!\n");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
-		System.out.println("PostgreSQL JDBC Driver Registered!");
+		getCreatorServer().getServerModel().addToText("PostgreSQL JDBC Driver Registered!\n");
 
 		this.connection = null;
 
@@ -39,15 +41,15 @@ public class DatabaseConnection {
 
 		} catch (SQLException e) {
 
-			System.out.println("Connection Failed! Check output console");
+			getCreatorServer().getServerModel().addToText("Connection Failed! Check output console\n");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
 		if (connection != null) {
-			System.out.println("Made it! Can now submit SQL queries");
+			getCreatorServer().getServerModel().addToText("Made it! Can now submit SQL queries\n");
 		} else {
-			System.out.println("Failed to make connection!");
+			getCreatorServer().getServerModel().addToText("Failed to make connection!\n");
 			System.exit(-1);
 		}
 		
@@ -55,7 +57,7 @@ public class DatabaseConnection {
 		
 		try {
 			stmnt = this.connection.createStatement();
-			System.out.println("Setting schema");
+			getCreatorServer().getServerModel().addToText("Setting schema\n");
 			stmnt.execute("SET search_path TO calendar");
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -69,7 +71,9 @@ public class DatabaseConnection {
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
-	
-	
+
+	public Server getCreatorServer() {
+		return creatorServer;
+	}
 	
 }
