@@ -30,19 +30,17 @@ public class MainView extends JFrame implements Observer {
 		this.controller = objectClientController;
 
 		this.login = new Login(this.controller);
-		// this.registration = new RegistrationPanel(this.controller);
+
 		this.model = model;
 		
 		scroll = new JScrollPane(login);
+	
 
-//		frame = new JFrame("Calendar");
-//		frame.setLayout(new BorderLayout());
-//		frame.add(login);
 		setDefaultLookAndFeelDecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(scroll);
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
-		// frame.setSize(700, 700);
+
 		setResizable(true);
 		setVisible(true);
 		addWindowListener(new WindowListener() {
@@ -115,29 +113,21 @@ public class MainView extends JFrame implements Observer {
 	// Observer
 	@Override
 	public synchronized void update(Observable o, Object arg) {
-		//System.out.println("View: Update method has been called");
+
 		switch (model.getCurrentState()) {
-//		case REGISTRATION:
 
-//			setLogin(new Registration(this.controller, this.model));
-//			scroll = new JScrollPane(new Registration(this.controller, this.model));
-////			this.registration = new Registration(this.controller, this.model);
-//			getContentPane().removeAll();
-////			add(this.registration);
-//			setContentPane(scroll);
-//			getContentPane().invalidate();
-//			getContentPane().validate();
-//		 	repaint();
-//			break;
-
+		case REGISTRATION:
+			this.registration = new Registration(controller, model);
+			
+			JScrollPane scroll = new JScrollPane(this.registration);
+			this.setContentPane(scroll);
+			this.validate();
+			break;
 		case LOGIN:
 			////////FRAME!!!!!!!/////////////////
-			getContentPane().removeAll();
-			login = new Login(controller);
-			add(login);
-			getContentPane().invalidate();
-			getContentPane().validate();
-			repaint();
+			JScrollPane scroll1 = new JScrollPane(login);
+			this.setContentPane(scroll1);
+			this.validate();
 			break;
 
 		case REGISTRATIONUPDATE:
@@ -159,10 +149,9 @@ public class MainView extends JFrame implements Observer {
 			} else {
 				this.registration.getRegistrationPanel().setEmailLabel("Email*");
 			}
-			repaint();
-			//System.out.println("email exists or username exists!");
+			this.repaint();
 			break;
-		// this.registration.repaint();
+
 
 		case EXIT:
 			dispose();
