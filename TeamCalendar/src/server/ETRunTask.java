@@ -3,6 +3,8 @@ package server;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import objectTransferrable.*;
+
 public class ETRunTask implements ExecutableTask{
 
 	private Server masterServer;

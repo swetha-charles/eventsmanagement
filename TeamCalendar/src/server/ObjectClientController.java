@@ -15,6 +15,7 @@ import gui.MainView;
 import gui.Registration;
 import model.Model;
 import model.State;
+import objectTransferrable.*;
 
 public class ObjectClientController implements ActionListener, MouseListener {
 	private ObjectOutputStream toServer;

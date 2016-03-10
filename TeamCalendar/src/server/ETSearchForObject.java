@@ -3,6 +3,8 @@ package server;
 import java.io.EOFException;
 import java.io.IOException;
 
+import objectTransferrable.*;
+
 public class ETSearchForObject implements ExecutableTask {
 
 	private Server masterServer;
@@ -27,7 +29,7 @@ public class ETSearchForObject implements ExecutableTask {
 		ObjectTransferrable receivedOperation = null;
 		try {
 			receivedOperation = (ObjectTransferrable) getClientInfo().getClientInput().readObject();
-			System.out.println("Received Object with opCode: " + receivedOperation.getOpCode() + "from client with port " + getClientInfo().getClientSocket().getPort());
+			getMasterServer().getServerModel().addToText("Received Object with opCode: " + receivedOperation.getOpCode() + " from client with port " + getClientInfo().getClientSocket().getPort() +"\n");
 			//Create and ETRunTask object, and place it in the ExecutorService
 			ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
 			getMasterServer().getThreadPool().execute(newQueryToRun);
@@ -41,7 +43,12 @@ public class ETSearchForObject implements ExecutableTask {
 		} 
 
 		if(receivedOperation == null){
-			//create a new ETSearchForObject task with the same info and place it in the ExecutorService
+			//create a new ETSearchForObject task with the same info and place it in the ExecutorService after a brief pause
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 			getMasterServer().getThreadPool().execute(refreshedSearch);
 		}
