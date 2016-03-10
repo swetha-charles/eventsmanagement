@@ -101,7 +101,10 @@ public class Model extends Observable {
 		return email;
 	}
 
-
+	public void exit(){
+		this.controller.setRunning(false);
+		this.changeCurrentState(State.EXIT);
+	}
 
 	public synchronized void changeCurrentState(State state) {
 		//System.out.println("Model: has how many observers?" + this.countObservers());
