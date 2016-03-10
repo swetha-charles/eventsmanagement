@@ -6,6 +6,9 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import model.Model;
+import objectTransferrable.OTEmailCheck;
+import objectTransferrable.OTUsernameCheck;
+import objectTransferrable.ObjectTransferrable;
 
 public class ThreadForServer extends Thread{
 	LinkedBlockingQueue<ObjectTransferrable> OT;

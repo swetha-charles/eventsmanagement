@@ -1,4 +1,4 @@
-package server;
+package objectTransferrable;
 
 public class OTRegistrationCheck {
 	String opcode;

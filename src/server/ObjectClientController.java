@@ -16,6 +16,8 @@ import gui.Registration;
 import gui.RegistrationPanel;
 import model.Model;
 import model.State;
+import objectTransferrable.OTEmailCheck;
+import objectTransferrable.OTUsernameCheck;
 
 public class ObjectClientController implements ActionListener, MouseListener {
 	private ObjectOutputStream toServer;
