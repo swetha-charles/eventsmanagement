@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.util.*;
 import java.io.*;
 
-public class ObjectServer {
+public class ZDEPObjectServer {
 	static DatabaseConnection dbinstance;
 	static ServerSocket ss;
 
@@ -22,7 +22,7 @@ public class ObjectServer {
 			while(true){
 				Socket newConnection = ss.accept();
 				System.out.println("Recieved a new client connection. Assigning port: " + newConnection.getPort());
-				Thread newClientThread = new Thread(new ThreadForClient(newConnection, dbinstance.getConnection()));
+				Thread newClientThread = new Thread(new ZDEPThreadForClient(newConnection, dbinstance.getConnection()));
 				newClientThread.start();
 				clientThreads.add(newClientThread);
 				System.out.println("Currently " + clientThreads.size() + " thread(s) running.");

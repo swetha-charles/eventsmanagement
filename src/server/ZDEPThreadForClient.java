@@ -5,14 +5,14 @@ import java.net.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ThreadForClient implements Runnable{
+public class ZDEPThreadForClient implements Runnable{
 
 	private Socket clientSocket;
 	private Connection connection;
 	private ObjectInputStream fromClient;
 	private ObjectOutputStream toClient;
 	
-	public ThreadForClient(Socket clientSocket, Connection connection){
+	public ZDEPThreadForClient(Socket clientSocket, Connection connection){
 		this.clientSocket = clientSocket;
 		this.connection = connection;
 		try {
