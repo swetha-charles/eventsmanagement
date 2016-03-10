@@ -12,14 +12,13 @@ import java.net.Socket;
 import gui.Login;
 import gui.LoginPanel;
 import gui.MainView;
-import gui.Registration;
 import model.Model;
-import model.State;
+import model.ModelState;
 import objectTransferrable.*;
 
 public class ObjectClientController implements ActionListener, MouseListener {
-	private ObjectOutputStream toServer;
-	private ObjectInputStream fromServer;
+	private ObjectOutputStream toServer = null;
+	private ObjectInputStream fromServer = null;
 	private Model model;
 	private MainView view;
 	private Socket s;
@@ -28,9 +27,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 
 	public ObjectClientController() {
 	try {
-			int portnumber = 4446;
+			int portnumber = 4449;
 			s = new Socket("localhost", portnumber);
-			System.out.println("Client: Listening on port " + portnumber);
+			System.out.println("Client connected to port " + portnumber);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,15 +38,13 @@ public class ObjectClientController implements ActionListener, MouseListener {
 		try {
 			toServer = new ObjectOutputStream(s.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Could not create output stream to server");
 		}
 
 		try {
 			fromServer = new ObjectInputStream(s.getInputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Could not create input stream to server");
 		}
 
 		model = new Model(this);
@@ -56,10 +53,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			// this is what causes the exception
 			view = new MainView(this, model);
 			model.addObserver(view);
-			this.addModel(model);
-			this.addView(view);
+			
 
-			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
+			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.model, s));
 			threadForServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -69,30 +65,22 @@ public class ObjectClientController implements ActionListener, MouseListener {
 
 	}
 
-	public void addModel(Model model) {
-		this.model = model;
-	}
 
-	public void addView(MainView view) {
-		this.view = view;
-	}
 
 	@Override
 	public synchronized void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "cancel":
-
-			model.setPanel(view, new Login(this));
+			model.setPanel( new Login(this));
 		}
 
 	}
 
-	// mouse clicking, right now it's used for changing from login page to
-	// registration up
+	// mouse clicking, right now it's used for changing from login page to registration
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getComponent() == LoginPanel.signup) {
-			model.changeCurrentState(State.REGISTRATION);
+			model.changeCurrentState(ModelState.REGISTRATION);
 		}
 
 	}
@@ -100,8 +88,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	public void checkUsername(String username) {
 		OTUsernameCheck otuc = new OTUsernameCheck(username);
 		try {
+
 			this.toServer.writeObject(otuc);
-			System.out.println("Client: Sent OT with opcode" + otuc.getOpCode());
+			System.out.println("Sent OT with opcode" + otuc.getOpCode());
 		} catch (IOException e) {
 			// toserver isn't working
 		}
@@ -155,6 +144,24 @@ public class ObjectClientController implements ActionListener, MouseListener {
 		}
 	}
 
+	public void exitGracefully(){
+		if(s != null){
+			OTExitGracefully oeg = new OTExitGracefully();
+			try {
+				toServer.writeObject(oeg);
+				System.out.println("Send OT to server to exit");
+				toServer.close();
+				System.out.println("Output stream from client has been shutdown");
+				this.threadForServer.interrupt();
+				} catch (IOException e1) {
+				//toServer isn't working, what to do?
+				s = null;
+				fromServer = null;
+				toServer = null;
+			}
+			
+		}
+	}
 	public static void main(String[] args) {
 		ObjectClientController occ = new ObjectClientController();
 	}
