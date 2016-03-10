@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.Observer;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import model.Model;
 import model.State;
@@ -22,6 +25,7 @@ public class MainView extends JFrame implements Observer {
 
 	JPanel login = null;
 	Registration registration = null;
+	JScrollPane scroll;
 	JPanel loggedIn = null;
 	JFrame frame;
 
@@ -31,14 +35,16 @@ public class MainView extends JFrame implements Observer {
 		this.login = new Login(this.controller);
 		// this.registration = new RegistrationPanel(this.controller);
 		this.model = model;
+		
+		scroll = new JScrollPane(login);
 
 		frame = new JFrame("Calendar");
 		// frame.setLayout(new BorderLayout());
-		frame.add(login);
+//		frame.add(login);
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.setContentPane(login);
-		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(scroll);
+		frame.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		// frame.setSize(700, 700);
 		frame.setResizable(true);
 		frame.setVisible(true);
