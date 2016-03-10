@@ -113,10 +113,8 @@ public class LoginPanel extends JPanel{
 		setLayout(layout);
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		//add listener to fucking register button
+		
 		signup.addMouseListener(this.controller);
-		login.setActionCommand("login");
-		login.addActionListener(controller2);
 		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
