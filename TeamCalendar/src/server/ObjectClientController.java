@@ -9,8 +9,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import gui.Login;
 import gui.LoginPanel;
 import gui.MainView;
+import gui.Registration;
+import gui.RegistrationPanel;
 import model.Model;
 import model.State;
 
@@ -47,8 +50,8 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			e.printStackTrace();
 		}
 
-		Model model = new Model(this);
-		MainView view;
+		model = new Model(this);
+//		MainView view;
 		try {
 			// this is what causes the exception
 			view = new MainView(this, model);
@@ -80,8 +83,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 		switch (e.getActionCommand()) {
 		case "cancel":
 			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
-			model.changeCurrentState(State.LOGIN);
+//			model.changeCurrentState(State.LOGIN);
 			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+			model.setPanel(view, new Login(this));
 		}
 
 	}
@@ -92,8 +96,10 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getComponent() == LoginPanel.signup) {
 			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
-			model.changeCurrentState(State.REGISTRATION);
-			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
+//			model.changeCurrentState(State.REGISTRATION);
+			//System.out.println("Controller: Model's state changed to" + model.getCurrentState());
+			
+			model.setPanel(view, new Registration(this, model));
 		}
 
 	}
@@ -167,6 +173,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 		// TODO Auto-generated method stub
 
 	}
+
 	public boolean getRunning(){
 		return this.running;
 	}
@@ -177,7 +184,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			threadForServer.interrupt();
 		}
 	}
-
+	
 	public static void main(String[] args) {
 		ObjectClientController occ = new ObjectClientController();
 	}
