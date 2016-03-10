@@ -9,11 +9,11 @@ import objectTransferrable.ObjectTransferrable;
 public class QueryManager {
 
 	private ObjectTransferrable operation;
-	private Connection connection;
+	private Server server;
 
-	public QueryManager(ObjectTransferrable operation, Connection connection){
+	public QueryManager(ObjectTransferrable operation, Server server){
 		this.operation = operation;
-		this.connection = connection;
+		this.server = server;
 	}	
 	
 	public ObjectTransferrable getOperation() {
@@ -23,26 +23,22 @@ public class QueryManager {
 	public void setOperation(ObjectTransferrable operation) {
 		this.operation = operation;
 	}
-	
-	public Connection getConnection() {
-		return connection;
-	}
 
-	public void setConnection(Connection connection) {
-		this.connection = connection;
+	public Server getServer() {
+		return server;
 	}
 
 	public void runOperation() throws SQLException{
 	
 		ObjectTransferrable currentOperation = getOperation();
 		String query = null;
-		Connection dbconnection = getConnection();
+		Connection dbconnection = getServer().getDatabase().getConnection();
 		//Prepared st?
 		Statement stmnt = dbconnection.createStatement();
 		
 		if(currentOperation.getOpCode().equals("0001")){
 			OTUsernameCheck classifiedOperation = (OTUsernameCheck) currentOperation;
-//			System.out.println("Checking to see if " + classifiedOperation.getUsername() + " is in the database...");
+			getServer().getServerModel().addToText("Checking to see if " + classifiedOperation.getUsername() + " is in the database...\n");
 			query = "SELECT count(u.userName) " + 
 					"FROM users u " +
 					"GROUP BY u.userName " +
@@ -51,10 +47,10 @@ public class QueryManager {
 				ResultSet rs = stmnt.executeQuery(query);
 				
 				if(rs.next()){
-//					System.out.println("Found matching username, returning true.");
+					getServer().getServerModel().addToText("Found matching username, returning true.\n");
 					classifiedOperation.setAlreadyExists(true);
 				} else {
-//					System.out.println("Found no such user, returning false.");
+					getServer().getServerModel().addToText("Found no such user, returning false.\n");
 					classifiedOperation.setAlreadyExists(false);
 				}
 			} catch (SQLException e) {

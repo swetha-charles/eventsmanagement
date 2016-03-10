@@ -34,7 +34,7 @@ public class ETRunTask implements ExecutableTask{
 	@Override
 	public void run() {
 		//create a new QueryManager object to handle the execution of the received object
-		QueryManager runQuery = new QueryManager(getQuery(), getMasterServer().getDatabase().getConnection());
+		QueryManager runQuery = new QueryManager(getQuery(), getMasterServer());
 		
 		//execute the query, updating the object
 		try {
