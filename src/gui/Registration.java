@@ -1,9 +1,11 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
@@ -30,16 +32,10 @@ public class Registration extends JPanel{
 		
 		this.controller = controller2;
 		this.model = model;
+		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
-		
 		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = 3;
-		gbc.gridheight = 3;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
+		setLayout(layout);
 		
 //		method that reads picture from file to set as background
 		try {
@@ -57,20 +53,25 @@ public class Registration extends JPanel{
 			//File could not be found
 			background = null;
 		}
-//		background.setPreferredSize(new Dimension(1000, 750));
-//		Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
-//		background = new BackgroundPanel(backgroundImage);
+
+		background.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
-		
-		gbc.weightx = 0;
-		gbc.weighty = 0;
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		rp = new RegistrationPanel(this.controller,this.model );
+		rp = new RegistrationPanel(controller2, model);
+
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.gridx = 2;
+		gbc.gridy = 2;
 		add(rp, gbc);
-		
-		rp.setOpaque(true);
-		background.setOpaque(true);
+
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		add(background, gbc);
 	
 	}
 	
