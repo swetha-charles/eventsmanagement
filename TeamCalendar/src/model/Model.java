@@ -7,14 +7,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import gui.Login;
+import gui.Registration;
 import server.ObjectClientController;
 
 public class Model extends Observable {
-	private State currentstate;
+	private ModelState currentstate;
 	private ObjectClientController controller;
 
 	private String username;
 	private String email;
+
+	private JScrollPane currentPanel = null;
+	private Login login;
+	private Registration registration;
+	private JPanel meeting;
 
 	private Pattern emailRegex = Pattern
 			.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
@@ -26,8 +33,11 @@ public class Model extends Observable {
 
 	public Model(ObjectClientController controller2) {
 		this.controller = controller2;
+		this.currentstate = ModelState.LOGIN;
 
-		this.currentstate = State.LOGIN;
+		login = new Login(this.controller);
+		currentPanel = new JScrollPane(login);
+
 	}
 
 	////////////////// Check if username OR email is duplicated in the
@@ -41,19 +51,26 @@ public class Model extends Observable {
 		this.email = email;
 		if (emailRegex.matcher(email).matches()) {
 			this.emailMatchesRegex = true;
-			this.changeCurrentState(State.REGISTRATIONUPDATE);
+			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			this.controller.checkEmail(email);
 		} else {
 			System.out.println("Email failed Regex");
 
 			this.emailMatchesRegex = false;
-			this.changeCurrentState(State.REGISTRATIONUPDATE);
+			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 
 	}
 
 	public void checkRegistrationInformation(String firstname, String lastname, String dob, String password,
 			String confirm) {
+		String[] regInfo = { firstname, lastname, password, confirm };
+		if (DataValidation.checkLessThanFifty(regInfo)) {
+
+		} else {
+			System.out.println("User input has failed data validation, atleast one entry is more than 50 characters");
+
+		}
 
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,13 +80,13 @@ public class Model extends Observable {
 
 	public void setUsernameExists(boolean bool) {
 		this.usernameExists = bool;
-		this.changeCurrentState(State.REGISTRATIONUPDATE);
+		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
 
 	public void setEmailExists(boolean bool) {
 		this.emailExists = bool;
-		this.changeCurrentState(State.REGISTRATIONUPDATE);
+		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
 
@@ -91,7 +108,7 @@ public class Model extends Observable {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public State getCurrentState() {
+	public ModelState getCurrentState() {
 		return this.currentstate;
 
 	}
@@ -108,25 +125,63 @@ public class Model extends Observable {
 		return email;
 	}
 
-	public void exit() {
-		this.controller.setRunning(false);
-		this.changeCurrentState(State.EXIT);
-	}
-
-	public synchronized void changeCurrentState(State state) {
-
+	public synchronized void changeCurrentState(ModelState state) {
 		this.currentstate = state;
 
-		this.setChanged();
-		System.out.println("Model changed state to" + currentstate);
-		super.notifyObservers();
+		switch (state) {
+		case REGISTRATION:
+
+			this.registration = new Registration(controller, this);
+
+			setPanel(this.registration);
+			break;
+
+		case LOGIN:
+			this.login = new Login(controller);
+			setPanel(this.login);
+			break;
+
+		case REGISTRATIONUPDATE:
+			if (!this.getEmailMatchesRegex()) {
+				this.registration.getRegistrationPanel().setEmailLabel("Email incorrect format*");
+
+			} else {
+				if (this.getEmailExists()) {
+					this.registration.getRegistrationPanel().setEmailLabel("Email already exists!*");
+				} else {
+					this.registration.getRegistrationPanel().setEmailLabel("Email*");
+				}
+			}
+			if (this.getUsernameExists()) {
+				this.registration.getRegistrationPanel().setUserLabel("Username already exists!*");
+			} else {
+				this.registration.getRegistrationPanel().setUserLabel("Username*");
+			}
+
+			setPanel(this.registration);
+			break;
+		case ERRORCONNECTIONDOWN:
+			// create an error message??
+
+			break;
+		case EXIT:
+			this.controller.exitGracefully();
+			break;
+		}
 
 	}
 
-	public void setPanel(JFrame frame, JPanel panel) {
-		JScrollPane scroll = new JScrollPane(panel);
-		frame.setContentPane(scroll);
-		frame.validate();
+	public JScrollPane getCurrentPanel() {
+		return this.currentPanel;
+	}
+
+	public void setPanel(JPanel panel) {
+		currentPanel = new JScrollPane(panel);
+		setChanged();
+		notifyObservers();
+		/*
+		 * frame.setContentPane(scroll); frame.validate();
+		 */
 	}
 
 }

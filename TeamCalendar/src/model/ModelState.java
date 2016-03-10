@@ -1,6 +1,6 @@
 package model;
 
-public enum State {
+public enum ModelState {
 	REGISTRATION, LOGIN, REGISTRATIONUPDATE, ERRORCONNECTIONDOWN, 
 	ERRORSERVERCOMMUNICATION, EXIT
 }
