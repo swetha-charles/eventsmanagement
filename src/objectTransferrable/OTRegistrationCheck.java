@@ -1,6 +1,6 @@
 package objectTransferrable;
 
-public class OTRegistrationCheck {
+public class OTRegistrationCheck extends ObjectTransferrable {
 	String opcode;
 	String username;
 	String email;

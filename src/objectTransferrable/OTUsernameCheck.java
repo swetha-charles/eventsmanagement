@@ -1,6 +1,6 @@
 package objectTransferrable;
 
-public class OTUsernameCheck extends ObjectTransferrable {
+public class OTUsernameCheck  extends ObjectTransferrable{
 	
 	private String username;
 	private boolean alreadyExists;
