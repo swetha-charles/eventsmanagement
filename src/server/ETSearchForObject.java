@@ -3,7 +3,6 @@ package server;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-
 import objectTransferrable.*;
 
 public class ETSearchForObject implements ExecutableTask {
@@ -11,8 +10,7 @@ public class ETSearchForObject implements ExecutableTask {
 	private Server masterServer;
 	private ClientInfo clientInfo;
 
-	public ETSearchForObject(Server masterServer,
-			ClientInfo clientInfo) {
+	public ETSearchForObject(Server masterServer, ClientInfo clientInfo) {
 		this.masterServer = masterServer;
 		this.clientInfo = clientInfo;
 	}
@@ -27,27 +25,23 @@ public class ETSearchForObject implements ExecutableTask {
 
 	@Override
 	public void run() {
-		ObjectTransferrable receivedOperation = null;
-		if(getMasterServer().isServerActive() == true){
+		Object receivedObject = null;
+		if (getMasterServer().isServerActive() == true) {
 			try {
-				receivedOperation = (ObjectTransferrable) getClientInfo().getClientInput().readObject();
-				if(receivedOperation != null){
-					getMasterServer().getServerModel().addToText("Received Object with opCode: " + receivedOperation.getOpCode() + " from client with port " + getClientInfo().getClientSocket().getPort() +"\n");
-					//Create and ETRunTask object, and place it in the ExecutorService
-					ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
-					getMasterServer().getThreadPool().execute(newQueryToRun);
-				}
+				receivedObject = getClientInfo().getClientInput().readObject();
+				System.out.println("Server received object: " + receivedObject.toString());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
-			} catch (SocketTimeoutException e){
-			} catch (IOException e){	
-				//Nothing incoming from client
-				e.printStackTrace();
-			} 
-
-			if(receivedOperation == null){
-				//create a new ETSearchForObject task with the same info and place it in the ExecutorService after a brief pause
+				//EOFexception
+			} catch (SocketTimeoutException e) {
+				//TimeoutException
+			} catch (IOException e2) {
+				System.out.println("Server - IOException");
+			}
+			if (receivedObject == null) {
+				// create a new ETSearchForObject task with the same info and
+				// place it in the ExecutorService after a brief pause
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
@@ -55,7 +49,25 @@ public class ETSearchForObject implements ExecutableTask {
 				}
 				ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 				getMasterServer().getThreadPool().execute(refreshedSearch);
+			} else {
+				System.out.println("Object not null, server will try to cast this object");
+
+				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
+
+				System.out.println("Server tried to cast object: " + receivedOperation.getOpCode());
+
+				if (receivedOperation != null) {
+					getMasterServer().getServerModel()
+							.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
+									+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+					// Create and ETRunTask object, and place it in the
+					// ExecutorService
+					ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
+					getMasterServer().getThreadPool().execute(newQueryToRun);
+				}
+
 			}
+
 		}
 	}
 
