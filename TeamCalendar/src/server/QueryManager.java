@@ -3,6 +3,9 @@ package server;
 import java.sql.*;
 import java.util.*;
 
+import objectTransferrable.OTUsernameCheck;
+import objectTransferrable.ObjectTransferrable;
+
 public class QueryManager {
 
 	private ObjectTransferrable operation;
