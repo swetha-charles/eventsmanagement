@@ -11,6 +11,7 @@
  * OTEmailCheck = "0002"
  * OTRegistrationCheck = "0003"
  * OTRegistrationInformation = "0004"
+ * OTExitGracefully = "0005"
  * 
  * 
  * @author tmd668
