@@ -1,8 +1,14 @@
 package model;
 
 public class DataValidation {
-	public static boolean checkLessThanFifty(String str){
-		return (str.length() < 51);
+	public static boolean checkLessThanFifty(String... str){
+		for(String s : str){
+			if(s.length()>51){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	private static String escape(String str){
