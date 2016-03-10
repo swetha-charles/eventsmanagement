@@ -28,6 +28,7 @@ public class ThreadForServer extends Thread{
 	@Override
 	public void run() {
 		while(true){
+			System.out.println("Messaged receieved from server");
 			ObjectTransferrable receivedOperation = null;
 			try {
 				receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
