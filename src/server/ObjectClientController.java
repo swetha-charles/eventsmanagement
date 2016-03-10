@@ -20,7 +20,8 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	private Model model;
 	private MainView view;
 	private Socket s;
-	private Thread poolOfOTs = null;
+	private Thread threadForServer = null;
+	private boolean running;
 
 	public ObjectClientController() {
 		try {
@@ -55,8 +56,8 @@ public class ObjectClientController implements ActionListener, MouseListener {
 			this.addModel(model);
 			this.addView(view);
 			
-			poolOfOTs = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
-			poolOfOTs.start();
+			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
+			threadForServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -165,6 +166,16 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+	public boolean getRunning(){
+		return this.running;
+	}
+	
+	public void setRunning(boolean running){
+		this.running = running;
+		if(!running){
+			threadForServer.interrupt();
+		}
 	}
 
 	public static void main(String[] args) {
