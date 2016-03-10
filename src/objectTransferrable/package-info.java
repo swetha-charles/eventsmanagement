@@ -7,6 +7,12 @@
  * which allows the subtypes to be desseminated
  * 
  * 
+ * OTUsernameCheck "0001"
+ * OTEmailCheck = "0002"
+ * OTRegistrationCheck = "0003"
+ * OTRegistrationInformation = "0004"
+ * 
+ * 
  * @author tmd668
  *
  */
