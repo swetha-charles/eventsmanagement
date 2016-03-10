@@ -32,11 +32,12 @@ public class ETSearchForObject implements ExecutableTask {
 		if(getMasterServer().isServerActive() == true){
 			try {
 				receivedOperation = (objectTransferrable.ObjectTransferrable) getClientInfo().getClientInput().readObject();
-				getMasterServer().getServerModel().addToText("Received Object with opCode: " + receivedOperation.getOpCode() + " from client with port " + getClientInfo().getClientSocket().getPort() +"\n");
-				//Create and ETRunTask object, and place it in the ExecutorService
-				ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
-				getMasterServer().getThreadPool().execute(newQueryToRun);
-
+				if(receivedOperation != null){
+					getMasterServer().getServerModel().addToText("Received Object with opCode: " + receivedOperation.getOpCode() + " from client with port " + getClientInfo().getClientSocket().getPort() +"\n");
+					//Create and ETRunTask object, and place it in the ExecutorService
+					ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
+					getMasterServer().getThreadPool().execute(newQueryToRun);
+				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
