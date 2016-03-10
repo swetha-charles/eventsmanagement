@@ -118,13 +118,12 @@ public class MainView extends JFrame implements Observer {
 
 		case REGISTRATION:
 			this.registration = new Registration(controller, model);
-			
 			JScrollPane scroll = new JScrollPane(this.registration);
 			this.setContentPane(scroll);
 			this.validate();
 			break;
 		case LOGIN:
-			////////FRAME!!!!!!!/////////////////
+			
 			JScrollPane scroll1 = new JScrollPane(login);
 			this.setContentPane(scroll1);
 			this.validate();
