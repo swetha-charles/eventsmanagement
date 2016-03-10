@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -12,6 +13,8 @@ import java.net.Socket;
 import gui.Login;
 import gui.LoginPanel;
 import gui.MainView;
+import gui.MenuPanel;
+import gui.Profile;
 import gui.Registration;
 import gui.RegistrationPanel;
 import model.Model;
@@ -88,6 +91,9 @@ public class ObjectClientController implements ActionListener, MouseListener {
 //			model.changeCurrentState(State.LOGIN);
 			//System.out.println("Controller: Model's state chanhed to" + model.getCurrentState());
 			model.setPanel(view, new Login(this));
+			break;
+		case "login":
+			model.setPanel(view, new gui.List(this));
 		}
 
 	}
@@ -97,11 +103,16 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getComponent() == LoginPanel.signup) {
-			//System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
-//			model.changeCurrentState(State.REGISTRATION);
-			//System.out.println("Controller: Model's state changed to" + model.getCurrentState());
-			
+//			System.out.println("Controller: Model's state  about to, current state " + model.getCurrentState());
+			model.changeCurrentState(State.REGISTRATION);
+//			System.out.println("Controller: Model's state changed to" + model.getCurrentState());
 			model.setPanel(view, new Registration(this, model));
+		} else if (e.getComponent() == MenuPanel.home) {
+			model.setPanel(view, new gui.List(this));
+		} else if (e.getComponent() == MenuPanel.profile) {
+			model.setPanel(view, new Profile(this));
+		} else if (e.getComponent() == MenuPanel.logout) {
+			model.setPanel(view, new Login(this));
 		}
 
 	}
