@@ -28,7 +28,7 @@ public class MainView extends JFrame implements Observer {
 	JScrollPane scroll;
 	JPanel loggedIn = null;
 
-	public MainView(Client client, Model model) throws IOException {
+	public MainView(Client client, Model model) {
 		this.controller = client;
 		this.model = model;
 		this.login = new Login(this.controller, this.model);
@@ -74,9 +74,6 @@ public class MainView extends JFrame implements Observer {
 	public synchronized void update(Observable o, Object arg) {
 		if (model.getCurrentState().equals(ModelState.EXIT)) {
 			this.dispose();
-
-		} else if (model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWN)) {
-			JOptionPane.showMessageDialog(this, "Connection down, please check network");
 
 		} else {
 			this.setContentPane(model.getCurrentPanel());
