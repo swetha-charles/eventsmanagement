@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 
-import javax.swing.ActionMap;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,7 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import server.ObjectClientController;
+import client.Client;
+import listener.interfaces.MouseClickedListener;
+import model.Model;
+import model.ModelState;
 
 public class LoginPanel extends JPanel{
 	
@@ -27,7 +29,8 @@ public class LoginPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = -2535316040411018240L;
 	
-	ObjectClientController controller;
+	Client client;
+	Model model;
 	JTextField username = new JTextField();
 	JPasswordField password = new JPasswordField();
 	JLabel userLabel = new JLabel("Username");
@@ -42,9 +45,10 @@ public class LoginPanel extends JPanel{
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	public LoginPanel(ObjectClientController controller2){
-		this.controller= controller2;
-
+	@SuppressWarnings({ "unchecked", "unchecked", "unchecked", "unchecked" })
+	public LoginPanel(Client client, Model model){
+		this.client= client;
+		this.model = model;
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(420,410));
 		setMinimumSize(new Dimension(420,410));
@@ -114,7 +118,7 @@ public class LoginPanel extends JPanel{
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		
-		signup.addMouseListener(this.controller);
+		
 		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
@@ -132,6 +136,12 @@ public class LoginPanel extends JPanel{
 		gbc.gridx = 1;
 		gbc.gridy = 5;
 		add(signup, gbc);
+		
+		//---------------------------------Lambda Listeners------------------------------------------------------//
+		
+		signup.addMouseListener((MouseClickedListener) (e) -> this.model.changeCurrentState(ModelState.REGISTRATION));
+		
+		//--------------------------------End Lambda Listeners--------------------------------------------------//
 	
 	}
 
@@ -142,9 +152,9 @@ public class LoginPanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
-		
-		LoginPanel loginPanel = new LoginPanel(controller);
+		Client client = new Client();
+		Model model = new Model(client);
+		LoginPanel loginPanel = new LoginPanel(client, model);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import server.ObjectClientController;
+import client.Client;
 
 public class ListPanel extends JPanel{
 	
@@ -24,7 +24,7 @@ public class ListPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = -3193985081542643253L;
-	ObjectClientController controller;
+	Client controller;
 	JPanel list = new JPanel();
 	JScrollPane listscroll;
 	JPanel event = new JPanel();
@@ -35,7 +35,7 @@ public class ListPanel extends JPanel{
 	ArrayList<JLabel> time = new ArrayList<JLabel>(24);
 	ArrayList<JPanel> timeevent = new ArrayList<JPanel>(24);
 	
-	public ListPanel(ObjectClientController controller){
+	public ListPanel(Client controller){
 		
 		this.controller = controller;
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
@@ -81,7 +81,7 @@ public class ListPanel extends JPanel{
 	public static void main(String[] args) throws IOException {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		ListPanel loginPanel = new ListPanel(controller);
 		JScrollPane scroll = new JScrollPane(loginPanel);

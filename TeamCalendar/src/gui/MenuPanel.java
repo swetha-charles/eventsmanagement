@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import server.ObjectClientController;
+import client.Client;
 
 
 public class MenuPanel extends JPanel{
@@ -22,13 +22,13 @@ public class MenuPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ObjectClientController controller = null;
+	private Client controller = null;
 	JPanel menuBar = new JPanel();
 	public static JLabel home = new JLabel("Home");
 	public static JLabel profile = new JLabel("Profile");
 	public static JLabel logout = new JLabel("Logout");
 
-	public MenuPanel(ObjectClientController controller){
+	public MenuPanel(Client controller){
 		
 		this.controller = controller;
 		
@@ -78,7 +78,7 @@ public class MenuPanel extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		MenuPanel menu = new MenuPanel(controller);
 		

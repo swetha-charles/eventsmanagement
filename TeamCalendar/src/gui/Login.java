@@ -13,8 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import gui.LoginPanel;
-import server.ObjectClientController;
+import client.Client;
+import model.Model;
 
 public class Login extends JPanel {
 
@@ -23,7 +23,8 @@ public class Login extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	JLabel background;
-	ObjectClientController controller;
+	Client client;
+	Model model;
 	//TestController Tcontroller;
 
 	/**
@@ -31,8 +32,9 @@ public class Login extends JPanel {
 	 * 
 	 * @throws IOException
 	 */
-	public Login(ObjectClientController controller2) {
-		this.controller = controller2;
+	public Login(Client client, Model model) {
+		this.client = client;
+		this.model = model;
 
 		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		GridBagLayout layout = new GridBagLayout();
@@ -56,7 +58,7 @@ public class Login extends JPanel {
 
 		background.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
-		LoginPanel loginPanel = new LoginPanel(controller2);
+		LoginPanel loginPanel = new LoginPanel(this.client, this.model);
 
 		gbc.weightx = 1;
 		gbc.weighty = 1;
@@ -79,7 +81,7 @@ public class Login extends JPanel {
 	public static void main(String[] args) throws IOException {
 
 		/*JFrame frame = new JFrame();
-		ObjectClientController c1 = new ObjectClientController();
+		Client c1 = new Client();
 
 		Login loginPanel = new Login(c1);
 
