@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import objectTransferrable.*;
 
@@ -13,22 +14,19 @@ import model.ModelState;
 
 public class ThreadForServer extends Thread {
 
-	private Client occ;
+	private Client client;
 	private ObjectInputStream fromServer;
 	private boolean running = true;
 	private Model model;
-	private Socket socket;
-	private int count = 0;
 
-	public ThreadForServer(Client occ, ObjectInputStream fromServer, Model model, Socket socket) {
-
+	public ThreadForServer(Client client, ObjectInputStream fromServer, Model model) {
+		this.client = client;
 		this.fromServer = fromServer;
-
 		this.model = model;
-		this.socket = socket;
-
+		
 	}
 
+	
 	@Override
 	public void run() {
 		while (running) {
@@ -36,8 +34,22 @@ public class ThreadForServer extends Thread {
 			try {
 				receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 				System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
-				this.runOT(receivedOperation);
+				String waitingForOpCode;
+				while (true) {
+					try {
+						waitingForOpCode = this.client.getWaitingFor().take();
+						break;
+					} catch (InterruptedException e) {
+						//WaitingFor is blocked, try again
+					}
+				}
+				if (!waitingForOpCode.equals(receivedOperation.getOpCode())) {
+					System.out.println("OT from server does not match what client is waiting for");
+					throw new RuntimeException();
+				}
 				
+				this.runOT(receivedOperation);
+
 				if (Thread.interrupted()) {
 					System.out.println("Thread for Server has been interrupted, shutting down");
 					this.running = false;
@@ -47,7 +59,7 @@ public class ThreadForServer extends Thread {
 			} catch (ClassNotFoundException e) {
 				// When the ObjectTransferrable isn't the right class
 				System.out.println("OT from server could not be read");
-				
+
 			} catch (IOException e2) {
 				System.out.println("Server connection is down");
 				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
