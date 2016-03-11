@@ -1,0 +1,6 @@
+package model;
+
+public enum ModelState {
+	REGISTRATION, LOGIN, REGISTRATIONUPDATE, ERRORCONNECTIONDOWN, 
+	EXIT, RELOAD
+}
