@@ -9,17 +9,18 @@ import objectTransferrable.*;
 
 import model.Model;
 import model.ModelState;
+import client.*;
 
 public class ThreadForServer extends Thread {
 
-	private ObjectClientController occ;
+	private Client client;
 	private ObjectInputStream fromServer;
 	private boolean running = true;
 	private Model model;
 	private Socket socket;
 	private int count = 0;
 
-	public ThreadForServer(ObjectClientController occ, ObjectInputStream fromServer, Model model, Socket socket) {
+	public ThreadForServer(Client client, ObjectInputStream fromServer, Model model, Socket socket) {
 
 		this.fromServer = fromServer;
 
