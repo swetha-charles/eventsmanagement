@@ -9,10 +9,10 @@
  * 
  * OTUsernameCheck "0001"
  * OTEmailCheck = "0002"
- * OTRegistrationCheck = "0003"
- * OTRegistrationInformation = "0004"
+ * OTRegistrationInformation = "0003"
+ * OTRegistrationCheck = "0004"
  * OTExitGracefully = "0005"
- * OTRegistrationInformationConfirmation = "0006"
+ * 
  * 
  * @author tmd668
  *
