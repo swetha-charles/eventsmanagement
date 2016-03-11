@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import client.Client;
+import listener.interfaces.MouseClickedListener;
+import model.Model;
 
 
 public class MenuPanel extends JPanel{
@@ -22,7 +24,7 @@ public class MenuPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Client controller = null;
+	private Client client = null;
 	JPanel menuBar = new JPanel();
 	public static JLabel home = new JLabel("Home");
 	public static JLabel profile = new JLabel("Profile");
@@ -30,7 +32,7 @@ public class MenuPanel extends JPanel{
 
 	public MenuPanel(Client controller){
 		
-		this.controller = controller;
+		this.client = client;
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), 70));
@@ -46,9 +48,9 @@ public class MenuPanel extends JPanel{
 		profile.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		logout.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		
-		home.addMouseListener(controller);
-		profile.addMouseListener(controller);
-		logout.addMouseListener(controller);
+		home.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here 
+		profile.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
+		logout.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
 		
 		GridBagLayout grid = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
