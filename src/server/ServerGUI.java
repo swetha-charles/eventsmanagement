@@ -1,8 +1,8 @@
+
 package server;
 
-import java.io.IOException;
-
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 public class ServerGUI {
 	
@@ -12,8 +12,8 @@ public class ServerGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
         ServerController panel = new ServerController(4449);
-        
-        frame.add(panel);
+        JScrollPane scrollPanel = new JScrollPane(panel);
+        frame.add(scrollPanel);
         frame.setVisible(true);
     }
 }

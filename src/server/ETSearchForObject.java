@@ -29,7 +29,7 @@ public class ETSearchForObject implements ExecutableTask {
 		if (getMasterServer().isServerActive() == true) {
 			try {
 				receivedObject = getClientInfo().getClientInput().readObject();
-				System.out.println("Server received object: " + receivedObject.toString());
+				getMasterServer().getServerModel().addToText("Server received object: " + receivedObject.toString() + "\n");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
@@ -37,7 +37,7 @@ public class ETSearchForObject implements ExecutableTask {
 			} catch (SocketTimeoutException e) {
 				//TimeoutException
 			} catch (IOException e2) {
-				System.out.println("Server - IOException");
+				getMasterServer().getServerModel().addToText("\nServer - IOException");
 			}
 			if (receivedObject == null) {
 				// create a new ETSearchForObject task with the same info and
@@ -50,11 +50,11 @@ public class ETSearchForObject implements ExecutableTask {
 				ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 				getMasterServer().getThreadPool().execute(refreshedSearch);
 			} else {
-				System.out.println("Object not null, server will try to cast this object");
+				getMasterServer().getServerModel().addToText("Object not null, server will try to cast this object\n");
 
 				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
 
-				System.out.println("Server tried to cast object: " + receivedOperation.getOpCode());
+				getMasterServer().getServerModel().addToText("Server tried to cast object: " + receivedOperation.getOpCode() + "\n");
 
 				if (receivedOperation != null) {
 					getMasterServer().getServerModel()
