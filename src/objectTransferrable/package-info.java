@@ -12,7 +12,8 @@
  * OTRegistrationInformation = "0003"
  * OTRegistrationCheck = "0004"
  * OTExitGracefully = "0005"
- * 
+ * OTRegistrationInformationConfirmation = "0006"
+ * OTErrorResponse = "0007"
  * 
  * @author tmd668
  *
