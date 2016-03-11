@@ -9,11 +9,11 @@ import javax.swing.JScrollPane;
 
 import gui.Login;
 import gui.Registration;
-import server.ObjectClientController;
+import client.*;
 
 public class Model extends Observable {
 	private ModelState currentstate;
-	private ObjectClientController controller;
+	private Client client;
 
 	private String username;
 	private String email;
@@ -31,11 +31,11 @@ public class Model extends Observable {
 	private boolean emailExists = false;
 	private boolean emailMatchesRegex = true;
 
-	public Model(ObjectClientController controller2) {
-		this.controller = controller2;
+	public Model(Client  client) {
+		this.client = client;
 		this.currentstate = ModelState.LOGIN;
 
-		login = new Login(this.controller);
+		login = new Login(this.client, this);
 		currentPanel = new JScrollPane(login);
 
 	}
@@ -44,7 +44,7 @@ public class Model extends Observable {
 	////////////////// database///////////////////////////
 	public void checkUsername(String username) {
 		this.username = username;
-		this.controller.checkUsername(username);
+		this.client.checkUsername(username);
 	}
 
 	public void checkEmail(String email) {
@@ -52,7 +52,7 @@ public class Model extends Observable {
 		if (emailRegex.matcher(email).matches()) {
 			this.emailMatchesRegex = true;
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
-			this.controller.checkEmail(email);
+			this.client.checkEmail(email);
 		} else {
 			System.out.println("Email failed Regex");
 
@@ -131,13 +131,13 @@ public class Model extends Observable {
 		switch (state) {
 		case REGISTRATION:
 
-			this.registration = new Registration(controller, this);
+			this.registration = new Registration(client, this);
 
 			setPanel(this.registration);
 			break;
 
 		case LOGIN:
-			this.login = new Login(controller);
+			this.login = new Login(client, this);
 			setPanel(this.login);
 			break;
 
@@ -165,7 +165,7 @@ public class Model extends Observable {
 
 			break;
 		case EXIT:
-			this.controller.exitGracefully();
+			this.client.exitGracefully();
 			break;
 		}
 
