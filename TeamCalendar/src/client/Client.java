@@ -60,7 +60,11 @@ public class Client {
 		}
 
 	}
-
+	
+	
+	public Client(){
+		
+	}
 	/**
 	 * This is the only way to send object transferrables from the client. It is
 	 * a private method.
