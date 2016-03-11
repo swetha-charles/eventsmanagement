@@ -37,9 +37,8 @@ public class RegistrationPanel extends JPanel {
 
 	JLabel firstLabel = new JLabel("First Name*");
 	JLabel lastLabel = new JLabel("Last Name*");
-
 	JLabel userLabel = new JLabel("Username*");
-	JLabel dobLabel = new JLabel("Date of Birth*");
+	JLabel dobLabel = new JLabel("Date of Birth* dd/mm/yyyy");
 	JLabel emailLabel = new JLabel("Email*");
 	JLabel passwordLabel = new JLabel("Password*");
 	JLabel confirmLabel = new JLabel("Confirm Password*");
@@ -178,40 +177,98 @@ public class RegistrationPanel extends JPanel {
 		mainlayout.putConstraint(SpringLayout.WEST, cancel, 5, SpringLayout.EAST, submit);
 
 		// ------- Lambda Listeners----------//
-
-		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
+		firstName.addFocusListener((FocusLostListener) (e) -> {
+			this.model.validateFirstName(firstName.getText());
+		});
+		lastName.addFocusListener((FocusLostListener) (e) -> {
+			this.model.validateLastName(lastName.getText());
+		});
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
+		dob.addFocusListener((FocusLostListener) (e) -> this.model.validateDOB(dob.getText()));		
+		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
+		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePassword(password.getPassword()));
+		//confirm listener
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
 		submit.addActionListener((e) -> {
-			if (this.model.getEmailExists()) {
-				JOptionPane.showMessageDialog(this, "Email already exists! Did you forget you password?");
+			if (!this.model.isEmailUnique()) {
+				JOptionPane.showMessageDialog(this, "Email already exists! Did you forget your password?");
 
-			} else if (this.model.getUsernameExists()) {
-				JOptionPane.showMessageDialog(this, "Username already exists!");
-			} else if (!this.model.getEmailMatchesRegex()) {
-				JOptionPane.showMessageDialog(this, "Incorrect email");
+			} else if (!this.model.isUsernameUnique()) {
+				JOptionPane.showMessageDialog(this, "Username already exists! Pick another ones");
+			} else if (!this.model.isEmailMatchesRegex()) {
+				JOptionPane.showMessageDialog(this, "Incorrect email format");
+			} else if(!this.model.checkConfirmMatchesPassword(confirm.getPassword())){
+				JOptionPane.showMessageDialog(this, "Passwords do not match");
 			} else {
-				// email is OK and matches regex, username is OK. our user is a
-				// genius.
-				this.model.checkRegistrationInformation(firstName.getText(), lastName.getText(), dob.getText(),
-						password.getSelectedText(), confirm.getSelectedText());
+				
 			}
 
 		});
 
 	}
-		//-------End Lambda Listeners------//
+	// -------End Lambda Listeners------//
+
+	// ------ Email & User labels ---------//
+
 	
-	
-	//------ Email & User labels ---------//
-	
+	public void setDobLabel(String dobLabel) {
+		this.dobLabel.setText(dobLabel);
+		if (dobLabel.contains("incorrect") | dobLabel.contains("18")) {
+			this.dobLabel.setForeground(Color.RED);
+		} else {
+			this.dobLabel.setForeground(Color.WHITE);
+		}
+	}
+
 	public JLabel getUserLabel() {
 		return userLabel;
+	}
+
+	public JLabel getPasswordLabel() {
+		return passwordLabel;
+	}
+
+	public JLabel getConfirmLabel() {
+		return confirmLabel;
+	}
+
+	public void setPasswordLabel(String passwordLabel) {
+		this.passwordLabel.setText(passwordLabel);
+	}
+
+	public void setConfirmLabel(String confirmLabel) {
+		this.confirmLabel.setText(confirmLabel);
 	}
 
 	public JLabel getEmailLabel() {
 		return emailLabel;
 	}
+
+	public JLabel getFirstLabel() {
+		return firstLabel;
+	}
+
+	public void setFirstLabel(String firstLabel) {
+		this.firstLabel.setText(firstLabel);
+		if (firstLabel.contains("incorrect")) {
+			this.firstLabel.setForeground(Color.RED);
+		} else {
+			this.firstLabel.setForeground(Color.WHITE);
+		}
+	}
+
+	public JLabel getLastLabel() {
+		return lastLabel;
+	}
+
+	public void setLastLabel(String lastLabel) {
+		this.lastLabel.setText(lastLabel);
+		if (lastLabel.contains("incorrect")) {
+			this.lastLabel.setForeground(Color.RED);
+		} else {
+			this.lastLabel.setForeground(Color.WHITE);
+		}
+	};
 
 	public void setUserLabel(String userLabel) {
 		this.userLabel.setText(userLabel);
@@ -230,7 +287,7 @@ public class RegistrationPanel extends JPanel {
 			this.emailLabel.setForeground(Color.WHITE);
 		}
 	}
-	//------ End Email & User labels ---------//
+	// ------ End Email & User labels ---------//
 
 	public static void main(String[] args) {
 
