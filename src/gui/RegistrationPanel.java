@@ -14,10 +14,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import controller.FocusLostListener;
+import client.Client;
+import listener.interfaces.FocusLostListener;
 import model.Model;
 import model.ModelState;
-import server.ObjectClientController;
 
 public class RegistrationPanel extends JPanel {
 
@@ -25,7 +25,7 @@ public class RegistrationPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -2535316040411018240L;
-	private ObjectClientController controller = null;
+	private Client client = null;
 	private Model model = null;
 	JTextField firstName = new JTextField(50);
 	JTextField lastName = new JTextField(50);
@@ -61,8 +61,8 @@ public class RegistrationPanel extends JPanel {
 	 * This constructor builds a login panel where the user can input their
 	 * username and password.
 	 */
-	public RegistrationPanel(ObjectClientController controller2, Model model) {
-		this.controller = controller2;
+	public RegistrationPanel(Client client, Model model) {
+		this.client = client;
 		this.model = model;
 		// sets the dimension of the login panel
 		setPreferredSize(new Dimension(800, 500));
@@ -177,40 +177,33 @@ public class RegistrationPanel extends JPanel {
 		mainlayout.putConstraint(SpringLayout.NORTH, cancel, 25, SpringLayout.SOUTH, fields);
 		mainlayout.putConstraint(SpringLayout.WEST, cancel, 5, SpringLayout.EAST, submit);
 
-		cancel.setActionCommand("cancel");
-		cancel.addActionListener(controller2);
+		// ------- Lambda Listeners----------//
 
-		/////////////////////////// Adding
-		/////////////////////////// Listeners!!///////////////////////////////////////////////////////////
-
-		// ugly workaround but this way is better than using a bunch
-		// of anonymous classes w. higher overhead.
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
-
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
-
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
-		
-		// sanitize before handing in 
 		submit.addActionListener((e) -> {
 			if (this.model.getEmailExists()) {
-				JOptionPane.showMessageDialog(this, "email exists, i already TOLD your bitch ass");
+				JOptionPane.showMessageDialog(this, "Email already exists! Did you forget you password?");
 
 			} else if (this.model.getUsernameExists()) {
-				JOptionPane.showMessageDialog(this, "username exists, i already TOLD your bitch ass");
+				JOptionPane.showMessageDialog(this, "Username already exists!");
 			} else if (!this.model.getEmailMatchesRegex()) {
-				JOptionPane.showMessageDialog(this, "write a proper email dumbo. i'm tired of you");
+				JOptionPane.showMessageDialog(this, "Incorrect email");
 			} else {
-				//email is OK and matches regex, username is OK. our user is a genius. 
+				// email is OK and matches regex, username is OK. our user is a
+				// genius.
 				this.model.checkRegistrationInformation(firstName.getText(), lastName.getText(), dob.getText(),
 						password.getSelectedText(), confirm.getSelectedText());
 			}
 
-		});// end Lamda
+		});
 
 	}
-
-	/////////////////////////// Getters and Setters for user/email labels////////////////////////////////////
+		//-------End Lambda Listeners------//
+	
+	
+	//------ Email & User labels ---------//
 	
 	public JLabel getUserLabel() {
 		return userLabel;
@@ -237,18 +230,16 @@ public class RegistrationPanel extends JPanel {
 			this.emailLabel.setForeground(Color.WHITE);
 		}
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////
+	//------ End Email & User labels ---------//
 
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
-	
+		Client client = new Client();
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		frame.setSize(1000, 650);
 		frame.setResizable(true);
 		frame.setVisible(true);

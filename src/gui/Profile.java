@@ -6,7 +6,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import server.ObjectClientController;
+import client.Client;
 
 public class Profile extends JPanel{
 	
@@ -14,11 +14,11 @@ public class Profile extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ObjectClientController controller = null;
+	private Client controller = null;
 	MenuPanel bar;
 	ProfilePanel profile;
 	
-	public Profile(ObjectClientController controller){
+	public Profile(Client controller){
 		
 		this.controller = controller;
 		bar = new MenuPanel(controller);
@@ -33,7 +33,7 @@ public class Profile extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		Profile menu = new Profile(controller);
 		

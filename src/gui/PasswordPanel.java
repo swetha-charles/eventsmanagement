@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
 
-import server.ObjectClientController;
+import client.Client;
 
 public class PasswordPanel extends JPanel{
 
@@ -21,7 +21,7 @@ public class PasswordPanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ObjectClientController controller = null;
+	private Client controller = null;
 	JLabel hello = new JLabel("Want to change your password?");
 	JPanel detailsPanel = new JPanel();
 	JLabel oldPassword = new JLabel("Old Password");
@@ -38,7 +38,7 @@ public class PasswordPanel extends JPanel{
 	JButton cancel = new JButton("Cancel");
 	
 	
-	public PasswordPanel(ObjectClientController controller){
+	public PasswordPanel(Client controller){
 		
 		this.controller = controller;
 		
@@ -95,7 +95,7 @@ public class PasswordPanel extends JPanel{
 public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		PasswordPanel menu = new PasswordPanel(controller);
 		

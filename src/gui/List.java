@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import server.ObjectClientController;
+import client.Client;
 
 public class List extends JPanel{
 	
@@ -19,7 +19,7 @@ public class List extends JPanel{
 	MenuPanel bar;
 	ListPanel list;
 	
-	public List(ObjectClientController controller){
+	public List(Client controller){
 		
 		bar = new MenuPanel(controller);
 		list = new ListPanel(controller);
@@ -30,9 +30,9 @@ public class List extends JPanel{
 	}
 
 	public static void main(String[] args) {
-		
+		/*
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client client = new Client();
 		
 		List menu = new List(controller);
 		JScrollPane scroll = new JScrollPane(menu);
@@ -42,7 +42,7 @@ public class List extends JPanel{
 		frame.setContentPane(scroll);
 		frame.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		frame.setResizable(true);
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 	}
 
 }

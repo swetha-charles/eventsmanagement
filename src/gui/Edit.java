@@ -6,18 +6,18 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import server.ObjectClientController;
+import client.Client;
 
 
 
 public class Edit extends JPanel{
 
 	private static final long serialVersionUID = 1L;
-	private ObjectClientController controller = null;
+	private Client controller = null;
 	MenuPanel bar;
 	EditPanel edit;
 	
-	public Edit(ObjectClientController controller){
+	public Edit(Client controller){
 		
 		this.controller = controller;
 		bar = new MenuPanel(controller);
@@ -32,7 +32,7 @@ public class Edit extends JPanel{
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		Edit menu = new Edit(controller);
 		

@@ -13,27 +13,25 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import controller.*;
+import client.Client;
+import listener.interfaces.*;
 import model.Model;
 import model.ModelState;
-import server.ObjectClientController;
 
 public class MainView extends JFrame implements Observer {
 
 	Model model = null;
-	ObjectClientController controller = null;
+	Client controller = null;
 
 	JPanel login = null;
 	Registration registration = null;
 	JScrollPane scroll;
 	JPanel loggedIn = null;
 
-	public MainView(ObjectClientController objectClientController, Model model) throws IOException {
-		this.controller = objectClientController;
-
-		this.login = new Login(this.controller);
-
+	public MainView(Client client, Model model) throws IOException {
+		this.controller = client;
 		this.model = model;
+		this.login = new Login(this.controller, this.model);
 
 		scroll = new JScrollPane(login);
 
@@ -43,9 +41,13 @@ public class MainView extends JFrame implements Observer {
 		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		setResizable(true);
 		setVisible(true);
+
+		// --------------Lambda Listeners-------------------//
+
 		this.addWindowListener((WindowClosingListener) (e) -> model.changeCurrentState(ModelState.EXIT));
-		
-		
+
+		// -------------End Lambda Listeners---------------//
+
 	}
 
 	public JPanel getLogin() {
@@ -64,71 +66,23 @@ public class MainView extends JFrame implements Observer {
 		this.scroll = scroll;
 	}
 
-	public void addController(ObjectClientController controller) {
+	public void addController(Client controller) {
 		this.controller = controller;
 	}
 
-	// Observer
 	@Override
 	public synchronized void update(Observable o, Object arg) {
-		
 		if (model.getCurrentState().equals(ModelState.EXIT)) {
-			
 			this.dispose();
 
 		} else if (model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWN)) {
+			JOptionPane.showMessageDialog(this, "Connection down, please check network");
 
-			JOptionPane.showMessageDialog(this, "Connection down, check network");
-		
 		} else {
-		
 			this.setContentPane(model.getCurrentPanel());
-			
 			this.validate();
 		}
 
-		/*
-		 * switch (model.getCurrentState()) {
-		 * 
-		 * case REGISTRATION: this.registration = new Registration(controller,
-		 * model); JScrollPane scroll = new JScrollPane(this.registration);
-		 * this.setContentPane(scroll); this.validate(); break; case LOGIN:
-		 * 
-		 * JScrollPane scroll1 = new JScrollPane(login);
-		 * this.setContentPane(scroll1); this.validate(); break;
-		 * 
-		 * case REGISTRATIONUPDATE: if(!model.getEmailMatchesRegex()){
-		 * this.registration.getRegistrationPanel().setEmailLabel(
-		 * "Email incorrect format*"); repaint(); break; } else {
-		 * this.registration.getRegistrationPanel().setEmailLabel("Email*"); }
-		 * if (model.getUsernameExists()) {
-		 * this.registration.getRegistrationPanel().setUserLabel(
-		 * "Username already exists!*"); } else {
-		 * this.registration.getRegistrationPanel().setUserLabel("Username*"); }
-		 * 
-		 * if (model.getEmailExists()) {
-		 * this.registration.getRegistrationPanel().setEmailLabel(
-		 * "Email already exists!*"); } else {
-		 * this.registration.getRegistrationPanel().setEmailLabel("Email*"); }
-		 * this.repaint(); break;
-		 * 
-		 * 
-		 * case EXIT: dispose(); default: break;
-		 * 
-		 * }
-		 */
 	}
 
-	/*
-	 * public static void main(String[] args) throws HeadlessException,
-	 * IOException {
-	 * 
-	 * Login login = new Login(); JFrame frame = new JFrame("Calendar"); //
-	 * frame.setLayout(new BorderLayout());
-	 * 
-	 * JFrame.setDefaultLookAndFeelDecorated(true);
-	 * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	 * frame.setContentPane(login); frame.setSize(Integer.MAX_VALUE,
-	 * Integer.MAX_VALUE); frame.setResizable(true); frame.setVisible(true); }
-	 */
 }

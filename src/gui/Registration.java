@@ -13,12 +13,12 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import client.Client;
 import model.Model;
-import server.ObjectClientController;
 
 public class Registration extends JPanel{
 
-	private ObjectClientController controller = null;
+	private Client controller = null;
 	private Model model;
 	private static final long serialVersionUID = 1L;
 	JPanel background;
@@ -28,7 +28,7 @@ public class Registration extends JPanel{
 	 * 
 	 * @throws IOException
 	 */
-	public Registration(ObjectClientController controller2, Model model){
+	public Registration(Client controller2, Model model){
 		
 		this.controller = controller2;
 		this.model = model;
@@ -83,10 +83,10 @@ public class Registration extends JPanel{
 	public static void main(String[] args) throws IOException {
 		
 		JFrame frame = new JFrame();
-		ObjectClientController controller = new ObjectClientController();
+		Client controller = new Client();
 		
 		
-		//Registration r = new Registration(controller, model);
+		//Registration r = new Registration(listener.interfaces, model);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
