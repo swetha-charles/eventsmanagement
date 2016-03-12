@@ -10,7 +10,9 @@
  * OTUsernameCheck "0001"
  * OTEmailCheck = "0002"
  * OTRegistrationInformation = "0003"
- * OTRegistrationCheck = "0004"
+ * 
+ * **** OPEN OPCODE **** = "0004"
+ * 
  * OTExitGracefully = "0005"
  * OTRegistrationInformationConfirmation = "0006"
  * OTErrorResponse = "0007"

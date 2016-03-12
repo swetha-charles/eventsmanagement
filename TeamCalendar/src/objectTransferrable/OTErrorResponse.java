@@ -42,5 +42,23 @@ public class OTErrorResponse extends ObjectTransferrable {
 		this.shouldShutdownCommunication = shouldShutdownCommunication;
 		
 	}
+	/**
+	 * @return the errCode
+	 */
+	public int getErrCode() {
+		return errCode;
+	}
+	/**
+	 * @return the errorDescription
+	 */
+	public String getErrorDescription() {
+		return errorDescription;
+	}
+	/**
+	 * @return the shouldShutdownCommunication
+	 */
+	public boolean isShouldShutdownCommunication() {
+		return shouldShutdownCommunication;
+	}
 
 }
