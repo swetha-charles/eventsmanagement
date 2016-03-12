@@ -96,6 +96,15 @@ public class QueryManager {
 			setOperation(new OTErrorResponse("A message meant to be sent by the server (sucessful event creation) has been found at the query manager!" , false));
 			System.err.println("A message meant to be sent by the server (sucessful event creation) has been found at the query manager!");
 		}
+		//Get login credentials from the client
+		else if(currentOperation.getOpCode().equals("0012")){
+			checkLoginCreds(stmnt);
+		}
+		//Login success state object, should not be received by query manager
+		else if(currentOperation.getOpCode().equals("0013")){
+			setOperation(new OTErrorResponse("A message meant to be sent by the server (login success state) has been found at the query manager!" , false));
+			System.err.println("A message meant to be sent by the server (login success state) has been found at the query manager!");
+		}
 		//Unknown OP code response
 		else{
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!" , false));
@@ -165,6 +174,7 @@ public class QueryManager {
 	}
 	
 	private String checkRegistrationInformation(Statement stmnt){
+		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation)getOperation();
 		//TODO THIS METHOD NEEDS COMPLETING
 		
 		setOperation(new OTRegistrationInformationConfirmation(true, "", ""));
@@ -213,6 +223,12 @@ public class QueryManager {
 		return "";
 	}
 	
+	private String checkLoginCreds(Statement stmnt){
+		OTLogin classifiedOperation = (OTLogin)getOperation();
+		//TODO SQL query here, actually make thing smart.
+		setOperation(new OTLoginSucessful(true));
+		return "";
+	}
 
 
 }
