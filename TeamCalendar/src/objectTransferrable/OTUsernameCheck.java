@@ -6,7 +6,7 @@ public class OTUsernameCheck  extends ObjectTransferrable{
 	private boolean alreadyExists;
 	
 	public OTUsernameCheck(String username){
-		setOpCode("0001");
+		super("0001");
 		this.username= username;
 	}
 

@@ -18,7 +18,8 @@
  * OTErrorResponse = "0007"
  * {@link objectTransferrable.OTRequestMeetingsOnDay} = "0008"
  * {@link objectTransferrable.OTReturnDayEvents} = "0009"
- * 
+ * {@link objectTransferrable.OTCreateEvent} = "0010"
+ * {@link objectTransferrable.OTCreateEventSucessful} = "0011"
  * @author tmd668
  *
  */

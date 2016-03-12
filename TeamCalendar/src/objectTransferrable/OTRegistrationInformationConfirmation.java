@@ -10,11 +10,11 @@ package objectTransferrable;
  */
 public class OTRegistrationInformationConfirmation extends ObjectTransferrable {
 	private boolean registrationSuccess;
-	private String whatFailed, reasonForFailure, opcode;
+	private String whatFailed, reasonForFailure;
 	
 	
 	public OTRegistrationInformationConfirmation(boolean registrationSuccess, String whatFailed, String reasonForFailure) {
-		opcode = "0006";
+		super("0006");
 		this.registrationSuccess = registrationSuccess;
 		this.whatFailed = whatFailed;
 		this.reasonForFailure = reasonForFailure;

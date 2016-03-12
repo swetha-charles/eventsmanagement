@@ -11,7 +11,7 @@ public class OTRegistrationInformation extends ObjectTransferrable{
 	private String pwHash;
 	
 	public OTRegistrationInformation(String username, String email, String firstname, String lastname, String pwHash){
-		setOpCode("0003");
+		super("0003");
 		this.username = username;
 		this.email = email;
 		this.firstname = firstname;

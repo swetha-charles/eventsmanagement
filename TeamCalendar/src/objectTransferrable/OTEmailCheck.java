@@ -5,7 +5,7 @@ public class OTEmailCheck extends ObjectTransferrable{
 	private boolean alreadyExists;
 	
 	public OTEmailCheck(String email){
-		setOpCode("0002");
+		super("0002");
 		this.email= email;
 	}
 
