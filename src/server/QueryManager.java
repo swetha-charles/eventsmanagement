@@ -57,13 +57,12 @@ public class QueryManager {
 		}
 		//OTRegistrationCheck = "0003"
 		else if(currentOperation.getOpCode().equals("0003")){
-			query = checkRegistration(stmnt);
-			
+			query = checkRegistration(stmnt);	
 		}
 		//OTRegistrationInformation = "0004"
 		else if(currentOperation.getOpCode().equals("0004")){
 			setOperation(new OTErrorResponse("OP code currently out of use!" , false, 0004));
-			System.err.println("opcode is presently depricated, look at query manager! Responding with Error Object");
+			System.err.println("opcode is presently depricated! Responding with Error Object");
 		}
 		//OP CODE 0005 SPECIAL CASE TO EXIT PROGRAM
 		else if(currentOperation.getOpCode().equals("0005")){
@@ -79,6 +78,7 @@ public class QueryManager {
 		else if(currentOperation.getOpCode().equals("0007")){
 			dealWithError();
 		}
+		
 		//Unknown OP code response
 		else{
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!" , false));

@@ -24,6 +24,7 @@ public class OTErrorResponse extends ObjectTransferrable {
 	 * Error code if this error has a particular way of being dealt with
 	 */
 	public OTErrorResponse(String errorDescription, boolean shouldShutdownCommunication,int errCode){
+		super("0007");
 		this.errCode = errCode;
 		this.errorDescription = errorDescription;
 		this.shouldShutdownCommunication = shouldShutdownCommunication;
@@ -37,6 +38,7 @@ public class OTErrorResponse extends ObjectTransferrable {
 	 * Should the communication be shutdown?
 	 */
 	public OTErrorResponse(String errorDescription, boolean shouldShutdownCommunication){
+		super("0007");
 		this.errCode = 0;
 		this.errorDescription = errorDescription;
 		this.shouldShutdownCommunication = shouldShutdownCommunication;
