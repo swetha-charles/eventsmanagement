@@ -19,12 +19,12 @@ public class ThreadForServer extends Thread {
 	private boolean running = true;
 	private Model model;
 
-	public ThreadForServer(Client client, ObjectInputStream fromServer, Model model) {
+	public ThreadForServer(Client client) {
 		this.client = client;
-		this.fromServer = fromServer;
-		this.model = model;
-		
-	}
+		this.fromServer = client.getFromServer();
+		this.model = client.getModel();
+		//TODO could be simplified as all of this is stored by the client right? could be simplified further by just getting from the client object?
+		}
 
 	
 	@Override
