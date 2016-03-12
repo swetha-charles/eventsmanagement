@@ -30,32 +30,24 @@ public class Client {
 		view = new MainView(this, model);
 		model.addObserver(view);
 		this.waitingFor = new LinkedBlockingQueue<String>();
-
+		this.portnumber = portnumber;
 		try {
-			this.portnumber = portnumber;
+			
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client connected to port " + portnumber);
-		} catch (IOException e) {
-			model.changeCurrentState(ModelState.UNABLETOOPENSOCKET);
-		}
-
-		try {
 			toServer = new ObjectOutputStream(s.getOutputStream());
-		} catch (IOException e) {
-			model.changeCurrentState(ModelState.UNABLETOOPENSTREAMS);
-		}
-
-		try {
 			fromServer = new ObjectInputStream(s.getInputStream());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			model.changeCurrentState(ModelState.UNABLETOOPENSTREAMS);
+			e.printStackTrace();
 		}
-
-		threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.model));
+		//TODO why not just take all the these things from the original "this" supplier? I've added getters for them. And now i've simplified it.
+		threadForServer = new Thread(new ThreadForServer(this));
 		threadForServer.start();
 
 	}
-
+	//TODO Can this go? but from the hierarchy you although you are calling creating a new client object an almost ridiculous amount of times, i'm not delving into that right now
 	public Client() {
 
 	}
@@ -76,6 +68,9 @@ public class Client {
 						break;
 					} catch (InterruptedException e) {
 						// waitingFor is being accessed, try again!
+						/* TODO what is this doing? seems like it will just run at max speed and burn system resource, use a lock or synchronised i think, 
+						 * but why is this here in a when the method is creating the queue? and it should be blocking?
+						 */
 					}
 				}
 
@@ -273,13 +268,28 @@ public class Client {
 			} catch (IOException e) {
 				System.out.println("Could not create input stream to server");
 			}
-			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.model));
+			threadForServer = new Thread(new ThreadForServer(this));
 			threadForServer.start();
 		} else {
 			System.out.println("Goodbye!");
 			return;
 		}
 
+	}
+	
+
+	/**
+	 * @return the fromServer
+	 */
+	public ObjectInputStream getFromServer() {
+		return fromServer;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public Model getModel() {
+		return model;
 	}
 
 	public static void main(String[] args) {
