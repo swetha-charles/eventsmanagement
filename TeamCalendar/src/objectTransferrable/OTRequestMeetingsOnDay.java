@@ -10,8 +10,14 @@ import java.util.Calendar;
  *
  */
 public class OTRequestMeetings extends ObjectTransferrable {
+	
 	private String userName;
 	private Calendar dateRequest;
+	/**
+	 * 
+	 * @param userName - The username of the user
+	 * @param dateRequest - the date requested as a calendar
+	 */
 	public OTRequestMeetings(String userName, Calendar dateRequest) {
 		this.dateRequest = dateRequest;
 		this.userName = userName;
