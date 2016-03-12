@@ -12,10 +12,19 @@ import java.util.ArrayList;
  */
 public class OTReturnDayEvents extends ObjectTransferrable {
 	private ArrayList<Event> eventList;
+	private final String opcode;
 	public OTReturnDayEvents(ArrayList<Event> eventList){
 		this.eventList = eventList;
+		this.opcode = "0009";
 	}
 	
+	/**
+	 * @return the opcode
+	 */
+	public String getOpcode() {
+		return opcode;
+	}
+
 	/**
 	 * @return the eventList
 	 */
