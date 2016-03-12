@@ -7,19 +7,22 @@
  * which allows the subtypes to be desseminated
  * 
  * 
- * OTUsernameCheck "0001"
- * OTEmailCheck = "0002"
- * OTRegistrationInformation = "0003"
+ * {@link objectTransferrable.OTUsernameCheck} "0001"
+ * {@link objectTransferrable.OTEmailCheck} = "0002"
+ * {@link objectTransferrable.OTRegistrationInformation} = "0003"
  * 
  * **** OPEN OPCODE **** = "0004"
  * 
- * OTExitGracefully = "0005"
- * OTRegistrationInformationConfirmation = "0006"
- * OTErrorResponse = "0007"
+ * {@link objectTransferrable.OTExitGracefully} = "0005"
+ * {@link objectTransferrable.OTRegistrationInformationConfirmation} = "0006"
+ * {@link objectTransferrable.OTErrorResponse} = "0007"
  * {@link objectTransferrable.OTRequestMeetingsOnDay} = "0008"
  * {@link objectTransferrable.OTReturnDayEvents} = "0009"
  * {@link objectTransferrable.OTCreateEvent} = "0010"
  * {@link objectTransferrable.OTCreateEventSucessful} = "0011"
+ * {@link objectTransferrable.OTLogin} = "0012"
+ * {@link objectTransferrable.OTLoginSucessful} = "0013"
+ * {@link objectTransferrable.OTHeartBeat} = "0014"
  * @author tmd668
  *
  */
