@@ -1,6 +1,7 @@
 package server;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -64,7 +65,8 @@ public class ServerController extends JPanel {
 		textLayout.gridheight = 2;
 		buttonLayout.weightx = 1;
 		textLayout.weighty = 1;
-		add(text, textLayout);
+		JScrollPane jsp = new JScrollPane(text);
+		add(jsp, textLayout);
 
 		buttonLayout.fill = GridBagConstraints.BOTH;
 		buttonLayout.insets = new Insets(2,2,2,2);

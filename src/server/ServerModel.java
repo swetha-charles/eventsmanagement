@@ -32,7 +32,7 @@ public class ServerModel extends Observable{
 		return server;
 	}
 
-	public void addToText(String additionalText){
+	public synchronized void addToText(String additionalText){
 		setText(getText() + additionalText);
         setChanged();
         notifyObservers();
