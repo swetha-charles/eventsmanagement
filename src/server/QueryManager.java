@@ -44,32 +44,44 @@ public class QueryManager {
 		 * OTEmailCheck = "0002"
 		 * OTRegistrationCheck = "0003"
 		 * OTRegistrationInformation = "0004"
-		 * OTExitGracefully = "0005" - Should appear at query manager
+		 * OTExitGracefully = "0005" - Should not appear at query manager
 		 * OTRegistrationInformationConfirmation = "0006" - Should not appear at query manager
 		 */
-		
+		//OTUsernameCheck "0001"
 		if(currentOperation.getOpCode().equals("0001")){
 			query = checkUsername(stmnt);
 		} 
+		//OTEmailCheck = "0002"
 		else if(currentOperation.getOpCode().equals("0002")){
 			query = checkEmailvalid(stmnt);
 		}
+		//OTRegistrationCheck = "0003"
 		else if(currentOperation.getOpCode().equals("0003")){
 			query = checkRegistration(stmnt);
+			
 		}
+		//OTRegistrationInformation = "0004"
 		else if(currentOperation.getOpCode().equals("0004")){
-			query = checkRegistrationInformation(stmnt);
+			setOperation(new OTErrorResponse("OP code currently out of use!" , false, 0004));
+			System.err.println("opcode is presently depricated, look at query manager! Responding with Error Object");
 		}
 		//OP CODE 0005 SPECIAL CASE TO EXIT PROGRAM
-		else if(currentOperation.getOpCode().equals("0006")){
+		else if(currentOperation.getOpCode().equals("0005")){
 			System.err.println("Specially reserved opcode for exiting program has arrived at query manager!");
+			//No reason to tell the client, they gone, possible shutdown communication?
 		}
 		//OP CODE 0006 RETURN FROM SERVER, SHOULD NEVER APPEAR HERE
 		else if(currentOperation.getOpCode().equals("0006")){
+			setOperation(new OTErrorResponse("Server specified confirmation message recieved from client!" , false, 0006));
 			System.err.println("The object assocatied with this opcode should not be recieved from client! Responding with Error Object");
+		}
+		// The client has returned an error, considering client passive previous server response was bad
+		else if(currentOperation.getOpCode().equals("0007")){
+			dealWithError();
 		}
 		//Unknown OP code response
 		else{
+			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!" , false));
 			System.err.println("opcode of object not known by query manager! Responding with Error Object");
 		}
 		
@@ -93,10 +105,13 @@ public class QueryManager {
 				getServer().getServerModel().addToText("Found no such user, returning false.\n");
 				classifiedOperation.setAlreadyExists(false);
 			}
+			setOperation(classifiedOperation);
 		} catch (SQLException e) {
+			setOperation(new OTErrorResponse("SQL Server failed with username query", false));
 			e.printStackTrace();
+			
 		}
-		setOperation(classifiedOperation);
+		
 		return query;
 	}
 	
@@ -107,6 +122,21 @@ public class QueryManager {
 				"FROM users u " +
 				"GROUP BY u.email " +
 				"HAVING u.email = '" + classifiedOperation.getEmail() + "'" ;
+		try {
+			ResultSet rs = stmnt.executeQuery(query);
+			
+			if(rs.next()){
+				getServer().getServerModel().addToText("Email exists, returning true.\n");
+				classifiedOperation.setAlreadyExists(true);
+			} else {
+				getServer().getServerModel().addToText("Email not in use, returning false.\n");
+				classifiedOperation.setAlreadyExists(false);
+			}
+		} catch (SQLException e) {
+			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
+			e.printStackTrace();
+			
+		}
 		return "";
 	}
 	
@@ -115,6 +145,31 @@ public class QueryManager {
 	}
 	
 	private String checkRegistrationInformation(Statement stmnt){
+		return "";
+	}
+	
+	
+
+	private String dealWithError(){
+		
+		OTErrorResponse error = (OTErrorResponse) getOperation();
+		//Is known error response can go here
+		if (error.getErrCode()==0){
+		System.err.println("Undefined error from client, Description: " + error.getErrorDescription() + " Communications being shut down? " + error.isShouldShutdownCommunication());
+		}
+		else{
+			/**
+			 * TODO any specific error handling can go here
+			 */
+		}
+		
+		if (error.isShouldShutdownCommunication()){
+			
+			/**
+			 * TODO need to work out a call to shutdown, this is where being able to call exit gracefully could come in
+			 */
+		
+		}
 		return "";
 	}
 	
