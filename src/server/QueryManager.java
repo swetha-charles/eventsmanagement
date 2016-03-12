@@ -78,7 +78,24 @@ public class QueryManager {
 		else if(currentOperation.getOpCode().equals("0007")){
 			dealWithError();
 		}
-		
+		//Request for meetings on specific Day
+		else if(currentOperation.getOpCode().equals("0008")){
+			getMeetings(stmnt);
+		}
+		//Server Response to get meetings, should never get here
+		else if(currentOperation.getOpCode().equals("0009")){
+			setOperation(new OTErrorResponse("A message meant to be sent by the server (return list of meetings) has been found at the query manager!" , false));
+			System.err.println("A message meant to be sent by the server (return list of meetings) has been found at the query manager!");
+		}
+		//Request to create an event from the client
+		else if(currentOperation.getOpCode().equals("0010")){
+			createEvent(stmnt);
+		}
+		//This is a return message for event creation successful and should not be seen by server
+		else if(currentOperation.getOpCode().equals("0011")){
+			setOperation(new OTErrorResponse("A message meant to be sent by the server (sucessful event creation) has been found at the query manager!" , false));
+			System.err.println("A message meant to be sent by the server (sucessful event creation) has been found at the query manager!");
+		}
 		//Unknown OP code response
 		else{
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!" , false));
@@ -141,11 +158,18 @@ public class QueryManager {
 	}
 	
 	private String checkRegistration(Statement stmnt){
+		//TODO THIS METHOD MAY BE DEPRICATED
+		
+		
 		return "";
 	}
 	
 	private String checkRegistrationInformation(Statement stmnt){
+		//TODO THIS METHOD NEEDS COMPLETING
+		
+		setOperation(new OTRegistrationInformationConfirmation(true, "", ""));
 		return "";
+		
 	}
 	
 	
@@ -170,6 +194,22 @@ public class QueryManager {
 			 */
 		
 		}
+		return "";
+	}
+	
+	private String getMeetings(Statement stmnt){
+		OTRequestMeetingsOnDay classifiedOperation =(OTRequestMeetingsOnDay) getOperation();
+		//TODO SQL query here
+		
+		setOperation(new OTReturnDayEvents(new ArrayList<Event>()));
+		return "";
+	}
+	
+	private String createEvent(Statement stmnt){
+		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
+		//TODO SQL query here
+		
+		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
 		return "";
 	}
 	
