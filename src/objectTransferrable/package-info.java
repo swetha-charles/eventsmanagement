@@ -16,6 +16,8 @@
  * OTExitGracefully = "0005"
  * OTRegistrationInformationConfirmation = "0006"
  * OTErrorResponse = "0007"
+ * {@link objectTransferrable.OTRequestMeetingsOnDay} = "0008"
+ * {@link objectTransferrable.OTReturnDayEvents} = "0009"
  * 
  * @author tmd668
  *
