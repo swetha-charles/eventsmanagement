@@ -3,10 +3,25 @@
  */
 package objectTransferrable;
 
+import java.util.ArrayList;
+
 /**
- * @author Tom
+ * Returns the days event, for use as a response from the server
+ * @author tmd668
  *
  */
 public class OTReturnDayEvents extends ObjectTransferrable {
+	private ArrayList<Event> eventList;
+	public OTReturnDayEvents(ArrayList<Event> eventList){
+		this.eventList = eventList;
+	}
+	
+	/**
+	 * @return the eventList
+	 */
+	public ArrayList<Event> getEventList() {
+		return eventList;
+	}
+	
 	
 }
