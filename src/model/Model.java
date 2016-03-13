@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import bcrypt.BCrypt;
 import client.Client;
 import gui.ErrorConnectionDown;
 import gui.Login;
 import gui.Registration;
+import objectTransferrable.OTLogin;
 import objectTransferrable.OTRegistrationInformation;
 
 public class Model extends Observable {
@@ -204,7 +204,18 @@ public class Model extends Observable {
 	
 	//-------------------------ButtonMethods---------------//
 	
-	public void login(String username, String date){
+	public void login(String username, char[] password){
+		String passwordAsString = new String(password);
+		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
+		OTLogin loginObject = new OTLogin(username, hashedPassword);
+		
+		this.client.checkLoginDetails(loginObject);
+		
+		setSuccessfulLogin(true);
+		
+		if(getSuccessfulLogin()){
+			//TODO get the users information from the database and then set it
+		}
 		
 	}
 
@@ -275,6 +286,10 @@ public class Model extends Observable {
 
 	public boolean getSuccessfulLogin() {
 		return successfulLogin;
+	}
+
+	public void setSuccessfulLogin(boolean successfulLogin) {
+		this.successfulLogin = successfulLogin;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {

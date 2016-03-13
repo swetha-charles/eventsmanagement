@@ -225,8 +225,27 @@ public class QueryManager {
 	
 	private String checkLoginCreds(Statement stmnt){
 		OTLogin classifiedOperation = (OTLogin)getOperation();
-		//TODO SQL query here, actually make thing smart.
-		setOperation(new OTLoginSucessful(true));
+		//not sure what field name of email is? inserted guess
+		String query = "SELECT count(u.email) " + 
+				"FROM users u " +
+				"GROUP BY u.email " +
+				"HAVING u.email = '" + classifiedOperation.getEmail() + "'" ;
+		try {
+			ResultSet rs = stmnt.executeQuery(query);
+			
+			if(rs.next()){
+				getServer().getServerModel().addToText("Email exists, returning true.\n");
+				classifiedOperation.setAlreadyExists(true);
+			} else {
+				getServer().getServerModel().addToText("Email not in use, returning false.\n");
+				classifiedOperation.setAlreadyExists(false);
+			}
+		} catch (SQLException e) {
+			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
+			e.printStackTrace();
+			
+		}
+		setOperation(new OTLoginSuccessful(true));
 		return "";
 	}
 
