@@ -135,7 +135,7 @@ public class Client {
 		OTUsernameCheck otuc = new OTUsernameCheck(username);
 
 		this.writeToServer(otuc, false, otuc.getOpCode());
-		System.out.println("Sent OT with opcode" + otuc.getOpCode());
+		System.out.println("Sent OT with opcode " + otuc.getOpCode());
 
 	}
 
@@ -143,12 +143,12 @@ public class Client {
 		OTEmailCheck otec = new OTEmailCheck(email);
 
 		this.writeToServer(otec, false, otec.getOpCode());
-		System.out.println("Client: Sent OT with opcode" + otec.getOpCode());
+		System.out.println("Client: Sent OT with opcode " + otec.getOpCode());
 
 	}
 
 	public void checkRegistration(OTRegistrationInformation otri) {
-		String complementOpCode = "0004";
+		String complementOpCode = "0006";
 		this.writeToServer(otri, false, complementOpCode);
 		System.out.println("Client: Send OT with opcode " + otri.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);

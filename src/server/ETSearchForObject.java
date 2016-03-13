@@ -29,7 +29,7 @@ public class ETSearchForObject implements ExecutableTask {
 		if (getMasterServer().isServerActive() == true) {
 			try {
 				receivedObject = getClientInfo().getClientInput().readObject();
-				getMasterServer().getServerModel().addToText("Server received object: " + receivedObject.toString() + "\n");
+//				getMasterServer().getServerModel().addToText("Server received object: " + receivedObject.toString() + "\n");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
@@ -50,11 +50,11 @@ public class ETSearchForObject implements ExecutableTask {
 				ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 				getMasterServer().getThreadPool().execute(refreshedSearch);
 			} else {
-				getMasterServer().getServerModel().addToText("Object not null, server will try to cast this object\n");
+//				getMasterServer().getServerModel().addToText("Object not null, server will try to cast this object\n");
 
 				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
 
-				getMasterServer().getServerModel().addToText("Server tried to cast object: " + receivedOperation.getOpCode() + "\n");
+//				getMasterServer().getServerModel().addToText("Server tried to cast object: " + receivedOperation.getOpCode() + "\n");
 
 				if (receivedOperation != null) {
 					getMasterServer().getServerModel()

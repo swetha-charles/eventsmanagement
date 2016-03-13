@@ -37,7 +37,7 @@ public class Model extends Observable {
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
 	private Pattern emailRegex = Pattern
 			.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-	private Pattern dobRegex = Pattern.compile("\\d{2}-\\d{2}-\\d{4}");
+	private Pattern dobRegex = Pattern.compile("^[0-9]{2}-[0-9]{2}-[0-9]{4}$");
 
 	// ------------Registration information----------------------//
 	private String username;
@@ -133,7 +133,9 @@ public class Model extends Observable {
 	}
 
 	public boolean checkConfirmMatchesPassword(char[] confirm) {
-		if (confirm.equals(password)) {
+		String confirmPassword = new String(confirm);
+		String firstPassword = new String(password);
+		if (confirmPassword.equals(firstPassword)) {
 			this.passwordMatchesConfirm = true;
 			return true;
 		} else {
@@ -204,16 +206,19 @@ public class Model extends Observable {
 	}
 	
 	public void checkRegistrationInformation() {
-		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
-				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
-				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-			String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt());
-			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
-					this.lastname, hashedPassword);
-			this.client.checkRegistration(otri);
-		} else {
-
-		}
+		String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt());
+		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
+				this.lastname, hashedPassword);
+		System.out.println("Sending to server!");
+		this.client.checkRegistration(otri);
+//		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
+//				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
+//				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
+//
+//		} else {
+//
+//		}
+		
 	}
 
 	// --------Save information that returns from server----//
