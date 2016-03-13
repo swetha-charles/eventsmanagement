@@ -111,7 +111,7 @@ public class ListPanel extends JPanel{
 			m.setForeground(Color.DARK_GRAY);
 			eventNames.add(m);
 			JPanel p = new JPanel();
-			title = BorderFactory.createTitledBorder("Time");
+			title = BorderFactory.createTitledBorder(model.getMeetings().get(i).getStartTime().get(Calendar.HOUR_OF_DAY));
 			Border blackline = BorderFactory.createLineBorder(Color.red);
 			title.setTitleFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 //			title.setForeground(Color.GRAY);
