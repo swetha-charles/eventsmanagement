@@ -149,8 +149,8 @@ public class Client {
 
 	public void checkRegistration(OTRegistrationInformation otri) {
 		String complementOpCode = "0006";
-		this.writeToServer(otri, false, complementOpCode);
 		System.out.println("Client: Send OT with opcode " + otri.getOpCode());
+		this.writeToServer(otri, false, complementOpCode);
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
 
