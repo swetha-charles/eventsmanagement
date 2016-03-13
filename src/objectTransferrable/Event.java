@@ -94,7 +94,7 @@ public class Event {
 	}
 	
 	/**
-	 * Calculates and returns the end time of the event
+	 * Returns the end time of the event.
 	 * @return end time of the event
 	 */
 	public Calendar getEndTime(){
