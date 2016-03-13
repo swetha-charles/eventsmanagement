@@ -93,19 +93,19 @@ public class MenuPanel extends JPanel{
 
 	}
 	
-	public static void main(String[] args) {
-		
-		JFrame frame = new JFrame();
-		Client controller = new Client();
-		
-		MenuPanel menu = new MenuPanel(controller, model);
-		
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(menu);
-		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-		frame.setResizable(true);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		
+//		JFrame frame = new JFrame();
+//		Client controller = new Client();
+//		
+//		MenuPanel menu = new MenuPanel(controller, model);
+//		
+//		JFrame.setDefaultLookAndFeelDecorated(true);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setContentPane(menu);
+//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+//		frame.setResizable(true);
+//		frame.setVisible(true);
+//	}
 
 }

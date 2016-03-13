@@ -260,8 +260,7 @@ public class Model extends Observable {
 	}
 	
 //	method to get meetings
-	
-	public void getMeetingsOnDay(String userName, Calendar dateRequest)
+
 
 	// --------End of information from server------------//
 
