@@ -103,7 +103,7 @@ public class ListPanel extends JPanel{
 		top.add(addEvent);
 		
 		//for each event do this
-		for(int i=0; i<24; i++){
+		for(int i=0; i<model.getMeetings().size(); i++){
 //			l.setPreferredSize(new Dimension(20,100));
 			JLabel m = new JLabel("Event name", SwingConstants.LEFT);
 			m.setVerticalAlignment(SwingConstants.CENTER);
@@ -111,7 +111,7 @@ public class ListPanel extends JPanel{
 			m.setForeground(Color.DARK_GRAY);
 			eventNames.add(m);
 			JPanel p = new JPanel();
-			title = BorderFactory.createTitledBorder(model.getMeetings().get(i).getStartTime().get(Calendar.HOUR_OF_DAY));
+//			title = BorderFactory.createTitledBorder(model.getMeetings().get(i).getstartTime().get(Calendar.HOUR_OF_DAY));
 			Border blackline = BorderFactory.createLineBorder(Color.red);
 			title.setTitleFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 //			title.setForeground(Color.GRAY);
@@ -317,20 +317,20 @@ public class ListPanel extends JPanel{
 		
 	}
 	
-	public static void main(String[] args) throws IOException {
-		
-		JFrame frame = new JFrame();
-		Client controller = new Client();
-		
-		ListPanel loginPanel = new ListPanel(controller);
-		JScrollPane scroll = new JScrollPane(loginPanel);
-		
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(scroll);
-		frame.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
-		frame.setResizable(true);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) throws IOException {
+//		
+//		JFrame frame = new JFrame();
+//		Client controller = new Client();
+//		
+//		ListPanel loginPanel = new ListPanel(controller);
+//		JScrollPane scroll = new JScrollPane(loginPanel);
+//		
+//		JFrame.setDefaultLookAndFeelDecorated(true);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setContentPane(scroll);
+//		frame.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+//		frame.setResizable(true);
+//		frame.setVisible(true);
+//	}
 
 }
