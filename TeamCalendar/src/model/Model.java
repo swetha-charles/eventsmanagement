@@ -273,6 +273,10 @@ public class Model extends Observable {
 		return email;
 	}
 
+	public boolean getSuccessfulLogin() {
+		return successfulLogin;
+	}
+
 	public synchronized void changeCurrentState(ModelState state) {
 		this.currentstate = state;
 
