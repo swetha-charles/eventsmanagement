@@ -59,7 +59,8 @@ public class Model extends Observable {
 	private boolean oldEnough = false;
 	// --------------Login success----------------//
 	private boolean successfulLogin = false;
-
+	private boolean successfulRegistration = false;
+	
 	public Model(Client client) {
 		this.client = client;
 		this.currentstate = ModelState.LOGIN;
@@ -180,27 +181,6 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
 
-	public void checkRegistrationInformation(String firstname, String lastname, String dob, String password,
-			String confirm) {
-
-		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
-				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
-				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-			String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt()); // Does
-																								// this
-																								// work?
-																								// needs
-																								// some
-																								// research.
-			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
-					this.lastname, hashedPassword);
-			this.client.checkRegistration(otri);
-		} else {
-
-		}
-
-	}
-
 	public void promptRestart() {
 		if (this.error != null) {
 			this.error.promptRestart();
@@ -223,8 +203,17 @@ public class Model extends Observable {
 		this.client.checkLoginDetails(loginObject);
 	}
 	
-	public void submitRegistrationForm(){
-		
+	public void checkRegistrationInformation() {
+		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
+				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
+				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
+			String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt());
+			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
+					this.lastname, hashedPassword);
+			this.client.checkRegistration(otri);
+		} else {
+
+		}
 	}
 
 	// --------Save information that returns from server----//
@@ -314,6 +303,30 @@ public class Model extends Observable {
 
 	public void setSuccessfulLogin(boolean successfulLogin) {
 		this.successfulLogin = successfulLogin;
+	}
+
+	public String getDob() {
+		return dob;
+	}
+
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+
+	public char[] getPassword() {
+		return password;
+	}
+
+	public void setPassword(char[] password) {
+		this.password = password;
+	}
+
+	public boolean isSuccessfulRegistration() {
+		return successfulRegistration;
+	}
+
+	public void setSuccessfulRegistration(boolean successfulRegistration) {
+		this.successfulRegistration = successfulRegistration;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
