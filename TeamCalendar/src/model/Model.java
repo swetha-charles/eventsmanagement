@@ -209,7 +209,8 @@ public class Model extends Observable {
 	}
 	
 	public void checkRegistrationInformation() {
-		String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt());
+		String passwordAsString = new String(password);
+		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
 				this.lastname, hashedPassword);
 		System.out.println("Sending to server!");

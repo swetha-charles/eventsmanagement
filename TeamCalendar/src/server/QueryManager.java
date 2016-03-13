@@ -175,8 +175,10 @@ public class QueryManager {
 		String update = "INSERT INTO users VALUES ('"+ classifiedOperation.getUsername() +"', '" + classifiedOperation.getPwHash() + "', '"+classifiedOperation.getFirstname()+"', '"+classifiedOperation.getLastname()+"', '"+classifiedOperation.getEmail()+"')";
 		try {
 			stmnt.executeUpdate(update);
+			getServer().getServerModel().addToText("Succesfully created user");
 			setOperation(new OTRegistrationInformationConfirmation(true, null, null));
 		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't create user");
 			setOperation(new OTRegistrationInformationConfirmation(false, "ERROR", "ERROR"));
 			e.printStackTrace();
 		}
