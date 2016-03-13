@@ -12,6 +12,7 @@ import model.ModelState;
 import objectTransferrable.OTEmailCheck;
 import objectTransferrable.OTExitGracefully;
 import objectTransferrable.OTLogin;
+import objectTransferrable.OTLoginSuccessful;
 import objectTransferrable.OTRegistrationInformation;
 import objectTransferrable.OTUsernameCheck;
 import objectTransferrable.ObjectTransferrable;
@@ -23,32 +24,24 @@ public class Client {
 	private Model model;
 	private MainView view;
 	private Socket s;
-	private Thread threadForServer = null;
-	private LinkedBlockingQueue<String> waitingFor;
 
 	public Client(int portnumber) {
 		model = new Model(this);
 		view = new MainView(this, model);
 		model.addObserver(view);
-		this.waitingFor = new LinkedBlockingQueue<String>();
 		this.portnumber = portnumber;
 		try {
-			
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			model.changeCurrentState(ModelState.UNABLETOOPENSTREAMS);
 			e.printStackTrace();
 		}
-		//TODO why not just take all the these things from the original "this" supplier? I've added getters for them. And now i've simplified it.
-		threadForServer = new Thread(new ThreadForServer(this));
-		threadForServer.start();
 
 	}
-	//TODO Can this go? but from the hierarchy you although you are calling creating a new client object an almost ridiculous amount of times, i'm not delving into that right now
+
 	public Client() {
 
 	}
@@ -63,18 +56,7 @@ public class Client {
 		try {
 			this.toServer.writeObject(OT);
 			if (!exit) {
-				while (true) {
-					try {
-						this.waitingFor.put(complementOpCode);
-						break;
-					} catch (InterruptedException e) {
-						// waitingFor is being accessed, try again!
-						/* TODO what is this doing? seems like it will just run at max speed and burn system resource, use a lock or synchronised i think, 
-						 * but why is this here in a when the method is creating the queue? and it should be blocking?
-						 */
-					}
-				}
-
+				this.readFromServer(complementOpCode);
 			}
 		} catch (IOException e) {
 			// Connection is down, what do we do?
@@ -85,8 +67,68 @@ public class Client {
 		}
 	}
 
-	public LinkedBlockingQueue<String> getWaitingFor() {
-		return waitingFor;
+	public void readFromServer(String waitingForOpcode) {
+		ObjectTransferrable receivedOperation = null;
+		try {
+			receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
+			System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
+			if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
+				System.out.println("Client was expecting OT with OpCode " + waitingForOpcode
+						+ "but received OT with OpCode " + receivedOperation.getOpCode());
+				// should we cause an error here? throw new RuntimeException();
+			}
+			this.runOT(receivedOperation);
+		} catch (ClassNotFoundException e) {
+			// When the ObjectTransferrable isn't the right class
+			System.out.println("OT from server could not be read");
+
+		} catch (IOException e2) {
+			System.out.println("Server connection is down");
+			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+			return;
+		}
+	}
+
+	private void runOT(ObjectTransferrable receivedOperation) {
+		switch (receivedOperation.getOpCode()) {
+
+		case "0001":
+			OTUsernameCheck otuc = (OTUsernameCheck) receivedOperation;
+			if (otuc.getAlreadyExists()) {
+				this.model.setUsername(otuc.getUsername());
+				this.model.setUsernameExists(true);
+			} else if (!otuc.getAlreadyExists()) {
+				this.model.setUsername(otuc.getUsername());
+				this.model.setUsernameExists(false);
+			}
+			break;
+		case "0002":
+			OTEmailCheck otec = (OTEmailCheck) receivedOperation;
+			if (otec.getAlreadyExists()) {
+				this.model.setEmail(otec.getEmail());
+				this.model.setEmailExists(true);
+			} else if (!otec.getAlreadyExists()) {
+				this.model.setEmail(otec.getEmail());
+				this.model.setEmailExists(false);
+			}
+			break;
+		case "0013":
+			OTLoginSuccessful loginObject = (OTLoginSuccessful) receivedOperation;
+			if (loginObject.isLoginSuccessful()) {
+				this.model.setSuccessfulLogin(true);
+				this.model.setFirstName(loginObject.getFirstName());
+				this.model.setLastname(loginObject.getLastName());
+				this.model.setEmail(loginObject.getEmail());
+				this.model.changeCurrentState(ModelState.LIST);
+			} else {
+				this.model.setSuccessfulLogin(false);
+				this.model.setFirstName(null);
+				this.model.setLastname(null);
+				this.model.setEmail(null);
+				this.model.setUsername(null);
+			}
+			break;
+		}
 	}
 
 	public void checkUsername(String username) {
@@ -111,8 +153,8 @@ public class Client {
 		System.out.println("Client: Send OT with opcode " + otri.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
-	
-	public void checkLoginDetails(OTLogin loginObject){
+
+	public void checkLoginDetails(OTLogin loginObject) {
 		String complementOpCode = "0013";
 		this.writeToServer(loginObject, false, complementOpCode);
 		System.out.println("Client: Send OT with opcode " + loginObject.getOpCode());
@@ -133,25 +175,6 @@ public class Client {
 				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
 				toServer = null;
 			}
-
-			this.threadForServer.interrupt();
-			System.out.println("Interrupted threadForServer");
-			int count = 0;
-			// wait for ~1 minute for threadForServer to die.
-			while (threadForServer.isAlive() && count < 60) {
-				try {
-					count++;
-					threadForServer.interrupt();
-					Thread.currentThread();
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					System.out.println("Client has been interrupted and will quit");
-					break;
-				}
-			}
-
-			// threadForServer may not yet have died but that's OK, we can't
-			// wait forever.
 
 			try {
 				s.close();
@@ -174,47 +197,23 @@ public class Client {
 				toServer = null;
 			}
 
-			this.threadForServer.interrupt();
-			System.out.println("Interrupted threadForServer");
-			int count = 0;
-			while (threadForServer.isAlive() && count < 20) {
-				try {
-					Thread.currentThread();
-					Thread.sleep(1000);
-					count++;
-				} catch (InterruptedException e) {
-					try {
-						s.shutdownInput();
-					} catch (IOException e1) {
-						// Socket may already be closed
-					}
-					break;
-				}
+			try {
+				s.shutdownInput();
+				System.out.println("Output stream to server has been shutdown");
+
+			} catch (IOException e1) {
+				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
+				toServer = null;
 			}
 
-			if (!s.isClosed()) {
-				if (!s.isInputShutdown()) {
-					try {
-						s.shutdownInput();
-					} catch (IOException e) {
-						System.out.println("Input stream from server is malfunctioning");
-					}
-				}
-				if (!s.isOutputShutdown()) {
-					try {
-						s.shutdownInput();
-					} catch (IOException e) {
-						System.out.println("Output stream to server is malfunctioning");
-					}
-				}
-				try {
-					s.close();
-				} catch (IOException e) {
-					s = null;
-					System.out.println("Socket is malfunctinoning");
-				}
+			try {
+				s.close();
+			} catch (IOException e) {
+				s = null;
+				System.out.println("Socket is malfunctinoning. \n Setting socket to null");
 			}
 		}
+
 	}
 
 	private void attemptRecovery() {
@@ -276,15 +275,12 @@ public class Client {
 			} catch (IOException e) {
 				System.out.println("Could not create input stream to server");
 			}
-			threadForServer = new Thread(new ThreadForServer(this));
-			threadForServer.start();
 		} else {
 			System.out.println("Goodbye!");
 			return;
 		}
 
 	}
-	
 
 	/**
 	 * @return the fromServer
