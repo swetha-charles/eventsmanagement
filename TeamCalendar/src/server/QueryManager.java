@@ -226,20 +226,22 @@ public class QueryManager {
 	private String checkLoginCreds(Statement stmnt){
 		OTLogin classifiedOperation = (OTLogin)getOperation();
 		//not sure what field name of email is? inserted guess
-		String query = "SELECT count(*) " + 
+		String query = "SELECT u.userName, u.firstName, u.lastName, u.userEmail " + 
 				"FROM users u " +
-				"GROUP BY u.userID " +
-				"HAVING u.userName = '" + classifiedOperation.getUsername() + "' AND u.password = '" + classifiedOperation.getPwHash() + "'";
+				"WHERE u.userName = '" + classifiedOperation.getUsername() + "' AND u.password = '" + classifiedOperation.getPwHash() + "'";
 		try {
 			ResultSet rs = stmnt.executeQuery(query);
 			
 			if(rs.next()){
 				getServer().getServerModel().addToText("Login details CORRECT for "+ classifiedOperation.getUsername() +"\n");
-				
-				setOperation(new OTLoginSuccessful(true));
+				String firstName, lastName, email;
+				firstName = rs.getString(2);
+				lastName = rs.getString(3);
+				email = rs.getString(4);
+				setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
 			} else {
 				getServer().getServerModel().addToText("Login details INCORRECT for "+ classifiedOperation.getUsername() +"\n");
-				setOperation(new OTLoginSuccessful(true));
+				setOperation(new OTLoginSuccessful(false, null, null, null));
 			}
 		} catch (SQLException e) {
 			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
