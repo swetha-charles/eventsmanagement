@@ -10,10 +10,13 @@ public class QueryManager {
 
 	private ObjectTransferrable operation;
 	private Server server;
+	private ClientInfo clientInfo;
 
-	public QueryManager(ObjectTransferrable operation, Server server){
+	public QueryManager(ObjectTransferrable operation, Server server, ClientInfo clientInfo){
 		this.operation = operation;
 		this.server = server;
+		this.clientInfo = clientInfo;
+		
 	}	
 	
 	public ObjectTransferrable getOperation() {
@@ -221,8 +224,10 @@ public class QueryManager {
 		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
 		Event event = classifiedOperation.getEvent();
 		java.sql.Date eventDate = new java.sql.Date(event.getStartTime().getTimeInMillis());
-		String username = event.
-		String query = "INSERT INTO";
+		String username = this.clientInfo.getUserName();
+		
+		
+		String query = "INSERT INTO " ;
 		
 		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
 		return "";
