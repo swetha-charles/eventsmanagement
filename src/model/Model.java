@@ -16,6 +16,7 @@ import gui.Login;
 import gui.Password;
 import gui.Profile;
 import gui.Registration;
+import jBCrypt.BCrypt;
 import objectTransferrable.OTLogin;
 import objectTransferrable.OTRegistrationInformation;
 
