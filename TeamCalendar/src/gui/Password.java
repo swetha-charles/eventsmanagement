@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import client.Client;
+import model.Model;
 
 public class Password extends JPanel{
 	
@@ -15,14 +16,16 @@ public class Password extends JPanel{
 	 */
 	private static final long serialVersionUID = -6891502734315534592L;
 	private Client controller = null;
+	private Model model;
 	MenuPanel bar;
 	PasswordPanel password;
 	
-	public Password(Client controller){
+	public Password(Client controller, Model model){
 		
 		this.controller = controller;
-		bar = new MenuPanel(controller);
-		password = new PasswordPanel(controller);
+		this.model = model;
+		bar = new MenuPanel(controller, model);
+		password = new PasswordPanel(controller, model);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 

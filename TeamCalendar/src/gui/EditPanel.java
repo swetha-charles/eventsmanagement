@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,15 +32,13 @@ public class EditPanel extends JPanel{
 	JLabel firstName = new JLabel("First Name");
 	JLabel lastName = new JLabel("Last Name");
 	JLabel email = new JLabel("Email");
-	JLabel dob = new JLabel("Date of Birth");
 	JLabel password = new JLabel("Password");
 	JLabel comment = new JLabel("To save changes please enter your password");
 	JLabel empty = new JLabel();
 
-	JTextField firstNameA = new JTextField("Natalie McDonnell");
-	JTextField lastNameA = new JTextField("Natalie McDonnell");
-	JTextField emailA = new JTextField("natalie.mcdonnell1@hotmail.co.uk");
-	JTextField dobA = new JTextField("08/05/1994");
+	JTextField firstNameA;
+	JTextField lastNameA;
+	JTextField emailA;
 	JPasswordField passwordA = new JPasswordField();
 	
 	JButton submit = new JButton("Confirm Changes");
@@ -49,6 +49,9 @@ public class EditPanel extends JPanel{
 		
 		this.controller = controller;
 		this.model = model;
+		firstNameA = new JTextField(model.getFirstName());
+		lastNameA = new JTextField(model.getLastName());
+		emailA = new JTextField(model.getEmail());
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
@@ -57,7 +60,6 @@ public class EditPanel extends JPanel{
 		firstName.setForeground(Color.DARK_GRAY);
 		lastName.setForeground(Color.DARK_GRAY);
 		email.setForeground(Color.DARK_GRAY);
-		dob.setForeground(Color.DARK_GRAY);
 		password.setForeground(Color.DARK_GRAY);
 		comment.setForeground(Color.GRAY);
 		
@@ -68,8 +70,6 @@ public class EditPanel extends JPanel{
 		lastNameA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		email.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		emailA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		dob.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		dobA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		password.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		passwordA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		comment.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
@@ -84,8 +84,6 @@ public class EditPanel extends JPanel{
 		detailsPanel.add(lastNameA);
 		detailsPanel.add(email);
 		detailsPanel.add(emailA);
-		detailsPanel.add(dob);
-		detailsPanel.add(dobA);
 		detailsPanel.add(comment);
 		detailsPanel.add(empty);
 		detailsPanel.add(password);
@@ -110,6 +108,20 @@ public class EditPanel extends JPanel{
 		
 		layout.putConstraint(SpringLayout.WEST, cancel, 10, SpringLayout.EAST, submit);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 20, SpringLayout.SOUTH, detailsPanel);
+		
+		//----------------------Listeners----------------------//
+		
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				
+			}
+		});
 	}
 	
 public static void main(String[] args) {

@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -178,8 +180,43 @@ public class ListPanel extends JPanel{
 		add(Box.createRigidArea(new Dimension(50,0)));
 		add(event);
 		
+		//----------------------Listeners----------------------//
+		previous.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+						
+			}
+		});
+		
+		next.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+						
+			}
+		});
+		
+		addEvent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+						
+			}
+		});
 	}
 	
+	
+	
+	public void setEvent(JPanel event, int a) {
+		if(a==1){
+//			set panel as new event
+		} else {
+//			set
+		}
+		this.event = event;
+	}
+
+	public void setDate(JLabel date, int a) {
+		this.date = date;
+	}
+
+
+
 	public static void getMeetings(){
 		//get tuples with todays date in ascending order of time
 		//while there is a next store in arraylist of array and return

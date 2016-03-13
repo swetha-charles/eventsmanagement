@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,7 +32,6 @@ public class PasswordPanel extends JPanel{
 	JLabel oldPassword = new JLabel("Old Password");
 	JLabel newPassword = new JLabel("New Password");
 	JLabel confirmNew = new JLabel("Confirm New Password");
-	JLabel comment = new JLabel("To save changes please enter your password");
 	JLabel empty = new JLabel();
 
 	JPasswordField oldPasswordA = new JPasswordField();
@@ -53,7 +54,6 @@ public class PasswordPanel extends JPanel{
 		oldPassword.setForeground(Color.DARK_GRAY);
 		newPassword.setForeground(Color.DARK_GRAY);
 		confirmNew.setForeground(Color.DARK_GRAY);
-		comment.setForeground(Color.GRAY);
 		
 		hello.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 30));
 		oldPassword.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
@@ -62,7 +62,6 @@ public class PasswordPanel extends JPanel{
 		oldPasswordA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		newPasswordA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		confirmNewA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		comment.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		
@@ -94,6 +93,20 @@ public class PasswordPanel extends JPanel{
 		
 		layout.putConstraint(SpringLayout.WEST, cancel, 10, SpringLayout.EAST, submit);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 20, SpringLayout.SOUTH, detailsPanel);
+		
+		//----------------------Listeners----------------------//
+		
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+						
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				
+			}
+		});
 	}
 	
 public static void main(String[] args) {
