@@ -91,12 +91,20 @@ public class ThreadForServer extends Thread {
 				this.model.setEmailExists(false);
 			}
 			break;
-		case "0012":
+		case "0013":
 			OTLoginSuccessful loginObject = (OTLoginSuccessful) receivedOperation;
 			if(loginObject.isLoginSuccessful()){
 				this.model.setSuccessfulLogin(true);
+				this.model.setFirstName(loginObject.getFirstName());
+				this.model.setLastname(loginObject.getLastName());
+				this.model.setEmail(loginObject.getEmail());
+				this.model.changeCurrentState(ModelState.LIST);
 			} else {
 				this.model.setSuccessfulLogin(false);
+				this.model.setFirstName(null);
+				this.model.setLastname(null);
+				this.model.setEmail(null);
+				this.model.setUsername(null);
 			}
 			break;
 		}

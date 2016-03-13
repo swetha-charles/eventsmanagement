@@ -218,13 +218,12 @@ public class Model extends Observable {
 		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 		OTLogin loginObject = new OTLogin(username, hashedPassword);
 		
+		setUsername(username);
+		
 		this.client.checkLoginDetails(loginObject);
-		
-		setSuccessfulLogin(true);
-		
-		if(getSuccessfulLogin()){
-			//TODO get the users information from the database and then set it
-		}
+	}
+	
+	public void submitRegistrationForm(){
 		
 	}
 
@@ -262,6 +261,22 @@ public class Model extends Observable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 	public boolean isEmailUnique() {

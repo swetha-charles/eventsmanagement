@@ -113,7 +113,7 @@ public class Client {
 	}
 	
 	public void checkLoginDetails(OTLogin loginObject){
-		String complementOpCode = "0013"; 
+		String complementOpCode = "0013";
 		this.writeToServer(loginObject, false, complementOpCode);
 		System.out.println("Client: Send OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
