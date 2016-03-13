@@ -46,7 +46,7 @@ public class ProfilePanel extends JPanel{
 		this.model = model;
 		
 		//here we need it to get the information from the database
-		nameA = new JLabel(model.getFirstName() + " " + model.getLastName());
+		nameA = new JLabel(model.getFirstName() + " " + model.getLastname());
 		emailA = new JLabel(model.getEmail());
 		hello = new JLabel("Hello "+ model.getUsername() +"!");
 		

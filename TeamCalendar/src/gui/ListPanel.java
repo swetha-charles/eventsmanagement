@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,11 +21,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 import client.Client;
+import listener.interfaces.MouseClickedListener;
 import model.Model;
+import model.ModelState;
 
 public class ListPanel extends JPanel{
 	
@@ -40,6 +46,7 @@ public class ListPanel extends JPanel{
 	JScrollPane listscroll;
 	
 	JPanel event = new JPanel();
+	JLabel name = new JLabel("Event name");
 	JLabel eventName;
 	JLabel empty = new JLabel("");
 	JLabel descriptionLabel = new JLabel("Description");
@@ -51,7 +58,9 @@ public class ListPanel extends JPanel{
 	JLabel locationLabel = new JLabel("Location");
 	JLabel locationA;
 	JButton edit = new JButton("Edit Event");
+	JButton submit = new JButton("Add Event");
 	
+	Calendar c = new GregorianCalendar();
 	
 	JPanel top = new JPanel();
 	JLabel date;
@@ -61,8 +70,11 @@ public class ListPanel extends JPanel{
 	JButton previous = new JButton("Previous Day");
 	JButton next = new JButton("Next Day");
 	
+	TitledBorder title;
+	
 	ArrayList<JLabel> times = new ArrayList<JLabel>();
 	ArrayList<JPanel> timeevent = new ArrayList<JPanel>();
+	ArrayList<JLabel> eventNames = new ArrayList<JLabel>();
 	
 	public ListPanel(Client controller, Model model){
 		
@@ -74,7 +86,8 @@ public class ListPanel extends JPanel{
 		setMaximumSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-200));
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
-		this.date=getDate();
+		date=getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR));
+		
 //		date.setPreferredSize(new Dimension(100,50));
 		date.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 25));
 		date.setForeground(Color.DARK_GRAY);
@@ -89,15 +102,20 @@ public class ListPanel extends JPanel{
 		top.add(Box.createRigidArea(new Dimension(20,0)));
 		top.add(addEvent);
 		
+		//for each event do this
 		for(int i=0; i<24; i++){
-			String s = Integer.toString(i)+":00"; 
-			JLabel l = new JLabel(s, SwingConstants.LEFT);
-			l.setVerticalAlignment(SwingConstants.CENTER);
-			l.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
-			l.setForeground(Color.GRAY);
-			l.setPreferredSize(new Dimension(20,100));
-			times.add(l);
+//			l.setPreferredSize(new Dimension(20,100));
+			JLabel m = new JLabel("Event name", SwingConstants.LEFT);
+			m.setVerticalAlignment(SwingConstants.CENTER);
+			m.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
+			m.setForeground(Color.DARK_GRAY);
+			eventNames.add(m);
 			JPanel p = new JPanel();
+			title = BorderFactory.createTitledBorder("Time");
+			Border blackline = BorderFactory.createLineBorder(Color.red);
+			title.setTitleFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
+//			title.setForeground(Color.GRAY);
+			p.setBorder(title);
 			timeevent.add(p);
 		}
 		
@@ -105,7 +123,7 @@ public class ListPanel extends JPanel{
 		list.setLayout(new GridLayout(24,2));
 		
 		for(int i = 0; i<24; i++){
-			list.add(times.get(i));
+			timeevent.get(i).add(eventNames.get(i));
 			list.add(timeevent.get(i));
 		}
 		
@@ -122,12 +140,7 @@ public class ListPanel extends JPanel{
 		event.setMinimumSize(new Dimension(400,200));
 		event.setMaximumSize(new Dimension(400,200));
 		
-		eventName = new JLabel("Group Meeting");
-		decription = new JLabel("Software Workshop group project meeting.");
-		dateA = new JLabel("12/05/2016");
-		timeA = new JLabel("13:00");
-		locationA = new JLabel("CS 222");
-		
+		name.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 		eventName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 		descriptionLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		decription.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
@@ -137,8 +150,10 @@ public class ListPanel extends JPanel{
 		timeA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		locationLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		locationA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
+		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		
+		name.setForeground(Color.DARK_GRAY);
 		descriptionLabel.setForeground(Color.GRAY);
 		decription.setForeground(Color.DARK_GRAY);
 		dateLabel.setForeground(Color.GRAY);
@@ -147,18 +162,6 @@ public class ListPanel extends JPanel{
 		timeA.setForeground(Color.DARK_GRAY);
 		locationLabel.setForeground(Color.GRAY);
 		locationA.setForeground(Color.DARK_GRAY);
-		
-		event.add(eventName);
-		event.add(empty);
-		event.add(descriptionLabel);
-		event.add(decription);
-		event.add(dateLabel);
-		event.add(dateA);
-		event.add(timeLabel);
-		event.add(timeA);
-		event.add(locationLabel);
-		event.add(locationA);
-		event.add(edit);
 		
 		changeDay.setPreferredSize(new Dimension(610,50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
@@ -181,21 +184,30 @@ public class ListPanel extends JPanel{
 		add(event);
 		
 		//----------------------Listeners----------------------//
+		
+		for(int i=0; i<timeevent.size(); i++){
+			timeevent.get(i).addMouseListener((MouseClickedListener) (e) ->{
+				setEvent(event, 2);
+			});
+		}
+		
 		previous.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-						
+				c.add(Calendar.DATE, 1);
+				setDate(date, c);
 			}
 		});
 		
 		next.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-						
+				c.add(Calendar.DATE, -1);
+				setDate(date, c);
 			}
 		});
 		
 		addEvent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-						
+				setEvent(event, 1);		
 			}
 		});
 	}
@@ -204,18 +216,47 @@ public class ListPanel extends JPanel{
 	
 	public void setEvent(JPanel event, int a) {
 		if(a==1){
-//			set panel as new event
+//			set panel as add new event
+			event.add(name);
+			event.add(new JTextField());
+			event.add(descriptionLabel);
+			event.add(new JTextField());
+			event.add(dateLabel);
+			event.add(new JTextField());
+			event.add(timeLabel);
+			event.add(new JTextField());
+			event.add(locationLabel);
+			event.add(new JTextField());
+			event.add(submit);
+			
 		} else {
-//			set
+//			set panel as event clicked on
+			eventName = new JLabel();
+			decription = new JLabel();
+			dateA = new JLabel();
+			timeA = new JLabel();
+			locationA = new JLabel();
+			
+			event.add(eventName);
+			event.add(empty);
+			event.add(descriptionLabel);
+			event.add(decription);
+			event.add(dateLabel);
+			event.add(dateA);
+			event.add(timeLabel);
+			event.add(timeA);
+			event.add(locationLabel);
+			event.add(locationA);
+			event.add(edit);
 		}
+		
 		this.event = event;
 	}
-
-	public void setDate(JLabel date, int a) {
+	
+	public void setDate(JLabel date, Calendar c){
+		date = getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR));
 		this.date = date;
 	}
-
-
 
 	public static void getMeetings(){
 		//get tuples with todays date in ascending order of time
@@ -229,12 +270,7 @@ public class ListPanel extends JPanel{
 		//make arraylist of JPanels with JLabels inside and return
 	}
 	
-	public static JLabel getDate(){
-		
-		Calendar c = new GregorianCalendar();
-		int day = c.get(Calendar.DAY_OF_WEEK);
-		int date = c.get(Calendar.DATE);
-		int month = c.get(Calendar.MONTH);
+	public static JLabel getDate(int day, int date, int month, int year){
 		
 		StringBuffer s = new StringBuffer();
 		
@@ -274,6 +310,8 @@ public class ListPanel extends JPanel{
 			case 10: s.append("November"); break;
 			case 11: s.append("December"); break;
 		}
+		
+		s.append(" " + year);
 		
 		return new JLabel(s.toString());
 		
