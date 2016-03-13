@@ -17,6 +17,7 @@ import javax.swing.SpringLayout;
 
 import client.Client;
 import model.Model;
+import model.ModelState;
 
 public class PasswordPanel extends JPanel{
 
@@ -104,7 +105,7 @@ public class PasswordPanel extends JPanel{
 		
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				
+				model.changeCurrentState(ModelState.PROFILE);
 			}
 		});
 	}

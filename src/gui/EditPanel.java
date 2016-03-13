@@ -18,6 +18,7 @@ import javax.swing.SpringLayout;
 
 import client.Client;
 import model.Model;
+import model.ModelState;
 
 public class EditPanel extends JPanel{
 	
@@ -50,7 +51,7 @@ public class EditPanel extends JPanel{
 		this.controller = controller;
 		this.model = model;
 		firstNameA = new JTextField(model.getFirstName());
-		lastNameA = new JTextField(model.getLastName());
+		lastNameA = new JTextField(model.getLastname());
 		emailA = new JTextField(model.getEmail());
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
@@ -119,7 +120,7 @@ public class EditPanel extends JPanel{
 		
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				
+				model.changeCurrentState(ModelState.PROFILE);
 			}
 		});
 	}
