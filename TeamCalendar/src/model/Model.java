@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import gui.Password;
 import gui.Profile;
 import gui.Registration;
 import jBCrypt.BCrypt;
+import objectTransferrable.Event;
 import objectTransferrable.OTLogin;
 import objectTransferrable.OTRegistrationInformation;
 
@@ -46,6 +48,7 @@ public class Model extends Observable {
 	private String lastname;
 	private String dob;
 	private char[] password;
+	private ArrayList<Event> meetings;
 	// --------------Boolean values for registration-----------------//
 	private boolean usernameUnique = false;
 	private boolean username20orLess = false;
@@ -221,6 +224,14 @@ public class Model extends Observable {
 		
 	}
 
+//	method for next day
+	
+//	method for previous day
+	
+//	method for add event
+	
+//	method for  
+	
 	// --------Save information that returns from server----//
 
 	public void setUsernameExists(boolean usernameExists) {
@@ -246,6 +257,10 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
+	
+//	method to get meetings
+	
+	public void getMeetingsOnDay(String userName, Calendar dateRequest)
 
 	// --------End of information from server------------//
 
@@ -332,6 +347,14 @@ public class Model extends Observable {
 
 	public void setSuccessfulRegistration(boolean successfulRegistration) {
 		this.successfulRegistration = successfulRegistration;
+	}
+
+	public ArrayList<Event> getMeetings() {
+		return meetings;
+	}
+
+	public void setMeetings(ArrayList<Event> meetings) {
+		this.meetings = meetings;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
