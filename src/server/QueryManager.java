@@ -217,7 +217,10 @@ public class QueryManager {
 	
 	private String createEvent(Statement stmnt){
 		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
-		//TODO SQL query here
+		Event event = classifiedOperation.getEvent();
+		java.sql.Date eventDate = new java.sql.Date(event.getStartTime().getTimeInMillis());
+		String username = event.
+		String query = "INSERT INTO";
 		
 		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
 		return "";
