@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import client.Client;
 import listener.interfaces.MouseClickedListener;
 import model.Model;
+import model.ModelState;
 
 
 public class MenuPanel extends JPanel{
@@ -25,14 +26,16 @@ public class MenuPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Client client = null;
+	private Model model = null;
 	JPanel menuBar = new JPanel();
 	public static JLabel home = new JLabel("Home");
 	public static JLabel profile = new JLabel("Profile");
 	public static JLabel logout = new JLabel("Logout");
 
-	public MenuPanel(Client controller){
+	public MenuPanel(Client client, Model model){
 		
 		this.client = client;
+		this.model = model;
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), 70));
@@ -74,6 +77,18 @@ public class MenuPanel extends JPanel{
 		setLayout(layout);
 		
 		add(menuBar);
+		
+		//------------------Action Listeners---------------------//
+		
+		home.addMouseListener((MouseClickedListener) (e) -> {
+			this.model.changeCurrentState(ModelState.LIST);
+		});
+		profile.addMouseListener((MouseClickedListener) (e) -> {
+			this.model.changeCurrentState(ModelState.PROFILE);
+		});
+		logout.addMouseListener((MouseClickedListener) (e) -> {
+			this.model.changeCurrentState(ModelState.LOGIN);
+		});
 
 	}
 	

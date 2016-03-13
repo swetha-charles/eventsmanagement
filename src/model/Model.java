@@ -9,8 +9,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import client.Client;
+import gui.Edit;
 import gui.ErrorConnectionDown;
+import gui.List;
 import gui.Login;
+import gui.Password;
+import gui.Profile;
 import gui.Registration;
 import objectTransferrable.OTLogin;
 import objectTransferrable.OTRegistrationInformation;
@@ -20,10 +24,14 @@ public class Model extends Observable {
 	private Client client;
 
 	private JScrollPane currentPanel = null;
-	private Login login;
-	private Registration registration;
+	private Login loginView;
+	private Registration registrationView;
 	private JPanel meeting;
 	private ErrorConnectionDown error;
+	private List listView;
+	private Profile profileView;
+	private Edit editView;
+	private Password passwordView;
 
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
 	private Pattern emailRegex = Pattern
@@ -55,8 +63,8 @@ public class Model extends Observable {
 		this.client = client;
 		this.currentstate = ModelState.LOGIN;
 
-		login = new Login(this.client, this);
-		currentPanel = new JScrollPane(login);
+		loginView = new Login(this.client, this);
+		currentPanel = new JScrollPane(loginView);
 
 	}
 
@@ -65,12 +73,12 @@ public class Model extends Observable {
 		this.username = username;
 		if (DataValidation.checkLessThanTwenty(username)) {
 			this.username20orLess = true;
-			this.registration.getRegistrationPanel().setUserLabel("User*");
+			this.registrationView.getRegistrationPanel().setUserLabel("User*");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			this.client.checkUsername(username);
 		} else {
 			this.username20orLess = false;
-			this.registration.getRegistrationPanel().setUserLabel("User* : incorrect format");
+			this.registrationView.getRegistrationPanel().setUserLabel("User* : incorrect format");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 
@@ -81,12 +89,12 @@ public class Model extends Observable {
 		this.email = email;
 		if (emailRegex.matcher(email).matches()) {
 			this.emailMatchesRegex = true;
-			this.registration.getRegistrationPanel().setEmailLabel("Email*");
+			this.registrationView.getRegistrationPanel().setEmailLabel("Email*");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			this.client.checkEmail(email);
 		} else {
 			this.emailMatchesRegex = false;
-			this.registration.getRegistrationPanel().setEmailLabel("Email*: incorrect format*");
+			this.registrationView.getRegistrationPanel().setEmailLabel("Email*: incorrect format*");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 
@@ -97,11 +105,11 @@ public class Model extends Observable {
 		this.firstName = name;
 		if (DataValidation.checkLessThanThirty(name)) {
 			this.firstNameLessThan30 = true;
-			this.registration.getRegistrationPanel().setFirstLabel("First Name");
+			this.registrationView.getRegistrationPanel().setFirstLabel("First Name");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		} else {
 			this.firstNameLessThan30 = false;
-			this.registration.getRegistrationPanel().setFirstLabel("First Name*: incorrect format");
+			this.registrationView.getRegistrationPanel().setFirstLabel("First Name*: incorrect format");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 	}
@@ -111,11 +119,11 @@ public class Model extends Observable {
 		this.lastname = name;
 		if (DataValidation.checkLessThanThirty(name)) {
 			this.lastNameNameLessThan30 = true;
-			this.registration.getRegistrationPanel().setFirstLabel("Last Name");
+			this.registrationView.getRegistrationPanel().setFirstLabel("Last Name");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		} else {
 			this.lastNameNameLessThan30 = false;
-			this.registration.getRegistrationPanel().setLastLabel("Last Name*: incorrect format");
+			this.registrationView.getRegistrationPanel().setLastLabel("Last Name*: incorrect format");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 		}
@@ -144,14 +152,14 @@ public class Model extends Observable {
 			Period period = Period.between(birthdate, now);
 			if (period.getYears() >= 18) {
 				this.oldEnough = true;
-				this.registration.getRegistrationPanel().setDobLabel("Date Of Birth");
+				this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth");
 			} else {
 				this.oldEnough = false;
-				this.registration.getRegistrationPanel().setDobLabel("Date Of Birth: Must be 18 or over");
+				this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth: Must be 18 or over");
 			}
 
 		} else {
-			this.registration.getRegistrationPanel().setDobLabel("Date Of Birth* dd/mm/yyyy: incorrect format");
+			this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth* dd/mm/yyyy: incorrect format");
 		}
 	}
 
@@ -159,14 +167,14 @@ public class Model extends Observable {
 		this.password = password;
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
-			this.registration.getRegistrationPanel().setPasswordLabel("Password*: must be between 8 and 60 characters");
+			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be between 8 and 60 characters");
 		} else if (password.length > 60) {
 			this.password60orLess = false;
-			this.registration.getRegistrationPanel().setPasswordLabel("Password*: must be less than 60 characters");
+			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be less than 60 characters");
 		} else {
 			this.password60orLess = true;
 			this.passwordatleast8 = true;
-			this.registration.getRegistrationPanel().setPasswordLabel("Password*");
+			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
@@ -224,10 +232,10 @@ public class Model extends Observable {
 	public void setUsernameExists(boolean usernameExists) {
 		if (usernameExists) {
 			this.usernameUnique = false;
-			this.registration.getRegistrationPanel().setUserLabel("Username*: already exists!*");
+			this.registrationView.getRegistrationPanel().setUserLabel("Username*: already exists!*");
 		} else {
 			this.usernameUnique = true;
-			this.registration.getRegistrationPanel().setUserLabel("Username*");
+			this.registrationView.getRegistrationPanel().setUserLabel("Username*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
@@ -236,10 +244,10 @@ public class Model extends Observable {
 	public void setEmailExists(boolean emailExists) {
 		if (emailExists) {
 			this.emailUnique = false;
-			this.registration.getRegistrationPanel().setEmailLabel("Email*: already exists!*");
+			this.registrationView.getRegistrationPanel().setEmailLabel("Email*: already exists!*");
 		} else {
 			this.emailUnique = true;
-			this.registration.getRegistrationPanel().setEmailLabel("Email*");
+			this.registrationView.getRegistrationPanel().setEmailLabel("Email*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
@@ -299,17 +307,17 @@ public class Model extends Observable {
 		switch (state) {
 
 		case REGISTRATION:
-			this.registration = new Registration(client, this);
-			setPanel(this.registration);
+			this.registrationView = new Registration(client, this);
+			setPanel(this.registrationView);
 			break;
 
 		case LOGIN:
-			this.login = new Login(client, this);
-			setPanel(this.login);
+			this.loginView = new Login(client, this);
+			setPanel(this.loginView);
 			break;
 
 		case REGISTRATIONUPDATE:
-			setPanel(this.registration);
+			setPanel(this.registrationView);
 			break;
 
 		case ERRORCONNECTIONDOWN:
@@ -323,6 +331,22 @@ public class Model extends Observable {
 
 		case EXIT:
 			this.client.exitGracefully();
+			break;
+			
+		case LIST:
+			this.listView = new List(client, this);
+			break;
+			
+		case PROFILE:
+			this.profileView = new Profile(client, this);
+			break;
+			
+		case EDIT:
+			this.editView = new Edit(client, this);
+			break;
+			
+		case PASSWORD:
+			this.passwordView = new Password(client, this);
 			break;
 		}
 

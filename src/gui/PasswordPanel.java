@@ -14,6 +14,7 @@ import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
 
 import client.Client;
+import model.Model;
 
 public class PasswordPanel extends JPanel{
 
@@ -22,6 +23,8 @@ public class PasswordPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
+	private Model model;
+	
 	JLabel hello = new JLabel("Want to change your password?");
 	JPanel detailsPanel = new JPanel();
 	JLabel oldPassword = new JLabel("Old Password");
@@ -38,9 +41,10 @@ public class PasswordPanel extends JPanel{
 	JButton cancel = new JButton("Cancel");
 	
 	
-	public PasswordPanel(Client controller){
+	public PasswordPanel(Client controller, Model model){
 		
 		this.controller = controller;
+		this.model = model;
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));

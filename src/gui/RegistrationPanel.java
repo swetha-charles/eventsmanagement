@@ -180,19 +180,24 @@ public class RegistrationPanel extends JPanel {
 		firstName.addFocusListener((FocusLostListener) (e) -> {
 			this.model.validateFirstName(firstName.getText());
 		});
+		
 		lastName.addFocusListener((FocusLostListener) (e) -> {
 			this.model.validateLastName(lastName.getText());
 		});
+		
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
+		
 		dob.addFocusListener((FocusLostListener) (e) -> this.model.validateDOB(dob.getText()));		
+		
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
+		
 		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePassword(password.getPassword()));
+		
 		//confirm listener
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
 		submit.addActionListener((e) -> {
 			if (!this.model.isEmailUnique()) {
 				JOptionPane.showMessageDialog(this, "Email already exists! Did you forget your password?");
-
 			} else if (!this.model.isUsernameUnique()) {
 				JOptionPane.showMessageDialog(this, "Username already exists! Pick another ones");
 			} else if (!this.model.isEmailMatchesRegex()) {
@@ -200,7 +205,7 @@ public class RegistrationPanel extends JPanel {
 			} else if(!this.model.checkConfirmMatchesPassword(confirm.getPassword())){
 				JOptionPane.showMessageDialog(this, "Passwords do not match");
 			} else {
-				
+				model.submitRegistrationForm();
 			}
 
 		});
