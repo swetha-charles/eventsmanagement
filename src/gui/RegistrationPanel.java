@@ -205,7 +205,7 @@ public class RegistrationPanel extends JPanel {
 			} else if(!this.model.checkConfirmMatchesPassword(confirm.getPassword())){
 				JOptionPane.showMessageDialog(this, "Passwords do not match");
 			} else {
-				model.submitRegistrationForm();
+				model.checkRegistrationInformation();
 			}
 
 		});

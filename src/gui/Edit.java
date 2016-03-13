@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import client.Client;
+import model.Model;
 
 
 
@@ -14,14 +15,16 @@ public class Edit extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
+	private Model model;
 	MenuPanel bar;
 	EditPanel edit;
 	
-	public Edit(Client controller){
+	public Edit(Client controller, Model model){
 		
 		this.controller = controller;
-		bar = new MenuPanel(controller);
-		edit = new EditPanel(controller);
+		this.model = model;
+		bar = new MenuPanel(controller, model);
+		edit = new EditPanel(controller, model);
 				
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 

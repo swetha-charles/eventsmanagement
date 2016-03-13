@@ -88,6 +88,7 @@ public class MenuPanel extends JPanel{
 		});
 		logout.addMouseListener((MouseClickedListener) (e) -> {
 			this.model.changeCurrentState(ModelState.LOGIN);
+//			need to clear all details in model
 		});
 
 	}
@@ -97,7 +98,7 @@ public class MenuPanel extends JPanel{
 		JFrame frame = new JFrame();
 		Client controller = new Client();
 		
-		MenuPanel menu = new MenuPanel(controller);
+		MenuPanel menu = new MenuPanel(controller, model);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

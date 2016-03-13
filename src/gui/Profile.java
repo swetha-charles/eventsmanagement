@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import client.Client;
+import model.Model;
 
 public class Profile extends JPanel{
 	
@@ -15,14 +16,16 @@ public class Profile extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
+	private Model model;
 	MenuPanel bar;
 	ProfilePanel profile;
 	
-	public Profile(Client controller){
+	public Profile(Client controller, Model model){
 		
 		this.controller = controller;
-		bar = new MenuPanel(controller);
-		profile = new ProfilePanel(controller);
+		this.model = model;
+		bar = new MenuPanel(controller, model);
+		profile = new ProfilePanel(controller, model);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -34,8 +37,9 @@ public class Profile extends JPanel{
 		
 		JFrame frame = new JFrame();
 		Client controller = new Client();
+		Model model = new Model(controller);
 		
-		Profile menu = new Profile(controller);
+		Profile menu = new Profile(controller, model);
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
