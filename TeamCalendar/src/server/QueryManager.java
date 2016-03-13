@@ -143,11 +143,14 @@ public class QueryManager {
 	
 	private String checkEmailvalid(Statement stmnt){
 		OTEmailCheck classifiedOperation = (OTEmailCheck) getOperation();
+		getServer().getServerModel().addToText("Email received: " +classifiedOperation.getEmail()+"\n");
 		//not sure what field name of email is? inserted guess
-		String query = "SELECT count(u.email) " + 
+		String query = "SELECT count(u.userEmail) " + 
 				"FROM users u " +
-				"GROUP BY u.email " +
-				"HAVING u.email = '" + classifiedOperation.getEmail() + "'" ;
+				"GROUP BY u.userEmail " +
+				"HAVING u.userEmail = '" + classifiedOperation.getEmail() + "'" ;
+		
+		getServer().getServerModel().addToText(query);
 		try {
 			ResultSet rs = stmnt.executeQuery(query);
 			
@@ -168,10 +171,16 @@ public class QueryManager {
 	
 	private String checkRegistration(Statement stmnt){
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation)getOperation();
-		
-		String query = "DEFAULT, '"+ classifiedOperation.getUsername() +"', '" + classifiedOperation.getPwHash() + "', '"+classifiedOperation.getFirstname()+"', '"+classifiedOperation.getLastname()+"', '"+classifiedOperation.getEmail()+"'";
-		
-		setOperation(new OTRegistrationInformationConfirmation(true, null, null));
+		getServer().getServerModel().addToText("Attempting to create a user with name: "+ classifiedOperation.getUsername() + "\n");
+		String update = "INSERT INTO users VALUES ('"+ classifiedOperation.getUsername() +"', '" + classifiedOperation.getPwHash() + "', '"+classifiedOperation.getFirstname()+"', '"+classifiedOperation.getLastname()+"', '"+classifiedOperation.getEmail()+"')";
+		try {
+			stmnt.executeUpdate(update);
+			setOperation(new OTRegistrationInformationConfirmation(true, null, null));
+		} catch (SQLException e) {
+			setOperation(new OTRegistrationInformationConfirmation(false, "ERROR", "ERROR"));
+			e.printStackTrace();
+		}
+
 		return "";
 	}	
 
@@ -217,21 +226,36 @@ public class QueryManager {
 	private String checkLoginCreds(Statement stmnt){
 		OTLogin classifiedOperation = (OTLogin)getOperation();
 		//not sure what field name of email is? inserted guess
-		String query = "SELECT u.userName, u.firstName, u.lastName, u.userEmail " + 
+		String query = "SELECT u.userName, u.firstName, u.lastName, u.userEmail, u.password " + 
 				"FROM users u " +
-				"WHERE u.userName = '" + classifiedOperation.getUsername() + "' AND u.password = '" + classifiedOperation.getPwHash() + "'";
+				"WHERE u.userName = '" + classifiedOperation.getUsername() + "'";
 		try {
 			ResultSet rs = stmnt.executeQuery(query);
 			
 			if(rs.next()){
-				getServer().getServerModel().addToText("Login details CORRECT for "+ classifiedOperation.getUsername() +"\n");
-				String firstName, lastName, email;
-				firstName = rs.getString(2);
-				lastName = rs.getString(3);
-				email = rs.getString(4);
-				setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
+				String pwFromDB = rs.getString(5);
+				String pwFromLogin = classifiedOperation.getPwHash();
+				
+				getServer().getServerModel().addToText("Supplied PW: "+pwFromLogin+" PW from DB: "+pwFromDB+"\n");
+				
+				if(pwFromDB.equals(pwFromLogin)){
+					getServer().getServerModel().addToText("Login details CORRECT for "+ classifiedOperation.getUsername() +"\n");
+					String firstName, lastName, email;
+					firstName = rs.getString(2);
+					lastName = rs.getString(3);
+					email = rs.getString(4);
+					setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
+				} else {
+					getServer().getServerModel().addToText("Password INCORRECT for "+ classifiedOperation.getUsername() +"\n");
+					String firstName, lastName, email;
+					firstName = rs.getString(2);
+					lastName = rs.getString(3);
+					email = rs.getString(4);
+					setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
+				}
+
 			} else {
-				getServer().getServerModel().addToText("Login details INCORRECT for "+ classifiedOperation.getUsername() +"\n");
+				getServer().getServerModel().addToText("User "+ classifiedOperation.getUsername() +" does not exist"+"\n");
 				setOperation(new OTLoginSuccessful(false, null, null, null));
 			}
 		} catch (SQLException e) {

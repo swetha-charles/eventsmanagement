@@ -143,11 +143,7 @@ public class LoginPanel extends JPanel{
 		signup.addMouseListener((MouseClickedListener) (e) -> this.model.changeCurrentState(ModelState.REGISTRATION));
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				if(model.getSuccessfulLogin() == true){
 					model.login(username.getText(), password.getPassword());
-				} else {
-					setError(getError());
-				}
 			}
 		});
 		
