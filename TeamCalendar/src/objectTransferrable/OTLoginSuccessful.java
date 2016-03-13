@@ -9,14 +9,17 @@ package objectTransferrable;
  * @author Tom
  *
  */
-public class OTLoginSucessful extends ObjectTransferrable {
-private final boolean loginSucessful;
+public class OTLoginSuccessful extends ObjectTransferrable {
+private final boolean loginSuccessful;
 	/**
 	 * @param opCode
 	 */
-	public OTLoginSucessful(boolean loginSucessful) {
+	public OTLoginSuccessful(boolean loginSuccessful) {
 		super("0013");
-		this.loginSucessful =  loginSucessful;
+		this.loginSuccessful =  loginSuccessful;
+	}
+	public boolean isLoginSuccessful() {
+		return loginSuccessful;
 	}
 
 }

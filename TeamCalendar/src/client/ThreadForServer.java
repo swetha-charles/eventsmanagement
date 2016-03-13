@@ -3,14 +3,12 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import objectTransferrable.*;
-
 import model.Model;
 import model.ModelState;
+import objectTransferrable.OTEmailCheck;
+import objectTransferrable.OTLoginSuccessful;
+import objectTransferrable.OTUsernameCheck;
+import objectTransferrable.ObjectTransferrable;
 
 public class ThreadForServer extends Thread {
 
@@ -91,6 +89,14 @@ public class ThreadForServer extends Thread {
 			} else if (!otec.getAlreadyExists()) {
 				this.model.setEmail(otec.getEmail());
 				this.model.setEmailExists(false);
+			}
+			break;
+		case "0012":
+			OTLoginSuccessful loginObject = (OTLoginSuccessful) receivedOperation;
+			if(loginObject.isLoginSuccessful()){
+				this.model.setSuccessfulLogin(true);
+			} else {
+				this.model.setSuccessfulLogin(false);
 			}
 			break;
 		}

@@ -32,8 +32,4 @@ public class OTRegistrationInformationConfirmation extends ObjectTransferrable {
 		return reasonForFailure;
 	}
 
-	public String getOpcode() {
-		return opcode;
-	}
-
 }

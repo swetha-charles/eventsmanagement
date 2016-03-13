@@ -11,6 +11,7 @@ import model.Model;
 import model.ModelState;
 import objectTransferrable.OTEmailCheck;
 import objectTransferrable.OTExitGracefully;
+import objectTransferrable.OTLogin;
 import objectTransferrable.OTRegistrationInformation;
 import objectTransferrable.OTUsernameCheck;
 import objectTransferrable.ObjectTransferrable;
@@ -108,6 +109,13 @@ public class Client {
 		String complementOpCode = "0004";
 		this.writeToServer(otri, false, complementOpCode);
 		System.out.println("Client: Send OT with opcode " + otri.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+	}
+	
+	public void checkLoginDetails(OTLogin loginObject){
+		String complementOpCode = "0013"; 
+		this.writeToServer(loginObject, false, complementOpCode);
+		System.out.println("Client: Send OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
 
