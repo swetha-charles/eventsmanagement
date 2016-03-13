@@ -22,6 +22,7 @@ public class Edit extends JPanel{
 	public Edit(Client controller, Model model){
 		
 		this.controller = controller;
+		
 		this.model = model;
 		bar = new MenuPanel(controller, model);
 		edit = new EditPanel(controller, model);
@@ -32,19 +33,19 @@ public class Edit extends JPanel{
 		add(edit);
 	}
 
-//	public static void main(String[] args) {
-//		
-//		JFrame frame = new JFrame();
-//		Client controller = new Client();
-//		
-//		Edit menu = new Edit(controller);
-//		
-//		JFrame.setDefaultLookAndFeelDecorated(true);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setContentPane(menu);
-//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-//		frame.setResizable(true);
-//		frame.setVisible(true);
-//	}
+	public static void main(String[] args) {
+		
+		JFrame frame = new JFrame();
+		Client controller = new Client();
+		Model model = new Model(controller);
+		Edit menu = new Edit(controller, model);
+		
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(menu);
+		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+		frame.setResizable(true);
+		frame.setVisible(true);
+	}
 
 }
