@@ -167,22 +167,13 @@ public class QueryManager {
 	}
 	
 	private String checkRegistration(Statement stmnt){
-		//TODO THIS METHOD MAY BE DEPRICATED
-		
-		
-		return "";
-	}
-	
-	private String checkRegistrationInformation(Statement stmnt){
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation)getOperation();
-		//TODO THIS METHOD NEEDS COMPLETING
 		
-		setOperation(new OTRegistrationInformationConfirmation(true, "", ""));
+		String query = "DEFAULT, '"+ classifiedOperation.getUsername() +"', '" + classifiedOperation.getPwHash() + "', '"+classifiedOperation.getFirstname()+"', '"+classifiedOperation.getLastname()+"', '"+classifiedOperation.getEmail()+"'";
+		
+		setOperation(new OTRegistrationInformationConfirmation(true, null, null));
 		return "";
-		
-	}
-	
-	
+	}	
 
 	private String dealWithError(){
 		

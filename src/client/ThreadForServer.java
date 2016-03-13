@@ -7,6 +7,7 @@ import model.Model;
 import model.ModelState;
 import objectTransferrable.OTEmailCheck;
 import objectTransferrable.OTLoginSuccessful;
+import objectTransferrable.OTRegistrationInformationConfirmation;
 import objectTransferrable.OTUsernameCheck;
 import objectTransferrable.ObjectTransferrable;
 
@@ -91,6 +92,14 @@ public class ThreadForServer extends Thread {
 				this.model.setEmailExists(false);
 			}
 			break;
+		case "0006":
+			OTRegistrationInformationConfirmation regObject = (OTRegistrationInformationConfirmation) receivedOperation;
+			if(regObject.isRegistrationSuccess()){
+				this.model.setSuccessfulRegistration(true);
+				this.model.changeCurrentState(ModelState.LOGIN);
+			} else {
+				this.model.setSuccessfulRegistration(false);
+			}
 		case "0013":
 			OTLoginSuccessful loginObject = (OTLoginSuccessful) receivedOperation;
 			if(loginObject.isLoginSuccessful()){
