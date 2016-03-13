@@ -7,31 +7,29 @@ import java.lang.reflect.Constructor;
 import java.util.Calendar;
 
 /**
- * Class to define object for an event, stores the StartTime, and Event Length parameters as unfortunately its surprisingly hard to find the time between two dates or calendar objects in java
+ * Class to define object for an event, stores the startTime, and Event Length parameters as unfortunately its surprisingly hard to find the time between two dates or calendar objects in java
  * 
  * @author tmd668
  *
  */
 public class Event {
-	private Calendar StartTime;
-	private int eventLengthHours, eventLengthMins;
+	private Calendar startTime;
+	private Calendar endTime;
 	private String eventDescription;
 	private String location;
 	private String[] attendees; //May not be used
 	
-	public Event(Calendar StartTime, int eventLengthHours, int eventLengthMins, String eventDescription, String location){
-		this.StartTime = StartTime;
-		this.eventLengthHours = eventLengthHours;
-		this.eventLengthMins = eventLengthMins;
+	public Event(Calendar startTime, int eventLengthHours, int eventLengthMins, String eventDescription, String location, Calendar endTime){
+		this.startTime = startTime;
+		this.endTime = endTime;
 		this.eventDescription = eventDescription;
 		this.location = location;
 		this.attendees = new String[] {""};
 	}
 	
-	public Event(Calendar StartTime, int eventLengthHours, int eventLengthMins, String eventDescription, String location, String[] attendees){
-		this.StartTime = StartTime;
-		this.eventLengthHours = eventLengthHours;
-		this.eventLengthMins = eventLengthMins;
+	public Event(Calendar startTime, int eventLengthHours, int eventLengthMins, String eventDescription, String location, Calendar endTime, String[] attendees){
+		this.startTime = startTime;
+		this.endTime = endTime;
 		this.eventDescription = eventDescription;
 		this.location = location;
 		this.attendees = attendees;
@@ -40,44 +38,18 @@ public class Event {
 	/**
 	 * @return the startTime
 	 */
-	public Calendar getStartTime() {
-		return StartTime;
+	public Calendar getstartTime() {
+		return startTime;
 	}
 
 	/**
 	 * @param startTime the startTime to set
 	 */
-	public void setStartTime(Calendar startTime) {
-		StartTime = startTime;
+	public void setstartTime(Calendar startTime) {
+		startTime = startTime;
 	}
 
-	/**
-	 * @return the eventLengthHours
-	 */
-	public int getEventLengthHours() {
-		return eventLengthHours;
-	}
 
-	/**
-	 * @param eventLengthHours the eventLengthHours to set
-	 */
-	public void setEventLengthHours(int eventLengthHours) {
-		this.eventLengthHours = eventLengthHours;
-	}
-
-	/**
-	 * @return the eventLengthMins
-	 */
-	public int getEventLengthMins() {
-		return eventLengthMins;
-	}
-
-	/**
-	 * @param eventLengthMins the eventLengthMins to set
-	 */
-	public void setEventLengthMins(int eventLengthMins) {
-		this.eventLengthMins = eventLengthMins;
-	}
 
 	/**
 	 * @return the eventDescription
@@ -126,9 +98,7 @@ public class Event {
 	 * @return end time of the event
 	 */
 	public Calendar getEndTime(){
-		Calendar endTime = (Calendar)StartTime.clone();
-		endTime.add(Calendar.HOUR, eventLengthHours);
-		endTime.add(Calendar.MINUTE, eventLengthMins);
 		return endTime;
+		
 	}
 }
