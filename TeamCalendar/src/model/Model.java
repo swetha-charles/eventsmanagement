@@ -48,6 +48,8 @@ public class Model extends Observable {
 	private boolean password60orLess = false;
 	private boolean passwordatleast8 = false;
 	private boolean oldEnough = false;
+	// --------------Login success----------------//
+	private boolean successfulLogin = false;
 
 	public Model(Client client) {
 		this.client = client;
@@ -198,6 +200,12 @@ public class Model extends Observable {
 			this.error.promptRestart();
 		}
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
+	}
+	
+	//-------------------------ButtonMethods---------------//
+	
+	public void login(String username, String date){
+		
 	}
 
 	// --------Save information that returns from server----//
