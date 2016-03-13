@@ -22,6 +22,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import client.Client;
+import model.Model;
 
 public class ListPanel extends JPanel{
 	
@@ -30,7 +31,8 @@ public class ListPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = -3193985081542643253L;
 	Client controller;
-JPanel left = new JPanel();
+	Model model;
+	JPanel left = new JPanel();
 	
 	JPanel list = new JPanel();
 	JScrollPane listscroll;
@@ -60,9 +62,10 @@ JPanel left = new JPanel();
 	ArrayList<JLabel> times = new ArrayList<JLabel>();
 	ArrayList<JPanel> timeevent = new ArrayList<JPanel>();
 	
-	public ListPanel(Client controller){
+	public ListPanel(Client controller, Model model){
 		
 		this.controller = controller;
+		this.model = model;
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)(dimension.getHeight()-200)));
 		setMinimumSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-200));

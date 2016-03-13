@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -38,6 +41,7 @@ public class LoginPanel extends JPanel{
 	JPanel userPanel = new JPanel();
 	JPanel passwordPanel = new JPanel();
 	JPanel logoPanel = new JPanel();
+	JLabel error = new JLabel("");
 	JButton login = new JButton("Login");
 	public static JLabel signup = new JLabel("Sign Up");
 	JPanel input = new JPanel();
@@ -117,9 +121,6 @@ public class LoginPanel extends JPanel{
 		setLayout(layout);
 		GridBagConstraints gbc = new GridBagConstraints();
 		
-		
-		
-		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -140,10 +141,30 @@ public class LoginPanel extends JPanel{
 		//---------------------------------Lambda Listeners------------------------------------------------------//
 		
 		signup.addMouseListener((MouseClickedListener) (e) -> this.model.changeCurrentState(ModelState.REGISTRATION));
+		login.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				if(model.getSuccessfulLogin() == true){
+					model.login(username.getText(), password.getPassword());
+				} else {
+					setError(getError());
+				}
+			}
+		});
 		
 		//--------------------------------End Lambda Listeners--------------------------------------------------//
 	
 	}
+	
+	public JLabel getError() {
+		return error;
+	}
+
+	public void setError(JLabel error) {
+		error.setText("Incorrect username or password");
+		error.setForeground(Color.RED);
+		this.error = error;
+	}
+	
 
 	/** Main method to veiw the logoPanel
 	 * 

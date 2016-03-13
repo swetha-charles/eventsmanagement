@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
 import client.Client;
+import model.Model;
 
 public class ProfilePanel extends JPanel{
 	
@@ -21,6 +22,8 @@ public class ProfilePanel extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
+	private Model model;
+	
 	JLabel hello;
 	JPanel detailsPanel = new JPanel();
 	JLabel details = new JLabel("Details");
@@ -36,9 +39,11 @@ public class ProfilePanel extends JPanel{
 	JButton editPassword = new JButton("Change Pasword");
 	
 	
-	public ProfilePanel(Client controller){
+	public ProfilePanel(Client controller, Model model){
 		
 		this.controller = controller;
+		this.model = model;
+		
 		//here we need it to get the information from the database
 		nameA = new JLabel("Natalie McDonnell");
 		emailA = new JLabel("natalie.mcdonnell1@hotmail.co.uk");

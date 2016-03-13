@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import client.Client;
+import model.Model;
 
 public class EditPanel extends JPanel{
 	
@@ -23,6 +24,7 @@ public class EditPanel extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
+	private Model model;
 	JLabel hello = new JLabel("Want to change your details?");
 	JPanel detailsPanel = new JPanel();
 	JLabel firstName = new JLabel("First Name");
@@ -43,9 +45,10 @@ public class EditPanel extends JPanel{
 	JButton cancel = new JButton("Cancel");
 	
 	
-	public EditPanel(Client controller){
+	public EditPanel(Client controller, Model model){
 		
 		this.controller = controller;
+		this.model = model;
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
