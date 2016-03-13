@@ -226,26 +226,26 @@ public class QueryManager {
 	private String checkLoginCreds(Statement stmnt){
 		OTLogin classifiedOperation = (OTLogin)getOperation();
 		//not sure what field name of email is? inserted guess
-		String query = "SELECT count(u.email) " + 
+		String query = "SELECT count(*) " + 
 				"FROM users u " +
-				"GROUP BY u.email " +
-				"HAVING u.email = '" + classifiedOperation.getEmail() + "'" ;
+				"GROUP BY u.userID " +
+				"HAVING u.userName = '" + classifiedOperation.getUsername() + "' AND u.password = '" + classifiedOperation.getPwHash() + "'";
 		try {
 			ResultSet rs = stmnt.executeQuery(query);
 			
 			if(rs.next()){
-				getServer().getServerModel().addToText("Email exists, returning true.\n");
-				classifiedOperation.setAlreadyExists(true);
+				getServer().getServerModel().addToText("Login details CORRECT for "+ classifiedOperation.getUsername() +"\n");
+				
+				setOperation(new OTLoginSuccessful(true));
 			} else {
-				getServer().getServerModel().addToText("Email not in use, returning false.\n");
-				classifiedOperation.setAlreadyExists(false);
+				getServer().getServerModel().addToText("Login details INCORRECT for "+ classifiedOperation.getUsername() +"\n");
+				setOperation(new OTLoginSuccessful(true));
 			}
 		} catch (SQLException e) {
 			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
 			e.printStackTrace();
-			
 		}
-		setOperation(new OTLoginSuccessful(true));
+		
 		return "";
 	}
 
