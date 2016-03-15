@@ -3,6 +3,7 @@
  */
 package objectTransferrable;
 
+import java.sql.Date;
 import java.util.Calendar;
 
 /**
@@ -11,30 +12,21 @@ import java.util.Calendar;
  */
 public class OTRequestMeetingsOnDay extends ObjectTransferrable {
 	
-	private String userName;
-	private Calendar dateRequest;
+	private Date date;
 	/**
 	 * 
 	 * @param userName - The username of the user
 	 * @param dateRequest - the date requested as a calendar
 	 */
-	public OTRequestMeetingsOnDay(String userName, Calendar dateRequest) {
+	public OTRequestMeetingsOnDay(Date date) {
 		super("0008");
-		this.dateRequest = dateRequest;
-		this.userName = userName;
+		this.date = date;
 	}
 
-
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
 	/**
 	 * @return the dateRequest
 	 */
-	public Calendar getDateRequest() {
-		return dateRequest;
+	public Date getDate() {
+		return date;
 	}
 }
