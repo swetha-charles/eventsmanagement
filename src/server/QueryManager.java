@@ -220,6 +220,18 @@ public class QueryManager {
 		return "";
 	}
 	
+<<<<<<< .mine
+//	private String createEvent(Statement stmnt){
+//		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
+//		Event event = classifiedOperation.getEvent();
+//		java.sql.Date eventDate = new java.sql.Date(event.getStartTime().getTimeInMillis());
+//		String username = event;
+//		String query = "INSERT INTO";
+//		
+//		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
+//		return "";
+//	}
+=======
 	private String createEvent(Statement stmnt){
 		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
 		Event event = classifiedOperation.getEvent();
@@ -232,6 +244,7 @@ public class QueryManager {
 		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
 		return "";
 	}
+>>>>>>> .r220
 	
 	private String checkLoginCreds(Statement stmnt){
 		OTLogin classifiedOperation = (OTLogin)getOperation();
