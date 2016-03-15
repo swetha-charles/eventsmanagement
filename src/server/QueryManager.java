@@ -116,6 +116,10 @@ public class QueryManager {
 		// Gets the users login details for the client
 		else if (currentOperation.getOpCode().equals("0013")) {
 			getUserDetails(stmnt);
+		} else if (currentOperation.getOpCode().equals("0014")) {
+			setOperation(new OTHeartBeat());
+			getServer().getServerModel().addToText(
+					"Server received heartbeat and has responded");
 		}
 		// This is a return message for sending the hash to the client and
 		// should not be seen by server
