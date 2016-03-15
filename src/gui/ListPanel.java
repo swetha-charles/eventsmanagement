@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
@@ -322,7 +323,7 @@ public class ListPanel extends JPanel{
 			
 			for(int i = 0; i<events.size(); i++){
 				eventsListPanel.add(events.get(i));
-				list.add(Box.createRigidArea(new Dimension(0,20)));
+				eventsListPanel.add(Box.createRigidArea(new Dimension(0,20)));
 			}
 		}
 		
