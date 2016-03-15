@@ -45,7 +45,9 @@ public class ETRunTask implements ExecutableTask{
 		
 		//get the updated object and pass it back to the client
 		try {
+			getMasterServer().getServerModel().addToText("Sending back Object with opCode " + runQuery.getOperation().getOpCode() + "\n");
 			getClientInfo().getClientOutput().writeObject(runQuery.getOperation());
+			getMasterServer().getServerModel().addToText("SENT" + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	

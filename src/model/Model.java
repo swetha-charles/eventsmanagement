@@ -453,10 +453,12 @@ public class Model extends Observable {
 		this.successfulRegistration = successfulRegistration;
 	}
 
-	public ArrayList<Event> getMeetings(Date date) {
+	public void updateMeetings(Date date) {
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
-		
+	}
+	
+	public ArrayList<Event> getMeetings(){
 		return meetings;
 	}
 
@@ -507,6 +509,7 @@ public class Model extends Observable {
 
 		case EVENTS:
 			this.listView = new List(client, this);
+			this.setPanel(listView);
 			// keep this in. Differentiates between List and ListUpdate for the
 			// reader.
 			// See class Client, method RunOT(), switch/case: 0013 for use.
@@ -519,14 +522,17 @@ public class Model extends Observable {
 
 		case PROFILE:
 			this.profileView = new Profile(client, this);
+			this.setPanel(profileView);
 			break;
 
 		case EDIT:
 			this.editView = new Edit(client, this);
+			this.setPanel(editView);
 			break;
 
 		case PASSWORD:
 			this.passwordView = new Password(client, this);
+			this.setPanel(passwordView);
 			break;
 		}
 
