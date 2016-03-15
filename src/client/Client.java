@@ -60,9 +60,8 @@ public class Client {
 
 		}
 	}
-	
-	
-	//read from server
+
+	// read from server
 	public void readFromServer(String waitingForOpcode) {
 		ObjectTransferrable receivedOperation = null;
 		try {
@@ -71,13 +70,8 @@ public class Client {
 			if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
 				System.out.println("Client was expecting OT with OpCode " + waitingForOpcode
 						+ "but received OT with OpCode " + receivedOperation.getOpCode());
-				//throw new UnexpectedOTReceivedException();
-				
-				//should
-				//we
-				//throw
-				//an exception
-				//here??
+				throw new UnexpectedOTReceivedException();
+
 			}
 			this.runOT(receivedOperation);
 		} catch (ClassNotFoundException e) {
@@ -136,8 +130,8 @@ public class Client {
 			break;
 		}
 	}
-	
-	//---------------- writeToServer calls -----------------------//
+
+	// ---------------- writeToServer calls -----------------------//
 	public void checkUsername(String username) {
 		OTUsernameCheck otuc = new OTUsernameCheck(username);
 
@@ -167,8 +161,8 @@ public class Client {
 		System.out.println("Client: Send OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
-	
-	public void getMeetingsForToday(String username){
+
+	public void getMeetingsForToday(String username) {
 		String complementOpCode = "0009";
 		Calendar now = Calendar.getInstance();
 		OTRequestMeetingsOnDay getMeetingsObject = new OTRequestMeetingsOnDay(username, now);
@@ -176,11 +170,10 @@ public class Client {
 		System.out.println("Client: Send OT with opcode " + getMeetingsObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
-	//--------------------- writeToServer calls Ends---------------------------//
-	
-	
-	
-	//--------------------- Exit -------------------------------------//
+	// --------------------- writeToServer calls
+	// Ends---------------------------//
+
+	// --------------------- Exit -------------------------------------//
 	public void exitGracefully() {
 		if (s != null) {
 			OTExitGracefully oeg = new OTExitGracefully();
