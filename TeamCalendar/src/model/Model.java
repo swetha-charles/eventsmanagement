@@ -169,7 +169,7 @@ public class Model extends Observable {
 
 	}
 
-	public void validateDOB(String dob) {
+	/*public void validateDOB(String dob) {
 
 
 		if (dobRegex.matcher(dob).matches()) {
@@ -208,7 +208,7 @@ public class Model extends Observable {
 			this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
 		}
 
-	}
+	}*/
 
 	public void validatePassword(char[] password) {
 		this.password = password;
@@ -428,11 +428,6 @@ public class Model extends Observable {
 			this.listView = new List(this.client, this);
 		}
 	}
-	
-		if (successfulLogin) {
-			this.listView = new List(this.client, this);
-		}
-	}
 
 	public String getDob() {
 		return dob;
@@ -509,14 +504,6 @@ public class Model extends Observable {
 		case EXIT:
 			this.client.exitGracefully();
 			break;
-
-<<<<<<< .mine
-		case LIST:
-			setPanel(this.listView); //keep this in. Differentiates between List and ListUpdate for the reader. 
-			//See class Client, method RunOT(), switch/case: 0013 for use.
-			//listView is created at class Model, method setSuccesfulLogin() 
-
-		case LISTUPDATE: 
 
 		case EVENTS:
 			this.listView = new List(client, this);
