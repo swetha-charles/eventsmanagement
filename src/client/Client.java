@@ -147,7 +147,7 @@ public class Client {
 				this.model.setFirstName(proceedOrNot.getFirstName());
 				this.model.setLastname(proceedOrNot.getLastName());
 				this.model.setEmail(proceedOrNot.getEmail());
-				this.model.changeCurrentState(ModelState.LIST);
+				this.model.changeCurrentState(ModelState.EVENTS);
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
