@@ -17,7 +17,7 @@ import model.Model;
 import model.State;
 import objectTransferrable.*;
 
-public class ObjectClientController implements ActionListener, MouseListener {
+public class ZDEPObjectClientController implements ActionListener, MouseListener {
 	private ObjectOutputStream toServer;
 	private ObjectInputStream fromServer;
 	private Model model;
@@ -26,7 +26,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	private Thread threadForServer = null;
 	private boolean running;
 
-	public ObjectClientController() {
+	public ZDEPObjectClientController() {
 	try {
 			int portnumber = 4446;
 			s = new Socket("localhost", portnumber);
@@ -156,7 +156,7 @@ public class ObjectClientController implements ActionListener, MouseListener {
 	}
 
 	public static void main(String[] args) {
-		ObjectClientController occ = new ObjectClientController();
+		ZDEPObjectClientController occ = new ZDEPObjectClientController();
 	}
 
 }
