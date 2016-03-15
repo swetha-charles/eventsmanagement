@@ -86,7 +86,7 @@ public class ListPanel extends JPanel{
 		
 		this.controller = controller;
 		this.model = model;
-		clickedEvent = new Event(null);
+		//clickedEvent = new Event(null);
 		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)(dimension.getHeight()-200)));
@@ -110,7 +110,9 @@ public class ListPanel extends JPanel{
 		top.add(Box.createRigidArea(new Dimension(20,0)));
 		top.add(addEvent);
 		
-		addMeetings(model.getMeetings(new Date(c.getTimeInMillis())));
+		model.updateMeetings(new Date(c.getTimeInMillis()));
+		
+		addMeetings(model.getMeetings());
 		
 		listscroll = new JScrollPane(list);
 		listscroll.setPreferredSize(new Dimension(660,500));
@@ -171,16 +173,18 @@ public class ListPanel extends JPanel{
 		previous.addActionListener((e) -> {
 			c.add(Calendar.DATE, -1);
 			setDate(date, c);
-			ArrayList<Event> meetings = getMeetings(new Date(c.getTimeInMillis()));
-			addMeetings(meetings);
+			model.updateMeetings(new Date(c.getTimeInMillis()));
+			
+			addMeetings(model.getMeetings());
 			model.changeCurrentState(ModelState.EVENTSUPDATE);
 		});
 		
 		next.addActionListener((e) -> {
 			c.add(Calendar.DATE, 1);
 			setDate(date, c);
-			ArrayList<Event> meetings = getMeetings(new Date(c.getTimeInMillis()));
-			addMeetings(meetings);
+			model.updateMeetings(new Date(c.getTimeInMillis()));
+			
+			addMeetings(model.getMeetings());
 			model.changeCurrentState(ModelState.EVENTSUPDATE);
 			
 		});
@@ -245,6 +249,7 @@ public class ListPanel extends JPanel{
 	public void addMeetings(ArrayList<Event> arraylist){
 			
 		JPanel list = new JPanel();
+		events.clear();
 		if (arraylist.isEmpty()){
 			
 			list.setPreferredSize(new Dimension(650,800));
@@ -260,7 +265,7 @@ public class ListPanel extends JPanel{
 			for(int i=0; i<arraylist.size(); i++){
 			
 				//creates new JLabel of event name for each event
-				JLabel m = new JLabel(arraylist.get(i).getTitle(), SwingConstants.LEFT); 
+				JLabel m = new JLabel(arraylist.get(i).getEventTitle(), SwingConstants.LEFT); 
 				m.setVerticalAlignment(SwingConstants.CENTER);
 				m.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				m.setForeground(Color.DARK_GRAY);

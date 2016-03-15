@@ -3,7 +3,9 @@ package objectTransferrable;
 
 import java.sql.Time;
 
-public class Event {
+public class Event implements java.io.Serializable{
+	
+	private static final long serialVersionUID = 3568874973406778347L;
 	private Time startTime; 
 	private Time endTime;
 	private String eventDescription;

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class OTReturnDayEvents extends ObjectTransferrable {
 	
 	private ArrayList<Event> eventList;
+	
 	public OTReturnDayEvents(ArrayList<Event> eventList){
 		super("0009");
 		this.eventList = eventList;

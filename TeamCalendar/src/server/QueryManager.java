@@ -235,7 +235,7 @@ public class QueryManager {
 		try {
 			rs = stmnt.executeQuery(query);
 			ArrayList<Event> meetings = new ArrayList<Event>();
-			getServer().getServerModel().addToText("Requestiing meeting information for " + "\n");
+			getServer().getServerModel().addToText("Requesting meeting information for "+ getClientInfo().getUserName() + "\n");
 			while(rs.next()){
 				String title = rs.getString(1);
 				String description = rs.getString(2);
@@ -246,6 +246,7 @@ public class QueryManager {
 				Event event = new Event(startTime, endTime, description, title, location);
 				meetings.add(event);
 			}
+			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
 			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
 			setOperation(returnEvents);
 		} catch (SQLException e) {
@@ -323,7 +324,7 @@ public class QueryManager {
 			if(rs.next()){
 				String pwFromDB = rs.getString(1);
 
-				getServer().getServerModel().addToText("Sending user following hash: "+ classifiedOperation.getUsername() +"\n");
+				getServer().getServerModel().addToText("Sending user following hash: "+ pwFromDB +"\n");
 				setOperation(new OTHashToClient(true, pwFromDB));
 
 			} else {

@@ -121,6 +121,7 @@ public class Client {
 			break;
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
+			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
 		case "0015":
@@ -147,6 +148,7 @@ public class Client {
 		case "0016":
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
 			boolean proceed = proceedOrNot.getLoginProceed();
+			System.out.println("Proceed was: " + proceed);
 			if (proceed) {
 				this.model.setSuccessfulLogin(true);
 				this.model.setFirstName(proceedOrNot.getFirstName());
