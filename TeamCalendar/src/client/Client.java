@@ -109,6 +109,11 @@ public class Client {
 				this.model.setEmailExists(false);
 			}
 			break;
+		case "0006":
+			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
+			if(regConf.getRegistrationSuccess()){
+				
+			}
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
 			this.model.displayEvents(eventsObject.getEventList());
@@ -173,7 +178,7 @@ public class Client {
 	}
 
 	public void checkRegistration(OTRegistrationInformation otri) {
-		String complementOpCode = "0004";
+		String complementOpCode = "0006";
 		this.writeToServer(otri, false, complementOpCode);
 		System.out.println("Client: Sent OT with opcode " + otri.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);

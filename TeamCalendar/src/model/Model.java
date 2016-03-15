@@ -285,7 +285,6 @@ public class Model extends Observable {
 		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
 				this.lastname, hashedPassword);
-		System.out.println("Sending to server!");
 		this.client.checkRegistration(otri);
 //		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
 //				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
@@ -417,7 +416,7 @@ public class Model extends Observable {
 		this.password = password;
 	}
 
-	public boolean isSuccessfulRegistration() {
+	public boolean getSuccessfulRegistration() {
 		return successfulRegistration;
 	}
 
