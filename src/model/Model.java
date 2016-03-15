@@ -40,7 +40,7 @@ public class Model extends Observable {
 	private Edit editView;
 	private Password passwordView;
 
-	//----------- Regex's and other formatting information-------//
+	// ----------- Regex's and other formatting information-------//
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
 	final Pattern emailRegex = Pattern
 			.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
@@ -49,8 +49,6 @@ public class Model extends Observable {
 	final DateFormat dayFormat = new SimpleDateFormat("dd");
 	final DateFormat hourFormat = new SimpleDateFormat("HH");
 	final DateFormat minuteFormat = new SimpleDateFormat("mm");
-	private Pattern dobRegex = Pattern.compile("^[0-9]{2}/[0-9]{2}/[0-9]{4}$");
-
 	// ------------Registration information----------------------//
 	private String username;
 	private String email;
@@ -59,7 +57,7 @@ public class Model extends Observable {
 	private String dob;
 	private char[] password;
 	private String passwordAsString;
-	private ArrayList<Event> meetings;
+
 	// --------------Boolean values for registration--------------//
 	private boolean usernameUnique = false;
 	private boolean username20orLess = false;
@@ -71,14 +69,14 @@ public class Model extends Observable {
 	private boolean password60orLess = false;
 	private boolean passwordatleast8 = false;
 	private boolean oldEnough = false;
-	
+
 	// ----------------------Login success-------------------------//
-	
+
 	private boolean successfulLogin = false;
 	private boolean successfulRegistration = false;
-	
+
 	// ------------------Event view information--------------------//
-	
+
 	private String displayYear;
 	private String displayMonth;
 	private String displayDay;
@@ -172,34 +170,31 @@ public class Model extends Observable {
 
 	public void validateDOB(String dob) {
 
-		if (dobRegex.matcher(dob).matches()) {
-			System.out.println(dob);
-			int day = Integer.parseInt(dob.substring(0, 2));
-			int month = Integer.parseInt(dob.substring(3, 5));
-			int year = Integer.parseInt(dob.substring(6, 10));
-			
-			LocalDate birthdate = LocalDate.of(year, month, day);
-			LocalDate now = LocalDate.now();
-			Period period = Period.between(birthdate, now);
-			
-			if (period.getYears() >= 18) {
-				this.oldEnough = true;
-				this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
-			} else {
-				this.oldEnough = false;
-				this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
-			}
+		System.out.println(dob);
+		int day = Integer.parseInt(dob.substring(0, 2));
+		int month = Integer.parseInt(dob.substring(3, 5));
+		int year = Integer.parseInt(dob.substring(6, 10));
 
+		LocalDate birthdate = LocalDate.of(year, month, day);
+		LocalDate now = LocalDate.now();
+		Period period = Period.between(birthdate, now);
+
+		if (period.getYears() >= 18) {
+			this.oldEnough = true;
+			this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
 		} else {
-			this.registrationView.getRegistrationPanel().setDobLabel("DOB* dd/mm/yyyy: incorrect format");
+			this.oldEnough = false;
+			this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
 		}
+
 	}
 
 	public void validatePassword(char[] password) {
 		this.password = password;
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
-			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be between 8 and 60 characters");
+			this.registrationView.getRegistrationPanel()
+					.setPasswordLabel("Password*: must be between 8 and 60 characters");
 		} else if (password.length > 60) {
 			this.password60orLess = false;
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be less than 60 characters");
@@ -211,46 +206,45 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
 
-	/*public void checkRegistrationInformation(String firstname, String lastname, String dob, String password,
-			String confirm) {
-
-		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
-				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
-				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-			String hashedPassword = BCrypt.hashpw(this.password.toString(), BCrypt.gensalt()); // Does
-																								// this
-																								// work?
-																								// needs
-																								// some
-																								// research.
-			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
-					this.lastname, hashedPassword);
-			this.client.checkRegistration(otri);
-		} else {
-
-		}
-
-	}*/
+	/*
+	 * public void checkRegistrationInformation(String firstname, String
+	 * lastname, String dob, String password, String confirm) {
+	 * 
+	 * if (this.usernameUnique && this.username20orLess && this.emailUnique &&
+	 * this.emailMatchesRegex && this.emailUnique && this.firstNameLessThan30 &&
+	 * this.lastNameNameLessThan30 && this.passwordMatchesConfirm &&
+	 * this.password60orLess && this.passwordatleast8 && this.oldEnough) {
+	 * String hashedPassword = BCrypt.hashpw(this.password.toString(),
+	 * BCrypt.gensalt()); // Does // this // work? // needs // some // research.
+	 * OTRegistrationInformation otri = new
+	 * OTRegistrationInformation(this.username, this.email, this.firstName,
+	 * this.lastname, hashedPassword); this.client.checkRegistration(otri); }
+	 * else {
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 	// --------------------Registration Ends -----------------------------//
 
 	// --------------------View Events methods/ List view---------------//
 	public void displayEvents(ArrayList<Event> events) {
-		for(Event e : events){
-			//double check that the meetings returned are 
-			//for the day the user asked for 
-			if((e.getYear().equals(this.displayYear) &&
-					(e.getMonth().equals(this.displayMonth) &&
-						(e.getDay().equals(this.displayDay))))){
-			this.meetings.add(e);
-				
+		for (Event e : events) {
+			// double check that the meetings returned are
+			// for the day the user asked for
+			if ((e.getYear().equals(this.displayYear)
+					&& (e.getMonth().equals(this.displayMonth) && (e.getDay().equals(this.displayDay))))) {
+				this.meetings.add(e);
+
 			}
 		}
-		
+
 		this.changeCurrentState(ModelState.EVENTSUPDATE);
 	}
 
 	// --------------------View Events methods/ List view Ends ---------------//
-	//--------------------- Prompt Reload ------------------------------------//
+	// --------------------- Prompt Reload
+	// ------------------------------------//
 	public void promptRestart() {
 		if (this.error != null) {
 			this.error.promptRestart();
@@ -260,7 +254,8 @@ public class Model extends Observable {
 		}
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
 	}
-	//--------------------- Prompt Reload Ends---------------------------------//
+	// --------------------- Prompt Reload
+	// Ends---------------------------------//
 	// -------------------------ButtonMethods---------------------------------//
 
 	public void login(String username, char[] password) {
@@ -273,7 +268,6 @@ public class Model extends Observable {
 		this.client.checkLoginDetails(loginObject);
 	}
 
-
 	// When the user presses "home" (MenuPanel) or right after successful login
 	// (LoginPanel), this method is called by the requisite listeners.
 	public void showListViewForToday() {
@@ -281,34 +275,36 @@ public class Model extends Observable {
 		this.displayYear = yearFormat.format(cal.getTime());
 		this.displayMonth = monthFormat.format(cal.getTime());
 		this.displayDay = dayFormat.format(cal.getTime());
-		this.client.getMeetings(this.username, cal);
-		}
-	
+		// this.client.getMeetings(this.username, cal);
+	}
+
 	public void checkRegistrationInformation() {
 		String passwordAsString = new String(password);
 		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
 				this.lastname, hashedPassword);
-			this.client.checkRegistration(otri);
-//		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
-//				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
-//				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-//
-//		} else {
-//
-//		}
-		
-	}
-	
+		this.client.checkRegistration(otri);
+		// if (this.usernameUnique && this.username20orLess && this.emailUnique
+		// && this.emailMatchesRegex
+		// && this.emailUnique && this.firstNameLessThan30 &&
+		// this.lastNameNameLessThan30
+		// && this.passwordMatchesConfirm && this.password60orLess &&
+		// this.passwordatleast8 && this.oldEnough) {
+		//
+		// } else {
+		//
+		// }
 
-//	method for next day
-	
-//	method for previous day
-	
-//	method for add event
-	
-//	method for  
-	
+	}
+
+	// method for next day
+
+	// method for previous day
+
+	// method for add event
+
+	// method for
+
 	// --------Save information that returns from server----//
 
 	public void setUsernameExists(boolean usernameExists) {
@@ -334,11 +330,11 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
-	
-	//	method to get meetings
-	
-	public void getMeetingsOnDay(String userName, Calendar dateRequest){
-		
+
+	// method to get meetings
+
+	public void getMeetingsOnDay(String userName, Calendar dateRequest) {
+
 	}
 
 	// --------End of information from server------------//
@@ -402,8 +398,11 @@ public class Model extends Observable {
 
 	public void setSuccessfulLogin(boolean successfulLogin) {
 		this.successfulLogin = successfulLogin;
-		if(successfulLogin){
-			this.listView = new List(this.client, this);}}
+		if (successfulLogin) {
+			this.listView = new List(this.client, this);
+		}
+	}
+
 	public String getDob() {
 		return dob;
 	}
@@ -479,16 +478,16 @@ public class Model extends Observable {
 
 		case EVENTS:
 			this.listView = new List(client, this);
-									//keep this in. Differentiates between List and ListUpdate for the reader. 
-									//See class Client, method RunOT(), switch/case: 0013 for use.
-									//listView is created at class Model, method setSuccesfulLogin() 
+			// keep this in. Differentiates between List and ListUpdate for the
+			// reader.
+			// See class Client, method RunOT(), switch/case: 0013 for use.
+			// listView is created at class Model, method setSuccesfulLogin()
 			break;
-			
-		case EVENTSUPDATE: 
-			this.listView.getListPanel().addMeetings(this.meetings);
+
+		case EVENTSUPDATE:
 			setPanel(this.listView);
 			break;
-			
+
 		case PROFILE:
 			this.profileView = new Profile(client, this);
 			break;
