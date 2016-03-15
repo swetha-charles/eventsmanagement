@@ -60,6 +60,9 @@ public class RegistrationPanel extends JPanel {
 
 	JButton submit = new JButton("Submit");
 	JButton cancel = new JButton("Cancel");
+	String dayInput = "";
+	String monthInput = "";
+	String yearInput = "";
 
 	/**
 	 * This constructor builds a login panel where the user can input their
@@ -119,7 +122,7 @@ public class RegistrationPanel extends JPanel {
 		// sets dimension of button
 		submit.setPreferredSize(new Dimension(100, 40));
 		cancel.setPreferredSize(new Dimension(100, 40));
-		
+
 		JPanel dob = new JPanel();
 		JLabel empty = new JLabel();
 		GridLayout grid2 = new GridLayout(1, 3);
@@ -199,20 +202,89 @@ public class RegistrationPanel extends JPanel {
 		firstName.addFocusListener((FocusLostListener) (e) -> {
 			this.model.validateFirstName(firstName.getText());
 		});
-		
+
 		lastName.addFocusListener((FocusLostListener) (e) -> {
 			this.model.validateLastName(lastName.getText());
 		});
-		
+
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
+		date.addFocusListener((FocusLostListener) (e) -> {
+			try{
+				
+				Integer.parseInt(date.getText());
+				if(date.getText().length() == 0){
+					JOptionPane.showMessageDialog(this, "Fill in DOB date!");
+				}
+				if(date.getText().length() == 1){
+					//if user only puts one a digit
+					this.dayInput = "0" + date.getText();
+				}
+				if(date.getText().length() == 2){
+					this.dayInput = date.getText();
+				}
+			} catch (NumberFormatException e2) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!!");
+			}
+
+		});
 		
-//		dob.addFocusListener((FocusLostListener) (e) -> this.model.validateDOB(dob.getText()));		
+		month.addFocusListener((FocusLostListener) (e) -> {
+			try{
+				Integer.parseInt(month.getText());
+				if(month.getText().length() == 0){
+					JOptionPane.showMessageDialog(this, "Fill in DOB month!");
+				}
+				if(month.getText().length() == 1){
+					//if user only puts one a digit
+					this.dayInput = "0" + date.getText();
+				}
+				if(month.getText().length() == 2){
+					this.monthInput = month.getText();
+				}
+				
+			}catch (NumberFormatException e2) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!");
+			}
+			
+		});
 		
+		year.addFocusListener((FocusLostListener) (e) -> {
+			try{
+				Integer.parseInt(year.getText());
+				if(year.getText().length() == 0){
+					JOptionPane.showMessageDialog(this, "Fill in DOB year!");
+				} else if(year.getText().length() == 1 || year.getText().length() == 3){
+					//if user only puts one a digit
+					JOptionPane.showMessageDialog(this, "Fill in valid DOB year!");
+				} else if(year.getText().length() == 2){
+					String yearBadInput = year.getText();
+					if(Integer.parseInt(yearBadInput) <= 16){
+						this.yearInput = "20" + yearBadInput;
+					} else{
+						this.yearInput = "19" + yearBadInput;
+					}
+					this.model.validateDOB(dayInput + monthInput + yearInput);
+				} else if (year.getText().length() == 4){
+					this.model.validateDOB(dayInput + monthInput + yearInput);
+				}
+			} catch (NumberFormatException e2) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!");
+			}
+			
+			
+			
+		});
+		
+		
+		
+		// dob.addFocusListener((FocusLostListener) (e) ->
+		// this.model.validateDOB(dob.getText()));
+
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
-		
+
 		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePassword(password.getPassword()));
-		
-		//confirm listener
+
+		// confirm listener
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
 		submit.addActionListener((e) -> {
 			if (!this.model.isEmailUnique()) {
@@ -221,7 +293,7 @@ public class RegistrationPanel extends JPanel {
 				JOptionPane.showMessageDialog(this, "Username already exists! Pick another ones");
 			} else if (!this.model.isEmailMatchesRegex()) {
 				JOptionPane.showMessageDialog(this, "Incorrect email format");
-			} else if(!this.model.checkConfirmMatchesPassword(confirm.getPassword())){
+			} else if (!this.model.checkConfirmMatchesPassword(confirm.getPassword())) {
 				JOptionPane.showMessageDialog(this, "Passwords do not match");
 			} else {
 				model.checkRegistrationInformation();
@@ -234,7 +306,6 @@ public class RegistrationPanel extends JPanel {
 
 	// ------ Email & User labels ---------//
 
-	
 	public void setDobLabel(String dobLabel) {
 		this.dobLabel.setText(dobLabel);
 		if (dobLabel.contains("incorrect") | dobLabel.contains("18")) {
@@ -312,23 +383,24 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 	// ------ End Email & User labels ---------//
-	
+
 	public class JTextFieldLimit extends PlainDocument {
-		  private int limit;
+		private int limit;
 
-		  JTextFieldLimit(int limit) {
-		   super();
-		   this.limit = limit;
-		   }
-
-		  public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
-		    if (str == null) return;
-
-		    if ((getLength() + str.length()) <= limit) {
-		      super.insertString(offset, str, attr);
-		    }
-		  }
+		JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
 		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
+			}
+		}
+	}
 
 	public static void main(String[] args) {
 
@@ -337,7 +409,10 @@ public class RegistrationPanel extends JPanel {
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Model model = new Model(client);
 
+		RegistrationPanel reg = new RegistrationPanel(client, model);
+		frame.add(reg);
 		frame.setSize(1000, 650);
 		frame.setResizable(true);
 		frame.setVisible(true);
