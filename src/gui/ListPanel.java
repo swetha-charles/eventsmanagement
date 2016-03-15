@@ -105,7 +105,7 @@ public class ListPanel extends JPanel{
 		//for each event do this
 		for(int i=0; i<model.getMeetings().size(); i++){
 //			l.setPreferredSize(new Dimension(20,100));
-			JLabel m = new JLabel("Event name", SwingConstants.LEFT);
+			JLabel m = new JLabel("Event name", SwingConstants.LEFT); // change event name to actual event name model.getMeetings().get(i).getEventTitle()
 			m.setVerticalAlignment(SwingConstants.CENTER);
 			m.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 			m.setForeground(Color.DARK_GRAY);
