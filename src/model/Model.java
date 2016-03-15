@@ -460,9 +460,14 @@ public class Model extends Observable {
 			setPanel(this.loginView);
 			break;
 
-		case LOGINUNSUCCESSFUL:
-			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Password or username incorrect");
+		case LOGINUNSUCCESSFULWRONGUSERNAME:
+			JOptionPane.showMessageDialog(this.getCurrentPanel(), "No such user");
 			break;
+			
+		case LOGINUNSUCCESSFULWRONGPASSWORD:
+			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Password incorrect");
+			break;
+			
 		case REGISTRATIONUPDATE:
 			setPanel(this.registrationView);
 			break;
