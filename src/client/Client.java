@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import gui.MainView;
 import jBCrypt.BCrypt;
@@ -14,6 +17,7 @@ import objectTransferrable.*;
 
 public class Client {
 	private int portnumber;
+	private Thread hb;
 	private ObjectOutputStream toServer = null;
 	private ObjectInputStream fromServer = null;
 	private Model model;
@@ -30,6 +34,9 @@ public class Client {
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
+			this.hb = new Thread(new HeartBeatThread(this));
+			this.hb.start();
+
 		} catch (IOException e) {
 			model.changeCurrentState(ModelState.UNABLETOOPENSTREAMS);
 			e.printStackTrace();
@@ -42,7 +49,7 @@ public class Client {
 	}
 
 	/**
-	 * This is the only way to send object transferrables from the client. It is
+	 * This is the only way to send object transferables from the client. It is
 	 * a private method.
 	 * 
 	 * @param OT
@@ -65,7 +72,13 @@ public class Client {
 	// read from server
 	public void readFromServer(String waitingForOpcode) {
 		ObjectTransferrable receivedOperation = null;
+		//if what was last sent was a heartbeat, use the waitForHeartBeat() method
+		if (waitingForOpcode.equals("0014")) {
+			waitForHeartBeat();
+			return;
+		}
 		try {
+
 			receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 			System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
 			if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
@@ -111,8 +124,8 @@ public class Client {
 			break;
 		case "0006":
 			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
-			
-			if(regConf.getRegistrationSuccess()){
+
+			if (regConf.getRegistrationSuccess()) {
 				this.model.setSuccessfulRegistration(true);
 				this.model.changeCurrentState(ModelState.LOGIN);
 			} else {
@@ -124,22 +137,21 @@ public class Client {
 			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-		
+
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
 			boolean userExists = userHash.getUserExists();
-			if (userExists){
+			if (userExists) {
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
-				System.out.println("Password check returned: " + successfulLogin);
 				OTLoginSuccessful returnObject;
-				if(successfulLogin){
-					returnObject = new OTLoginSuccessful(this.model.getUsername());
-					informServerLoginSuccess(returnObject);
+				if (successfulLogin) {
+					returnObject = new OTLoginSuccessful(true, this.model.getUsername());
 				} else {
+					returnObject = new OTLoginSuccessful(false, this.model.getUsername());
 					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
-
+				informServerLoginSuccess(returnObject);
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
@@ -201,9 +213,10 @@ public class Client {
 		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(loginObject, false, complementOpCode);
+
 	}
 
-	public void informServerLoginSuccess(OTLoginSuccessful loginObject){
+	public void informServerLoginSuccess(OTLoginSuccessful loginObject) {
 		String complementOpCode = "0016";
 		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
@@ -216,6 +229,23 @@ public class Client {
 		System.out.println("Client: Sent OT with opcode " + requestObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(requestObject, false, complementOpCode);
+	}
+
+	public void sendHeartBeat() {
+		String complementOpCode = "0014";
+		OTHeartBeat othb = new OTHeartBeat();
+		this.writeToServer(othb, false, complementOpCode);
+	}
+
+	public void waitForHeartBeat(){
+		try {
+			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
+			future.get(1000, TimeUnit.MILLISECONDS);
+			System.out.println("Heartbeat received from server");
+		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException | TimeoutException e) {
+			System.out.println("Hearbeat dead");
+			this.attemptRecovery();
+		}  
 	}
 	// ----------writeToServer calls Ends---------------------------//
 
@@ -284,7 +314,7 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-		Client C = new Client(4444);
+		Client C = new Client(4449);
 	}
 
 }
