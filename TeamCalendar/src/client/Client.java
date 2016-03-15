@@ -124,17 +124,19 @@ public class Client {
 			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
+		
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
-			boolean cont = userHash.getUserExists();
-			if (cont){
+			boolean userExists = userHash.getUserExists();
+			if (userExists){
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
 				OTLoginSuccessful returnObject;
 				if(successfulLogin){
 					returnObject = new OTLoginSuccessful(true, this.model.getUsername());
 				} else {
 					returnObject = new OTLoginSuccessful(false, this.model.getUsername());
+					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFUL);
 				}
 				informServerLoginSuccess(returnObject);
 			} else {
@@ -143,6 +145,7 @@ public class Client {
 				this.model.setLastname(null);
 				this.model.setEmail(null);
 				this.model.setUsername(null);
+				this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFUL);
 			}
 			break;
 		case "0016":
@@ -214,8 +217,7 @@ public class Client {
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(requestObject, false, complementOpCode);
 	}
-	// --------------------- writeToServer calls
-	// Ends---------------------------//
+	// ----------writeToServer calls Ends---------------------------//
 
 	// --------------------- Exit -------------------------------------//
 	public void exitGracefully() {
