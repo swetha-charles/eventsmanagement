@@ -16,7 +16,6 @@ public class QueryManager {
 		this.clientInfo = clientInfo;
 
 	}
-	
 
 	public ObjectTransferrable getOperation() {
 		return operation;
@@ -43,13 +42,11 @@ public class QueryManager {
 		Statement stmnt = dbconnection.createStatement();
 
 		/**
-		 * List of present opcodes
-		 * OTUsernameCheck "0001"
-		 * OTEmailCheck = "0002"
-		 * OTRegistrationCheck = "0003"
-		 * OTRegistrationInformation = "0004"
+		 * List of present opcodes OTUsernameCheck "0001" OTEmailCheck = "0002"
+		 * OTRegistrationCheck = "0003" OTRegistrationInformation = "0004"
 		 * OTExitGracefully = "0005" - Should not appear at query manager
-		 * OTRegistrationInformationConfirmation = "0006" - Should not appear at query manager
+		 * OTRegistrationInformationConfirmation = "0006" - Should not appear at
+		 * query manager
 		 */
 		// OTUsernameCheck "0001"
 		if (currentOperation.getOpCode().equals("0001")) {
@@ -252,45 +249,21 @@ public class QueryManager {
 				+ "ORDER BY m.meetingstarttime ASC";
 
 		ResultSet rs;
-
 		try {
 			rs = stmnt.executeQuery(query);
 			ArrayList<Event> meetings = new ArrayList<Event>();
 			getServer().getServerModel()
 					.addToText("Requesting meeting information for " + getClientInfo().getUserName() + "\n");
-			System.out.println("Query Manager" + classifiedOperation.getDate().toString());
-				//Mark, I commented out some stuff to test the code I wrote tonight. 
-			//remove from here to.....
-			if (classifiedOperation.getDate().toString().equals("2016-03-15")) {
-				String title = "elevensies";
-				String description = "bring some biscuits";
-				String location = "the garden";
-				Time startTime = new Time(5, 5, 5);
-				Time endTime = new Time(10, 10,10);
+			while (rs.next()) {
+				String title = rs.getString(1);
+				String description = rs.getString(2);
+				String location = rs.getString(3);
+				Time startTime = rs.getTime(4);
+				Time endTime = rs.getTime(5);
 
 				Event event = new Event(startTime, endTime, description, title, location);
 				meetings.add(event);
-			} else {
-				String title = "beheading";
-				String description = "bring an axe";
-				String location = "tower of london";
-				Time startTime = new Time(5, 5, 5);
-				Time endTime = new Time(10, 10,10);
-
-				Event event = new Event(startTime, endTime, description, title, location);
-				meetings.add(event);
-				
-				String title2 = "beheading 2";
-				String description2 = "bring an axe";
-				String location2 = "tower of london";
-				Time startTime2 = new Time(10, 10, 10);
-				Time endTime2 = new Time(12, 12,12);
-
-				Event event2 = new Event(startTime2, endTime2, description2, title2, location2);
-				meetings.add(event2);
-				
 			}
-			//.... here. And add the stuff that's labeled Marks code in place. 
 			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
 			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
 			setOperation(returnEvents);
@@ -299,62 +272,7 @@ public class QueryManager {
 			setOperation(new OTErrorResponse("SQL Server failed with meeting request", false));
 			e.printStackTrace();
 		}
-		
-		
-		//Marks code starts here....
-		
-		/*
-		 * try { rs = stmnt.executeQuery(query); ArrayList<Event> meetings = new
-		 * ArrayList<Event>(); getServer().getServerModel().addToText(
-		 * "Requesting meeting information for "+ getClientInfo().getUserName()
-		 * + "\n"); while(rs.next()){ String title = rs.getString(1); String
-		 * description = rs.getString(2); String location = rs.getString(3);
-		 * Time startTime = rs.getTime(4); Time endTime = rs.getTime(5);
-		 * 
-		 * Event event = new Event(startTime, endTime, description, title,
-		 * location); meetings.add(event); }
-		 * getServer().getServerModel().addToText("Returning " + meetings.size()
-		 * + " meetings to client" + "\n"); OTReturnDayEvents returnEvents = new
-		 * OTReturnDayEvents(meetings); setOperation(returnEvents); } catch
-		 * (SQLException e) { getServer().getServerModel().addToText(
-		 * "SQL Server failed with user details request" + "\n");
-		 * setOperation(new OTErrorResponse(
-		 * "SQL Server failed with meeting request", false));
-		 * e.printStackTrace(); }
-		 */
-		
-		
-		//... ends here. 
-
 	}
-
-	// private String createEvent(Statement stmnt){
-	// OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
-	// Event event = classifiedOperation.getEvent();
-	// java.sql.Date eventDate = new
-	// java.sql.Date(event.getStartTime().getTimeInMillis());
-	// String username = event;
-	// String query = "INSERT INTO";
-	//
-	// setOperation(new OTErrorResponse("The method for creating events has not
-	// yet been completed on the server", false));
-	// return "";
-	// }
-
-	// private void createEvent(Statement stmnt){
-	// OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
-	// Event event = classifiedOperation.getEvent();
-	// java.sql.Date eventDate = new
-	// java.sql.Date(event.getStartTime().getTimeInMillis());
-	// String username = this.clientInfo.getUserName();
-	//
-	//
-	// String query = "INSERT INTO " ;
-	//
-	// setOperation(new OTErrorResponse("The method for creating events has not
-	// yet been completed on the server", false));
-	//
-	// }
 
 	private void getUserDetails(Statement stmnt) {
 
