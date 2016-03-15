@@ -10,19 +10,14 @@ package objectTransferrable;
  *
  */
 public class OTLoginSuccessful extends ObjectTransferrable {
-	private final boolean loginSuccessful;
 	private String username;
 
 	/**
 	 * @param opCode
 	 */
-	public OTLoginSuccessful(boolean loginSuccessful, String username) {
+	public OTLoginSuccessful(String username) {
 		super("0013");
-		this.loginSuccessful =  loginSuccessful;
 		this.username = username;
-	}
-	public boolean isLoginSuccessful() {
-		return loginSuccessful;
 	}
 	public String getUsername() {
 		return username;
