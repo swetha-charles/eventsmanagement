@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Calendar;
 
 import gui.MainView;
+import jBCrypt.BCrypt;
 import model.Model;
 import model.ModelState;
 import objectTransferrable.*;
@@ -112,13 +113,35 @@ public class Client {
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
 			this.model.displayEvents(eventsObject.getEventList());
 			break;
-		case "0013":
-			OTLoginSuccessful loginObject = (OTLoginSuccessful) receivedOperation;
-			if (loginObject.isLoginSuccessful()) {
+		case "0015":
+			OTHashToClient userHash = (OTHashToClient) receivedOperation;
+			String passwordAsString = this.model.getPasswordAsString();
+			boolean cont = userHash.getUserExists();
+			if (cont){
+				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
+				OTLoginSuccessful returnObject;
+				if(successfulLogin){
+					returnObject = new OTLoginSuccessful(true, this.model.getUsername());
+				} else {
+					returnObject = new OTLoginSuccessful(false, this.model.getUsername());
+				}
+				informServerLoginSuccess(returnObject);
+			} else {
+				this.model.setSuccessfulLogin(false);
+				this.model.setFirstName(null);
+				this.model.setLastname(null);
+				this.model.setEmail(null);
+				this.model.setUsername(null);
+			}
+			break;
+		case "0016":
+			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
+			boolean proceed = proceedOrNot.getLoginProceed();
+			if (proceed) {
 				this.model.setSuccessfulLogin(true);
-				this.model.setFirstName(loginObject.getFirstName());
-				this.model.setLastname(loginObject.getLastName());
-				this.model.setEmail(loginObject.getEmail());
+				this.model.setFirstName(proceedOrNot.getFirstName());
+				this.model.setLastname(proceedOrNot.getLastName());
+				this.model.setEmail(proceedOrNot.getEmail());
 				this.model.changeCurrentState(ModelState.LIST);
 			} else {
 				this.model.setSuccessfulLogin(false);
@@ -129,6 +152,7 @@ public class Client {
 			}
 			break;
 		}
+
 	}
 
 	// ---------------- writeToServer calls -----------------------//
@@ -137,7 +161,7 @@ public class Client {
 
 		this.writeToServer(otuc, false, otuc.getOpCode());
 		System.out.println("Sent OT with opcode" + otuc.getOpCode());
-
+		System.out.println("Client: Expecting OT with opcode " + otuc.getOpCode());
 	}
 
 	public void checkEmail(String email) {
@@ -145,20 +169,27 @@ public class Client {
 
 		this.writeToServer(otec, false, otec.getOpCode());
 		System.out.println("Client: Sent OT with opcode" + otec.getOpCode());
-
+		System.out.println("Client: Expecting OT with opcode " + otec.getOpCode());
 	}
 
 	public void checkRegistration(OTRegistrationInformation otri) {
 		String complementOpCode = "0004";
 		this.writeToServer(otri, false, complementOpCode);
-		System.out.println("Client: Send OT with opcode " + otri.getOpCode());
+		System.out.println("Client: Sent OT with opcode " + otri.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
 
 	public void checkLoginDetails(OTLogin loginObject) {
-		String complementOpCode = "0013";
+		String complementOpCode = "0015";
 		this.writeToServer(loginObject, false, complementOpCode);
-		System.out.println("Client: Send OT with opcode " + loginObject.getOpCode());
+		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+	}
+
+	public void informServerLoginSuccess(OTLoginSuccessful loginObject){
+		String complementOpCode = "0016";
+		this.writeToServer(loginObject, false, complementOpCode);
+		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
 
@@ -167,7 +198,7 @@ public class Client {
 		Calendar now = Calendar.getInstance();
 		OTRequestMeetingsOnDay getMeetingsObject = new OTRequestMeetingsOnDay(username, now);
 		this.writeToServer(getMeetingsObject, false, complementOpCode);
-		System.out.println("Client: Send OT with opcode " + getMeetingsObject.getOpCode());
+		System.out.println("Client: Sent OT with opcode " + getMeetingsObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 	}
 	// --------------------- writeToServer calls
