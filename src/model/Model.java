@@ -82,6 +82,7 @@ public class Model extends Observable {
 	private String displayYear;
 	private String displayMonth;
 	private String displayDay;
+	private ArrayList<Event> meetings;
 
 	public Model(Client client) {
 		this.client = client;
@@ -235,14 +236,17 @@ public class Model extends Observable {
 	// --------------------View Events methods/ List view---------------//
 	public void displayEvents(ArrayList<Event> events) {
 		for(Event e : events){
-			//only get the meetings for the day the user asked for 
+			//double check that the meetings returned are 
+			//for the day the user asked for 
 			if((e.getYear().equals(this.displayYear) &&
 					(e.getMonth().equals(this.displayMonth) &&
 						(e.getDay().equals(this.displayDay))))){
-				String startingHour = e.getStartHour();
-				//Send to listpanel here. 
+			this.meetings.add(e);
+				
 			}
 		}
+		
+		this.changeCurrentState(ModelState.EVENTSUPDATE);
 	}
 
 	// --------------------View Events methods/ List view Ends ---------------//
@@ -277,7 +281,7 @@ public class Model extends Observable {
 		this.displayYear = yearFormat.format(cal.getTime());
 		this.displayMonth = monthFormat.format(cal.getTime());
 		this.displayDay = dayFormat.format(cal.getTime());
-		this.client.getMeetingsForToday(this.username);
+		this.client.getMeetings(this.username, cal);
 		}
 	
 	public void checkRegistrationInformation() {
@@ -285,7 +289,7 @@ public class Model extends Observable {
 		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
 				this.lastname, hashedPassword);
-		this.client.checkRegistration(otri);
+			this.client.checkRegistration(otri);
 //		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
 //				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
 //				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
@@ -331,7 +335,7 @@ public class Model extends Observable {
 
 	}
 	
-//	method to get meetings
+	//	method to get meetings
 	
 	public void getMeetingsOnDay(String userName, Calendar dateRequest){
 		
@@ -416,7 +420,7 @@ public class Model extends Observable {
 		this.password = password;
 	}
 
-	public boolean getSuccessfulRegistration() {
+	public boolean isSuccessfulRegistration() {
 		return successfulRegistration;
 	}
 
@@ -473,13 +477,17 @@ public class Model extends Observable {
 			this.client.exitGracefully();
 			break;
 
-		case LIST:
-			setPanel(this.listView); //keep this in. Differentiates between List and ListUpdate for the reader. 
+		case EVENTS:
+			this.listView = new List(client, this);
+									//keep this in. Differentiates between List and ListUpdate for the reader. 
 									//See class Client, method RunOT(), switch/case: 0013 for use.
 									//listView is created at class Model, method setSuccesfulLogin() 
+			break;
 			
-		case LISTUPDATE: 
+		case EVENTSUPDATE: 
+			this.listView.getListPanel().addMeetings(this.meetings);
 			setPanel(this.listView);
+			break;
 			
 		case PROFILE:
 			this.profileView = new Profile(client, this);
