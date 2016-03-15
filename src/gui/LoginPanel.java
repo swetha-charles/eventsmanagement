@@ -49,7 +49,7 @@ public class LoginPanel extends JPanel{
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
 	 */
-	@SuppressWarnings({ "unchecked", "unchecked", "unchecked", "unchecked" })
+	@SuppressWarnings({ "unchecked"})
 	public LoginPanel(Client client, Model model){
 		this.client= client;
 		this.model = model;
