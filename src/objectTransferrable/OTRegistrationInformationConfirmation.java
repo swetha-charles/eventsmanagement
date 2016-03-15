@@ -20,7 +20,7 @@ public class OTRegistrationInformationConfirmation extends ObjectTransferrable {
 		this.reasonForFailure = reasonForFailure;
 	}
 	
-	public boolean isRegistrationSuccess() {
+	public boolean getRegistrationSuccess() {
 		return registrationSuccess;
 	}
 
