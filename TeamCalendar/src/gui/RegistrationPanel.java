@@ -209,74 +209,72 @@ public class RegistrationPanel extends JPanel {
 
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
 		date.addFocusListener((FocusLostListener) (e) -> {
-			try{
-				
+			try {
 				Integer.parseInt(date.getText());
-				if(date.getText().length() == 0){
-					JOptionPane.showMessageDialog(this, "Fill in DOB date!");
-				}
-				if(date.getText().length() == 1){
-					//if user only puts one a digit
-					this.dayInput = "0" + date.getText();
-				}
-				if(date.getText().length() == 2){
-					this.dayInput = date.getText();
-				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!!");
+				JOptionPane.showMessageDialog(this, "Fill in date field with numbers!!");
+				return;
+			}
+			if (date.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB date!");
+			}
+			if (date.getText().length() == 1) {
+				// if user only puts one a digit
+				this.dayInput = "0" + date.getText();
+			}
+			if (date.getText().length() == 2) {
+				this.dayInput = date.getText();
 			}
 
 		});
-		
+
 		month.addFocusListener((FocusLostListener) (e) -> {
-			try{
+			try {
 				Integer.parseInt(month.getText());
-				if(month.getText().length() == 0){
-					JOptionPane.showMessageDialog(this, "Fill in DOB month!");
-				}
-				if(month.getText().length() == 1){
-					//if user only puts one a digit
-					this.dayInput = "0" + date.getText();
-				}
-				if(month.getText().length() == 2){
-					this.monthInput = month.getText();
-				}
-				
-			}catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!");
-			}
-			
-		});
-		
-		year.addFocusListener((FocusLostListener) (e) -> {
-			try{
-				Integer.parseInt(year.getText());
-				if(year.getText().length() == 0){
-					JOptionPane.showMessageDialog(this, "Fill in DOB year!");
-				} else if(year.getText().length() == 1 || year.getText().length() == 3){
-					//if user only puts one a digit
-					JOptionPane.showMessageDialog(this, "Fill in valid DOB year!");
-				} else if(year.getText().length() == 2){
-					String yearBadInput = year.getText();
-					if(Integer.parseInt(yearBadInput) <= 16){
-						this.yearInput = "20" + yearBadInput;
-					} else{
-						this.yearInput = "19" + yearBadInput;
-					}
-					this.model.validateDOB(dayInput + monthInput + yearInput);
-				} else if (year.getText().length() == 4){
-					this.model.validateDOB(dayInput + monthInput + yearInput);
-				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB with numbers!");
+				JOptionPane.showMessageDialog(this, "Fill in month field with numbers!");
+				return;
 			}
-			
-			
-			
+			if (month.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB month!");
+			}
+			if (month.getText().length() == 1) {
+				// if user only puts one a digit
+				this.dayInput = "0" + date.getText();
+			}
+			if (month.getText().length() == 2) {
+				this.monthInput = month.getText();
+			}
+
 		});
-		
-		
-		
+
+		year.addFocusListener((FocusLostListener) (e) -> {
+			try {
+				Integer.parseInt(year.getText());
+			} catch (NumberFormatException e2) {
+				JOptionPane.showMessageDialog(this, "Fill in year field with numbers!");
+				return;
+			}
+			if (year.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "Fill in DOB year!");
+			} else if (year.getText().length() == 1 || year.getText().length() == 3) {
+				// if user only puts one a digit
+				JOptionPane.showMessageDialog(this, "Fill in valid DOB year!");
+			} else if (year.getText().length() == 2) {
+				String yearBadInput = year.getText();
+				if (Integer.parseInt(yearBadInput) <= 16) {
+					this.yearInput = "20" + yearBadInput;
+				} else {
+					this.yearInput = "19" + yearBadInput;
+				}
+				this.model.validateDOB(dayInput + "/" + monthInput + "/" + yearInput);
+			} else if (year.getText().length() == 4) {
+				this.yearInput = year.getText();
+				this.model.validateDOB(dayInput + "/" + monthInput + "/" + yearInput);
+			}
+
+		});
+
 		// dob.addFocusListener((FocusLostListener) (e) ->
 		// this.model.validateDOB(dob.getText()));
 
