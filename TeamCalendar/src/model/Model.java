@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -170,10 +171,30 @@ public class Model extends Observable {
 
 	public void validateDOB(String dob) {
 
+
+		if (dobRegex.matcher(dob).matches()) {
+			System.out.println(dob);
+			int day = Integer.parseInt(dob.substring(0, 2));
+			int month = Integer.parseInt(dob.substring(3, 5));
+			int year = Integer.parseInt(dob.substring(6, 10));
+
+			LocalDate birthdate = LocalDate.of(year, month, day);
+			LocalDate now = LocalDate.now();
+			Period period = Period.between(birthdate, now);
+
+			if (period.getYears() >= 18) {
+				this.oldEnough = true;
+				this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
+			} else {
+				this.oldEnough = false;
+				this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
+			}
+
 		System.out.println(dob);
 		int day = Integer.parseInt(dob.substring(0, 2));
 		int month = Integer.parseInt(dob.substring(3, 5));
 		int year = Integer.parseInt(dob.substring(6, 10));
+
 
 		LocalDate birthdate = LocalDate.of(year, month, day);
 		LocalDate now = LocalDate.now();
@@ -228,19 +249,6 @@ public class Model extends Observable {
 	// --------------------Registration Ends -----------------------------//
 
 	// --------------------View Events methods/ List view---------------//
-	public void displayEvents(ArrayList<Event> events) {
-		for (Event e : events) {
-			// double check that the meetings returned are
-			// for the day the user asked for
-			if ((e.getYear().equals(this.displayYear)
-					&& (e.getMonth().equals(this.displayMonth) && (e.getDay().equals(this.displayDay))))) {
-				this.meetings.add(e);
-
-			}
-		}
-
-		this.changeCurrentState(ModelState.EVENTSUPDATE);
-	}
 
 	// --------------------View Events methods/ List view Ends ---------------//
 	// --------------------- Prompt Reload
@@ -284,6 +292,14 @@ public class Model extends Observable {
 		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
 				this.lastname, hashedPassword);
 		this.client.checkRegistration(otri);
+		//		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
+		//				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
+		//				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
+		//
+		//		} else {
+		//
+		//		}
+
 		// if (this.usernameUnique && this.username20orLess && this.emailUnique
 		// && this.emailMatchesRegex
 		// && this.emailUnique && this.firstNameLessThan30 &&
@@ -296,6 +312,15 @@ public class Model extends Observable {
 		// }
 
 	}
+
+
+	//	method for next day
+
+	//	method for previous day
+
+	//	method for add event
+
+	//	method for  
 
 	// method for next day
 
@@ -398,6 +423,12 @@ public class Model extends Observable {
 
 	public void setSuccessfulLogin(boolean successfulLogin) {
 		this.successfulLogin = successfulLogin;
+
+		if(successfulLogin){
+			this.listView = new List(this.client, this);
+		}
+	}
+	
 		if (successfulLogin) {
 			this.listView = new List(this.client, this);
 		}
@@ -427,7 +458,10 @@ public class Model extends Observable {
 		this.successfulRegistration = successfulRegistration;
 	}
 
-	public ArrayList<Event> getMeetings() {
+	public ArrayList<Event> getMeetings(Date date) {
+		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
+		this.client.getMeetingsForDay(meetingsRequest);
+		
 		return meetings;
 	}
 
@@ -475,6 +509,14 @@ public class Model extends Observable {
 		case EXIT:
 			this.client.exitGracefully();
 			break;
+
+<<<<<<< .mine
+		case LIST:
+			setPanel(this.listView); //keep this in. Differentiates between List and ListUpdate for the reader. 
+			//See class Client, method RunOT(), switch/case: 0013 for use.
+			//listView is created at class Model, method setSuccesfulLogin() 
+
+		case LISTUPDATE: 
 
 		case EVENTS:
 			this.listView = new List(client, this);

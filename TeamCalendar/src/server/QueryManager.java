@@ -31,6 +31,9 @@ public class QueryManager {
 		return server;
 	}
 
+	public ClientInfo getClientInfo() {
+		return clientInfo;
+	}
 
 	public void runOperation() throws SQLException{
 
@@ -92,7 +95,7 @@ public class QueryManager {
 		}
 		//Request to create an event from the client
 		else if(currentOperation.getOpCode().equals("0010")){
-			createEvent(stmnt);
+			//createEvent(stmnt);
 		}
 		//This is a return message for event creation successful and should not be seen by server
 		else if(currentOperation.getOpCode().equals("0011")){
@@ -220,13 +223,38 @@ public class QueryManager {
 		return "";
 	}
 
-	private String getMeetings(Statement stmnt){
+	private void getMeetings(Statement stmnt){
 		OTRequestMeetingsOnDay classifiedOperation =(OTRequestMeetingsOnDay) getOperation();
-		//TODO SQL query here
 
-		setOperation(new OTReturnDayEvents(new ArrayList<Event>()));
-		return "";
+		String query = "SELECT m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime " + 
+				"FROM meetings m " +
+				"WHERE m.creatorid = '" + getClientInfo().getUserName() + "' AND m.meetingdate = '" + classifiedOperation.getDate().toString() + "' " +
+				"ORDER BY m.meetingstarttime ASC";
+
+		ResultSet rs;
+		try {
+			rs = stmnt.executeQuery(query);
+			ArrayList<Event> meetings = new ArrayList<Event>();
+			getServer().getServerModel().addToText("Requestiing meeting information for " + "\n");
+			while(rs.next()){
+				String title = rs.getString(1);
+				String description = rs.getString(2);
+				String location = rs.getString(3);
+				Time startTime = rs.getTime(4);
+				Time endTime = rs.getTime(5);
+
+				Event event = new Event(startTime, endTime, description, title, location);
+				meetings.add(event);
+			}
+			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
+			setOperation(returnEvents);
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("SQL Server failed with user details request" + "\n");
+			setOperation(new OTErrorResponse("SQL Server failed with meeting request", false));
+			e.printStackTrace();
+		}
 	}
+
 
 	//	private String createEvent(Statement stmnt){
 	//		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
@@ -239,23 +267,23 @@ public class QueryManager {
 	//		return "";
 	//	}
 
-	private String createEvent(Statement stmnt){
-		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
-		Event event = classifiedOperation.getEvent();
-		java.sql.Date eventDate = new java.sql.Date(event.getStartTime().getTimeInMillis());
-		String username = this.clientInfo.getUserName();
-
-
-		String query = "INSERT INTO " ;
-
-		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
-		return "";
-	}
+//	private void createEvent(Statement stmnt){
+//		OTCreateEvent classifiedOperation = (OTCreateEvent)getOperation();
+//		Event event = classifiedOperation.getEvent();
+//		java.sql.Date eventDate = new java.sql.Date(event.getStartTime().getTimeInMillis());
+//		String username = this.clientInfo.getUserName();
+//
+//
+//		String query = "INSERT INTO " ;
+//
+//		setOperation(new OTErrorResponse("The method for creating events has not yet been completed on the server", false));
+//
+//	}
 
 	private void getUserDetails(Statement stmnt) {
 
 		OTLoginSuccessful classifiedOperation = (OTLoginSuccessful) getOperation();
-		//not sure what field name of email is? inserted guess
+
 		String query = "SELECT u.firstName, u.lastName, u.userEmail " + 
 				"FROM users u " +
 				"WHERE u.userName = '" + classifiedOperation.getUsername() + "'";
@@ -269,12 +297,15 @@ public class QueryManager {
 				lastName = rs.getString(2);
 				email = rs.getString(3);
 				setOperation(new OTLoginProceed(true, firstName, lastName, email));
+				getServer().getServerModel().addToText("Set Client username to " + classifiedOperation.getUsername() + "\n");
+				getClientInfo().setUserName(classifiedOperation.getUsername());
 			} else {
 				getServer().getServerModel().addToText("User "+ classifiedOperation.getUsername() +" does not exist"+"\n");
 				setOperation(new OTLoginProceed(false, null, null, null));
 			}
 		} catch (SQLException e) {
-			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
+			getServer().getServerModel().addToText("SQL Server failed with user details request" + "\n");
+			setOperation(new OTErrorResponse("SQL Server failed with user details request", false));
 			e.printStackTrace();
 		}
 	}
@@ -300,53 +331,10 @@ public class QueryManager {
 				setOperation(new OTHashToClient(false, null));
 			}
 		} catch (SQLException e) {
-			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
+			getServer().getServerModel().addToText("SQL Server failed with hash request" + "\n");
+			setOperation(new OTErrorResponse("SQL Server failed with hash request", false));
 			e.printStackTrace();
 		}
 	}
-
-	/*private String checkLoginCreds(Statement stmnt){
-		OTLogin classifiedOperation = (OTLogin)getOperation();
-		//not sure what field name of email is? inserted guess
-		String query = "SELECT u.userName, u.firstName, u.lastName, u.userEmail, u.password " + 
-				"FROM users u " +
-				"WHERE u.userName = '" + classifiedOperation.getUsername() + "'";
-		try {
-			ResultSet rs = stmnt.executeQuery(query);
-
-			if(rs.next()){
-				String pwFromDB = rs.getString(5);
-				String pwFromLogin = classifiedOperation.getPwHash();
-
-				getServer().getServerModel().addToText("Supplied PW: "+pwFromLogin+" PW from DB: "+pwFromDB+"\n");
-
-				if(pwFromDB.equals(pwFromLogin)){
-					getServer().getServerModel().addToText("Login details CORRECT for "+ classifiedOperation.getUsername() +"\n");
-					String firstName, lastName, email;
-					firstName = rs.getString(2);
-					lastName = rs.getString(3);
-					email = rs.getString(4);
-					setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
-				} else {
-					getServer().getServerModel().addToText("Password INCORRECT for "+ classifiedOperation.getUsername() +"\n");
-					String firstName, lastName, email;
-					firstName = rs.getString(2);
-					lastName = rs.getString(3);
-					email = rs.getString(4);
-					setOperation(new OTLoginSuccessful(true, firstName, lastName, email));
-				}
-
-			} else {
-				getServer().getServerModel().addToText("User "+ classifiedOperation.getUsername() +" does not exist"+"\n");
-				setOperation(new OTLoginSuccessful(false, null, null, null));
-			}
-		} catch (SQLException e) {
-			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
-			e.printStackTrace();
-		}
-
-		return "";
-	}*/
-
 
 }
