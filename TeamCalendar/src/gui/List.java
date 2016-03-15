@@ -32,6 +32,10 @@ public class List extends JPanel{
 		add(bar);
 		add(list);
 	}
+	
+	public ListPanel getListPanel(){
+		return this.list;
+	}
 
 	public static void main(String[] args) {
 		/*

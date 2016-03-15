@@ -81,7 +81,7 @@ public class MenuPanel extends JPanel{
 		//------------------Action Listeners---------------------//
 		
 		home.addMouseListener((MouseClickedListener) (e) -> {
-			this.model.changeCurrentState(ModelState.LIST);
+			this.model.changeCurrentState(ModelState.EVENTS);
 		});
 		profile.addMouseListener((MouseClickedListener) (e) -> {
 			this.model.changeCurrentState(ModelState.PROFILE);
