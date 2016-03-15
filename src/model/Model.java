@@ -49,7 +49,7 @@ public class Model extends Observable {
 	final DateFormat dayFormat = new SimpleDateFormat("dd");
 	final DateFormat hourFormat = new SimpleDateFormat("HH");
 	final DateFormat minuteFormat = new SimpleDateFormat("mm");
-	private Pattern dobRegex = Pattern.compile("^[0-9]{2}-[0-9]{2}-[0-9]{4}$");
+	private Pattern dobRegex = Pattern.compile("^[0-9]{2}/[0-9]{2}/[0-9]{4}$");
 
 	// ------------Registration information----------------------//
 	private String username;
@@ -171,22 +171,25 @@ public class Model extends Observable {
 	public void validateDOB(String dob) {
 
 		if (dobRegex.matcher(dob).matches()) {
+			System.out.println(dob);
 			int day = Integer.parseInt(dob.substring(0, 2));
 			int month = Integer.parseInt(dob.substring(3, 5));
-			int year = Integer.parseInt(dob.substring(5, -1));
-			LocalDate birthdate = LocalDate.of(1970, 1, 20);
+			int year = Integer.parseInt(dob.substring(6, 10));
+			
+			LocalDate birthdate = LocalDate.of(year, month, day);
 			LocalDate now = LocalDate.now();
 			Period period = Period.between(birthdate, now);
+			
 			if (period.getYears() >= 18) {
 				this.oldEnough = true;
-				this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth");
+				this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
 			} else {
 				this.oldEnough = false;
-				this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth: Must be 18 or over");
+				this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
 			}
 
 		} else {
-			this.registrationView.getRegistrationPanel().setDobLabel("Date Of Birth* dd/mm/yyyy: incorrect format");
+			this.registrationView.getRegistrationPanel().setDobLabel("DOB* dd/mm/yyyy: incorrect format");
 		}
 	}
 
