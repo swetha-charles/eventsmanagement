@@ -78,12 +78,16 @@ public class ListPanel extends JPanel{
 	ArrayList<JLabel> times = new ArrayList<JLabel>();
 	static ArrayList<JPanel> events = new ArrayList<JPanel>();
 	
+	Event clickedEvent;
+	
 	//----------------------Constructor------------------------------//
 	
 	public ListPanel(Client controller, Model model){
 		
 		this.controller = controller;
 		this.model = model;
+		clickedEvent = new Event(null);
+		
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
 		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)(dimension.getHeight()-200)));
 		setMinimumSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-200));
@@ -122,27 +126,16 @@ public class ListPanel extends JPanel{
 		event.setMaximumSize(new Dimension(400,200));
 		
 		name.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
-		eventName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 		descriptionLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		decription.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		dateLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		dateA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		timeLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		timeA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		locationLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		locationA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		
 		name.setForeground(Color.DARK_GRAY);
 		descriptionLabel.setForeground(Color.GRAY);
-		decription.setForeground(Color.DARK_GRAY);
 		dateLabel.setForeground(Color.GRAY);
-		dateA.setForeground(Color.DARK_GRAY);
 		timeLabel.setForeground(Color.GRAY);
-		timeA.setForeground(Color.DARK_GRAY);
 		locationLabel.setForeground(Color.GRAY);
-		locationA.setForeground(Color.DARK_GRAY);
 		
 		changeDay.setPreferredSize(new Dimension(610,50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
@@ -299,6 +292,12 @@ public class ListPanel extends JPanel{
 		this.list=list;
 	}
 	
+	//---------------------Says which event is clicked on--------------//
+	
+//	public static void setEventClickedOn(){
+//		Event eventClicked = new Event()
+//		
+//	}
 	
 	//-------------------Creates JLabel for date-----------------------//
 		
