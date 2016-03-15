@@ -11,7 +11,7 @@ import model.Model;
 import model.ModelState;
 import client.*;
 
-public class ThreadForServer extends Thread {
+public class ZDEPThreadForServer extends Thread {
 
 	private Client client;
 	private ObjectInputStream fromServer;
@@ -20,7 +20,7 @@ public class ThreadForServer extends Thread {
 	private Socket socket;
 	private int count = 0;
 
-	public ThreadForServer(Client client, ObjectInputStream fromServer, Model model, Socket socket) {
+	public ZDEPThreadForServer(Client client, ObjectInputStream fromServer, Model model, Socket socket) {
 
 		this.fromServer = fromServer;
 

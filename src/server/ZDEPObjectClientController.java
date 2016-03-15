@@ -59,7 +59,7 @@ public class ZDEPObjectClientController implements ActionListener, MouseListener
 			this.addModel(model);
 			this.addView(view);
 
-			threadForServer = new Thread(new ThreadForServer(this, this.fromServer, this.toServer, this.model));
+			threadForServer = new Thread(new ZDEPThreadForServer(this, this.fromServer, this.toServer, this.model));
 			threadForServer.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
