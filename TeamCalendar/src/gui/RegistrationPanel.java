@@ -208,71 +208,86 @@ public class RegistrationPanel extends JPanel {
 		});
 
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
+
 		date.addFocusListener((FocusLostListener) (e) -> {
-			try {
-				Integer.parseInt(date.getText());
-			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in date field with numbers!!");
-				return;
-			}
 			if (date.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB date!");
+				this.dobLabel.setText("DOB: fill in date");
+				this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+			} else {
+				try {
+					Integer.parseInt(date.getText());
+				} catch (NumberFormatException e2) {
+					this.dobLabel.setText("DOB: input numbers only for date");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					return;
+				}				
+				if (date.getText().length() == 1) {
+					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					this.dayInput = "0" + date.getText();
+				} else if (date.getText().length() == 2) {
+					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					this.dayInput = date.getText();
+				}
 			}
-			if (date.getText().length() == 1) {
-				// if user only puts one a digit
-				this.dayInput = "0" + date.getText();
-			}
-			if (date.getText().length() == 2) {
-				this.dayInput = date.getText();
-			}
+			
 
 		});
 
 		month.addFocusListener((FocusLostListener) (e) -> {
-			try {
-				Integer.parseInt(month.getText());
-			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in month field with numbers!");
-				return;
-			}
 			if (month.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB month!");
-			}
-			if (month.getText().length() == 1) {
-				// if user only puts one a digit
-				this.dayInput = "0" + date.getText();
-			}
-			if (month.getText().length() == 2) {
-				this.monthInput = month.getText();
+				this.dobLabel.setText("DOB: fill in month");
+				this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+			} else {
+				try {
+					Integer.parseInt(month.getText());
+				} catch (NumberFormatException e2) {
+					this.dobLabel.setText("DOB: input numbers only for month");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					return;
+				}
+				if (month.getText().length() == 1) {
+					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					this.monthInput = "0" + month.getText(); // if user only
+																// puts one a
+																// digit
+
+				} else if (month.getText().length() == 2) {
+					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					this.monthInput = month.getText();
+				}
 			}
 
 		});
 
 		year.addFocusListener((FocusLostListener) (e) -> {
-			try {
-				Integer.parseInt(year.getText());
-			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(this, "Fill in year field with numbers!");
-				return;
-			}
 			if (year.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, "Fill in DOB year!");
-			} else if (year.getText().length() == 1 || year.getText().length() == 3) {
-				// if user only puts one a digit
-				JOptionPane.showMessageDialog(this, "Fill in valid DOB year!");
-			} else if (year.getText().length() == 2) {
-				String yearBadInput = year.getText();
-				if (Integer.parseInt(yearBadInput) <= 16) {
-					this.yearInput = "20" + yearBadInput;
-				} else {
-					this.yearInput = "19" + yearBadInput;
+				this.dobLabel.setText("DOB: fill in year");
+				this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+			} else {
+				try {
+					Integer.parseInt(year.getText());
+				} catch (NumberFormatException e2) {
+					this.dobLabel.setText("DOB: fill in numbers only for year");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					return;
 				}
-				this.model.validateDOB(dayInput + "/" + monthInput + "/" + yearInput);
-			} else if (year.getText().length() == 4) {
-				this.yearInput = year.getText();
-				this.model.validateDOB(dayInput + "/" + monthInput + "/" + yearInput);
-			}
+				 if (year.getText().length() == 1 || year.getText().length() == 2 || year.getText().length() == 3) {
+					// if user only puts one a digit
+					this.dobLabel.setText("DOB: fill in valid year, format yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+				} else if (year.getText().length() == 4) {
+					this.yearInput = year.getText();
+					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
+					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+					this.model.validateDOB(dayInput + "/" + monthInput + "/" + yearInput);
+				}
 
+			}
+			
 		});
 
 		// dob.addFocusListener((FocusLostListener) (e) ->
@@ -306,7 +321,7 @@ public class RegistrationPanel extends JPanel {
 
 	public void setDobLabel(String dobLabel) {
 		this.dobLabel.setText(dobLabel);
-		if (dobLabel.contains("incorrect") | dobLabel.contains("18")) {
+		if (dobLabel.contains("incorrect") || dobLabel.contains("18") || dobLabel.contains("DOB")) {
 			this.dobLabel.setForeground(Color.RED);
 		} else {
 			this.dobLabel.setForeground(Color.WHITE);
