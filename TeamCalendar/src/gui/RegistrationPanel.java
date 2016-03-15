@@ -13,6 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import client.Client;
 import listener.interfaces.FocusLostListener;
@@ -27,11 +30,13 @@ public class RegistrationPanel extends JPanel {
 	private static final long serialVersionUID = -2535316040411018240L;
 	private Client client = null;
 	private Model model = null;
-	JTextField firstName = new JTextField(50);
-	JTextField lastName = new JTextField(50);
-	JTextField username = new JTextField(50);
-	JTextField dob = new JTextField();
-	JTextField email = new JTextField();
+	JTextField firstName = new JTextField(1);
+	JTextField lastName = new JTextField(1);
+	JTextField username = new JTextField(1);
+	JTextField date = new JTextField(1);
+	JTextField month = new JTextField(1);
+	JTextField year = new JTextField(1);
+	JTextField email = new JTextField(1);
 	JPasswordField password = new JPasswordField();
 	JPasswordField confirm = new JPasswordField();
 
@@ -114,6 +119,20 @@ public class RegistrationPanel extends JPanel {
 		// sets dimension of button
 		submit.setPreferredSize(new Dimension(100, 40));
 		cancel.setPreferredSize(new Dimension(100, 40));
+		
+		JPanel dob = new JPanel();
+		JLabel empty = new JLabel();
+		GridLayout grid2 = new GridLayout(1, 3);
+		grid2.setHgap(30);
+		dob.setLayout(grid2);
+		dob.setBackground(Color.DARK_GRAY);
+		date.setDocument(new JTextFieldLimit(2));
+		month.setDocument(new JTextFieldLimit(2));
+		year.setDocument(new JTextFieldLimit(4));
+		dob.add(date);
+		dob.add(month);
+		dob.add(year);
+		dob.add(empty);
 
 		GridLayout grid = new GridLayout(2, 1);
 		firstPanel.setLayout(grid);
@@ -187,7 +206,7 @@ public class RegistrationPanel extends JPanel {
 		
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
 		
-		dob.addFocusListener((FocusLostListener) (e) -> this.model.validateDOB(dob.getText()));		
+//		dob.addFocusListener((FocusLostListener) (e) -> this.model.validateDOB(dob.getText()));		
 		
 		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
 		
@@ -293,6 +312,23 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 	// ------ End Email & User labels ---------//
+	
+	public class JTextFieldLimit extends PlainDocument {
+		  private int limit;
+
+		  JTextFieldLimit(int limit) {
+		   super();
+		   this.limit = limit;
+		   }
+
+		  public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
+		    if (str == null) return;
+
+		    if ((getLength() + str.length()) <= limit) {
+		      super.insertString(offset, str, attr);
+		    }
+		  }
+		}
 
 	public static void main(String[] args) {
 
