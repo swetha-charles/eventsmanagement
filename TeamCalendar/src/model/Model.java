@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Observable;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -104,7 +105,7 @@ public class Model extends Observable {
 			this.client.checkUsername(username);
 		} else {
 			this.username20orLess = false;
-			this.registrationView.getRegistrationPanel().setUserLabel("User* : incorrect format");
+			this.registrationView.getRegistrationPanel().setUserLabel("User* : too long");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 
@@ -135,7 +136,7 @@ public class Model extends Observable {
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		} else {
 			this.firstNameLessThan30 = false;
-			this.registrationView.getRegistrationPanel().setFirstLabel("First Name*: incorrect format");
+			this.registrationView.getRegistrationPanel().setFirstLabel("First Name*: first name too long");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
 	}
@@ -156,6 +157,7 @@ public class Model extends Observable {
 
 	}
 
+	// checks confirm matches password field
 	public boolean checkConfirmMatchesPassword(char[] confirm) {
 		String confirmPassword = new String(confirm);
 		String firstPassword = new String(password);
@@ -169,14 +171,15 @@ public class Model extends Observable {
 
 	}
 
-	/*public void validateDOB(String dob) {
+	// checks if date is valid and then if so, check >= 18. If it passes both
+	// tests, set oldEnough to true.
+	public void validateDOB(String dob) {
 
+		if (DataValidation.isThisDateValid(dob)) {
 
-		if (dobRegex.matcher(dob).matches()) {
-			System.out.println(dob);
 			int day = Integer.parseInt(dob.substring(0, 2));
 			int month = Integer.parseInt(dob.substring(3, 5));
-			int year = Integer.parseInt(dob.substring(6, 10));
+			int year = Integer.parseInt(dob.substring(6));
 
 			LocalDate birthdate = LocalDate.of(year, month, day);
 			LocalDate now = LocalDate.now();
@@ -185,30 +188,17 @@ public class Model extends Observable {
 			if (period.getYears() >= 18) {
 				this.oldEnough = true;
 				this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
+				this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			} else {
 				this.oldEnough = false;
 				this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
+				this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			}
-
-		System.out.println(dob);
-		int day = Integer.parseInt(dob.substring(0, 2));
-		int month = Integer.parseInt(dob.substring(3, 5));
-		int year = Integer.parseInt(dob.substring(6, 10));
-
-
-		LocalDate birthdate = LocalDate.of(year, month, day);
-		LocalDate now = LocalDate.now();
-		Period period = Period.between(birthdate, now);
-
-		if (period.getYears() >= 18) {
-			this.oldEnough = true;
-			this.registrationView.getRegistrationPanel().setDobLabel("Date of Birth* dd/mm/yyyy");
 		} else {
-			this.oldEnough = false;
-			this.registrationView.getRegistrationPanel().setDobLabel("DOB*: Must be 18 or over");
+			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Invalid date");
 		}
 
-	}*/
+	}
 
 	public void validatePassword(char[] password) {
 		this.password = password;
@@ -216,6 +206,7 @@ public class Model extends Observable {
 			this.passwordatleast8 = false;
 			this.registrationView.getRegistrationPanel()
 					.setPasswordLabel("Password*: must be between 8 and 60 characters");
+			
 		} else if (password.length > 60) {
 			this.password60orLess = false;
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be less than 60 characters");
@@ -226,26 +217,34 @@ public class Model extends Observable {
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
+	
+	private boolean registrationDataValidated() {
+		try{
+			return (this.username20orLess && this.emailMatchesRegex && this.emailUnique && this.firstNameLessThan30
+					&& this.lastNameNameLessThan30 && this.passwordMatchesConfirm && this.password60orLess
+					&& this.passwordatleast8 && this.oldEnough);
+		} catch (NullPointerException e){
+			return false;
+		}
+	
+	}
 
-	/*
-	 * public void checkRegistrationInformation(String firstname, String
-	 * lastname, String dob, String password, String confirm) {
-	 * 
-	 * if (this.usernameUnique && this.username20orLess && this.emailUnique &&
-	 * this.emailMatchesRegex && this.emailUnique && this.firstNameLessThan30 &&
-	 * this.lastNameNameLessThan30 && this.passwordMatchesConfirm &&
-	 * this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-	 * String hashedPassword = BCrypt.hashpw(this.password.toString(),
-	 * BCrypt.gensalt()); // Does // this // work? // needs // some // research.
-	 * OTRegistrationInformation otri = new
-	 * OTRegistrationInformation(this.username, this.email, this.firstName,
-	 * this.lastname, hashedPassword); this.client.checkRegistration(otri); }
-	 * else {
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
+	public void checkRegistrationInformation() {
+		if (this.usernameUnique && this.emailUnique && registrationDataValidated()) {
+			String passwordAsString = new String(password);
+			String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
+			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
+					this.lastname, hashedPassword);
+			this.client.checkRegistration(otri);
+
+		} else {
+			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Data is incorrect, check warnings");
+		}
+
+	}
+
+	
+
 	// --------------------Registration Ends -----------------------------//
 
 	// --------------------View Events methods/ List view---------------//
@@ -262,9 +261,8 @@ public class Model extends Observable {
 		}
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
 	}
-	// --------------------- Prompt Reload
-	// Ends---------------------------------//
-	// -------------------------ButtonMethods---------------------------------//
+	// --------------- Prompt Reload Ends---------//
+	// -----------------ButtonMethods--------------//
 
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
@@ -286,41 +284,13 @@ public class Model extends Observable {
 		// this.client.getMeetings(this.username, cal);
 	}
 
-	public void checkRegistrationInformation() {
-		String passwordAsString = new String(password);
-		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
-		OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
-				this.lastname, hashedPassword);
-		this.client.checkRegistration(otri);
-		//		if (this.usernameUnique && this.username20orLess && this.emailUnique && this.emailMatchesRegex
-		//				&& this.emailUnique && this.firstNameLessThan30 && this.lastNameNameLessThan30
-		//				&& this.passwordMatchesConfirm && this.password60orLess && this.passwordatleast8 && this.oldEnough) {
-		//
-		//		} else {
-		//
-		//		}
+	// method for next day
 
-		// if (this.usernameUnique && this.username20orLess && this.emailUnique
-		// && this.emailMatchesRegex
-		// && this.emailUnique && this.firstNameLessThan30 &&
-		// this.lastNameNameLessThan30
-		// && this.passwordMatchesConfirm && this.password60orLess &&
-		// this.passwordatleast8 && this.oldEnough) {
-		//
-		// } else {
-		//
-		// }
+	// method for previous day
 
-	}
+	// method for add event
 
-
-	//	method for next day
-
-	//	method for previous day
-
-	//	method for add event
-
-	//	method for  
+	// method for
 
 	// method for next day
 
@@ -424,7 +394,7 @@ public class Model extends Observable {
 	public void setSuccessfulLogin(boolean successfulLogin) {
 		this.successfulLogin = successfulLogin;
 
-		if(successfulLogin){
+		if (successfulLogin) {
 			this.listView = new List(this.client, this);
 		}
 	}
@@ -457,8 +427,8 @@ public class Model extends Observable {
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
-	
-	public ArrayList<Event> getMeetings(){
+
+	public ArrayList<Event> getMeetings() {
 		return meetings;
 	}
 
