@@ -82,7 +82,7 @@ public class Model extends Observable {
 	private String displayYear;
 	private String displayMonth;
 	private String displayDay;
-	private ArrayList<Event> meetings;
+	private ArrayList<Event> meetings = new ArrayList<Event>();
 
 	public Model(Client client) {
 		this.client = client;
@@ -242,16 +242,14 @@ public class Model extends Observable {
 		}
 
 	}
-
+	//------------------Reg ends------------//
 	
-
-	// --------------------Registration Ends -----------------------------//
-
-	// --------------------View Events methods/ List view---------------//
-
-	// --------------------View Events methods/ List view Ends ---------------//
-	// --------------------- Prompt Reload
-	// ------------------------------------//
+	//-----------------Events --------------//
+	
+	public void addEvents(String title, String eventDescription, String eventDate, String eventTime, String eventLocation){
+		
+	}
+	
 	public void promptRestart() {
 		if (this.error != null) {
 			this.error.promptRestart();
@@ -261,12 +259,13 @@ public class Model extends Observable {
 		}
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
 	}
-	// --------------- Prompt Reload Ends---------//
-	// -----------------ButtonMethods--------------//
+
 
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
 		OTLogin loginObject = new OTLogin(username);
+		System.out.println(username);
+		System.out.println(passwordAsString);
 
 		setUsername(username);
 		setPasswordAsString(passwordAsString);
@@ -442,6 +441,7 @@ public class Model extends Observable {
 
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
+/*		this.listView.getListPanel().addMeetings(this.meetings);*/
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
@@ -460,6 +460,9 @@ public class Model extends Observable {
 			setPanel(this.loginView);
 			break;
 
+		case LOGINUNSUCCESSFUL:
+			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Password or username incorrect");
+			break;
 		case REGISTRATIONUPDATE:
 			setPanel(this.registrationView);
 			break;
@@ -480,10 +483,6 @@ public class Model extends Observable {
 		case EVENTS:
 			this.listView = new List(client, this);
 			this.setPanel(listView);
-			// keep this in. Differentiates between List and ListUpdate for the
-			// reader.
-			// See class Client, method RunOT(), switch/case: 0013 for use.
-			// listView is created at class Model, method setSuccesfulLogin()
 			break;
 
 		case EVENTSUPDATE:
