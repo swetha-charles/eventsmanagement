@@ -136,7 +136,7 @@ public class Client {
 					returnObject = new OTLoginSuccessful(true, this.model.getUsername());
 				} else {
 					returnObject = new OTLoginSuccessful(false, this.model.getUsername());
-					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFUL);
+					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
 				informServerLoginSuccess(returnObject);
 			} else {
@@ -145,7 +145,7 @@ public class Client {
 				this.model.setLastname(null);
 				this.model.setEmail(null);
 				this.model.setUsername(null);
-				this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFUL);
+				this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
 			}
 			break;
 		case "0016":
