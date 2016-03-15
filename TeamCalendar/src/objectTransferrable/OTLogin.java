@@ -10,26 +10,18 @@ package objectTransferrable;
  */
 public class OTLogin extends ObjectTransferrable {
 	private String username;
-	private String pwHash;
 	/**
 	 * @param opCode
 	 */
-	public OTLogin(String username, String pwHash) {
+	public OTLogin(String username) {
 		super("0012");
 		this.username = username;
-		this.pwHash = pwHash;
 	}
 	/**
 	 * @return the username
 	 */
 	public String getUsername() {
 		return username;
-	}
-	/**
-	 * @return the pwHash
-	 */
-	public String getPwHash() {
-		return pwHash;
 	}
 
 }

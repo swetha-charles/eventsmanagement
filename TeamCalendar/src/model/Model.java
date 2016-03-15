@@ -58,6 +58,7 @@ public class Model extends Observable {
 	private String lastname;
 	private String dob;
 	private char[] password;
+	private String passwordAsString;
 	private ArrayList<Event> meetings;
 	// --------------Boolean values for registration--------------//
 	private boolean usernameUnique = false;
@@ -260,10 +261,10 @@ public class Model extends Observable {
 
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
-		String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
-		OTLogin loginObject = new OTLogin(username, hashedPassword);
+		OTLogin loginObject = new OTLogin(username);
 
 		setUsername(username);
+		setPasswordAsString(passwordAsString);
 
 		this.client.checkLoginDetails(loginObject);
 	}
@@ -426,6 +427,14 @@ public class Model extends Observable {
 
 	public ArrayList<Event> getMeetings() {
 		return meetings;
+	}
+
+	public String getPasswordAsString() {
+		return passwordAsString;
+	}
+
+	public void setPasswordAsString(String passwordAsString) {
+		this.passwordAsString = passwordAsString;
 	}
 
 	public void setMeetings(ArrayList<Event> meetings) {
