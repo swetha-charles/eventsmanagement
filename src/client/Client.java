@@ -98,7 +98,7 @@ public class Client {
 			System.out.println("Server connection is down");
 			this.attemptRecovery();
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-			
+
 		}
 	}
 
@@ -137,10 +137,12 @@ public class Client {
 			break;
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
-			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-
+		case "0011":
+			OTCreateEventSucessful createSuccess = (OTCreateEventSucessful) receivedOperation;
+			this.model.setMeetingCreationSuccessful(true);
+			break;	
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
@@ -184,6 +186,10 @@ public class Client {
 		case "0018":
 			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
 			this.model.setMeetingUpdateSuccessful(true);
+			break;
+		case "0020":
+			OTDeleteEventSuccessful deleteSuccess = (OTDeleteEventSuccessful) receivedOperation;
+			this.model.setMeetingDeleteSuccessful(true);
 			break;
 		}
 
@@ -237,13 +243,36 @@ public class Client {
 		this.writeToServer(requestObject, false, complementOpCode);
 	}
 
+	public void createEvent(OTCreateEvent newEvent) {
+		String complementOpCode = "0011";
+		System.out.println("Client: Sent OT with opcode " + newEvent.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(newEvent, false, complementOpCode);
+
+	}
+
+	public void updateEvent(OTUpdateEvent changeEvent) {
+		String complementOpCode = "0018";
+		System.out.println("Client: Sent OT with opcode " + changeEvent.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(changeEvent, false, complementOpCode);
+
+	}
+
+	public void deleteEvent(OTDeleteEvent deleteEvent) {
+		String complementOpCode = "0020";
+		System.out.println("Client: Sent OT with opcode " + deleteEvent.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(deleteEvent, false, complementOpCode);
+
+	}
 	public void sendHeartBeat() {
 		String complementOpCode = "0014";
 		OTHeartBeat othb = new OTHeartBeat();
 		this.writeToServer(othb, false, complementOpCode);
 	}
 
-	
+
 	// ----------writeToServer calls Ends---------------------------//
 	@SuppressWarnings("deprecation")
 	public void waitForHeartBeat(){
@@ -257,7 +286,7 @@ public class Client {
 			this.attemptRecovery();
 		}  
 	}
-	
+
 	// --------------------- Exit -------------------------------------//
 	public void exitGracefully() {
 		if (s != null) {
@@ -284,7 +313,7 @@ public class Client {
 	}
 
 	private void attemptToCloseConnections() {
-		
+
 		if (s != null) {
 			try {
 				s.shutdownOutput();
@@ -321,11 +350,11 @@ public class Client {
 			count++;
 			System.out.println("Client closing connections, attempt " + count);
 			this.attemptToCloseConnections();
-					
+
 		}
 		model.promptUserToRestart();
 	}
-	
+
 	public void restart(){
 		System.out.println("Client will attempt to reopen connections");
 		attemptToOpenConnections();
@@ -342,7 +371,7 @@ public class Client {
 		} catch (IOException e) {
 			model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
 			this.attemptToCloseConnections();
-			
+
 		}
 	}
 

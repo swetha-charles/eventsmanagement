@@ -27,6 +27,8 @@
  * {@link objectTransferrable.OTLoginProceed} = "0016"
  * {@link objectTransferrable.OTUpdateEvent} = "0017"
  * {@link objectTransferrable.OTUpdateEventSuccessful} = "0018"
+ * {@link objectTransferrable.OTDeleteEvent} = "0019"
+ * {@link objectTransferrable.OTDeleteEventSuccessful} = "0020"
  * {@link objectTransferrable.Event}
  * @author tmd668
  *

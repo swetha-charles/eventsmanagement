@@ -251,8 +251,24 @@ public class Model extends Observable {
 	
 	//-----------------Events --------------//
 	
-	public void addEvents(String title, String eventDescription, String eventDate, String eventTime, String eventLocation){
-		
+	public void addEvents(Event event){
+		OTCreateEvent newEvent = new OTCreateEvent(event);
+		this.client.createEvent(newEvent);
+	}
+	
+	public void updateEvent(Event oldEvent, Event newEvent){
+		OTUpdateEvent changeEvent = new OTUpdateEvent(oldEvent, newEvent);
+		this.client.updateEvent(changeEvent);
+	}
+	
+	public void deleteEvent(Event event){
+		OTDeleteEvent deleteEvent = new OTDeleteEvent(event);
+		this.client.deleteEvent(deleteEvent);
+	}
+	
+	public void updateMeetings(Date date) {
+		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
+		this.client.getMeetingsForDay(meetingsRequest);
 	}
 	
 	public void promptUserToRestart() {
@@ -428,11 +444,6 @@ public class Model extends Observable {
 		this.successfulRegistration = successfulRegistration;
 	}
 
-	public void updateMeetings(Date date) {
-		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
-		this.client.getMeetingsForDay(meetingsRequest);
-	}
-
 	public ArrayList<Event> getMeetings() {
 		return meetings;
 	}
@@ -449,8 +460,16 @@ public class Model extends Observable {
 		this.meetings = meetings;
 /*		this.listView.getListPanel().addMeetings(this.meetings);*/
 	}
+	
+	public boolean getMeetingCreationSuccessful() {
+		return meetingCreationSuccessful;
+	}
 
-	public boolean isMeetingUpdateSuccessful() {
+	public void setMeetingCreationSuccessful(boolean meetingCreationSuccessful) {
+		this.meetingCreationSuccessful = meetingCreationSuccessful;
+	}
+
+	public boolean getMeetingUpdateSuccessful() {
 		return meetingUpdateSuccessful;
 	}
 
@@ -458,7 +477,7 @@ public class Model extends Observable {
 		this.meetingUpdateSuccessful = meetingUpdateSuccessful;
 	}
 
-	public boolean isMeetingDeleteSuccessful() {
+	public boolean getMeetingDeleteSuccessful() {
 		return meetingDeleteSuccessful;
 	}
 
