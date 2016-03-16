@@ -147,17 +147,9 @@ public class Client {
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
 				OTLoginSuccessful returnObject;
 				if (successfulLogin) {
-<<<<<<< .mine
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
 					informServerLoginSuccess(returnObject);
-=======
-					returnObject = new OTLoginSuccessful(this.model.getUsername());
->>>>>>> .r260
 				} else {
-<<<<<<< .mine
-=======
-					returnObject = new OTLoginSuccessful(this.model.getUsername());
->>>>>>> .r260
 					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
 
@@ -247,6 +239,13 @@ public class Client {
 		this.writeToServer(newEvent, false, complementOpCode);
 		
 	}
+	
+	public void updateEvent(OTUpdateEvent updatedEvent) {
+		String complementOpCode = "0018";
+		System.out.println("Client: Sent OT with opcode " + updatedEvent.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(updatedEvent, false, complementOpCode);
+	}
 
 	public void sendHeartBeat() {
 		String complementOpCode = "0014";
@@ -333,5 +332,4 @@ public class Client {
 	public static void main(String[] args) {
 		Client C = new Client(4449);
 	}
-
 }

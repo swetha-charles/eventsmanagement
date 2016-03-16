@@ -24,7 +24,9 @@
  * {@link objectTransferrable.OTLoginSuccessful} = "0013"
  * {@link objectTransferrable.OTHeartBeat} = "0014"
  * {@link objectTransferrable.OTHashToClient} = "0015"
- * {@link objectTransferrable.OTLoginProceed) = "0016"
+ * {@link objectTransferrable.OTLoginProceed} = "0016"
+ * {@link objectTransferrable.OTUpdateEvent} = "0017"
+ * {@link objectTransferrable.OTUpdateEventSuccessful} = "0018"
  * {@link objectTransferrable.Event}
  * @author tmd668
  *

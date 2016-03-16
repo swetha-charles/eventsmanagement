@@ -287,7 +287,9 @@ public class Model extends Observable {
 	}
 
 	public void updateEvent(Event oldEvent, Event newEvent){
+		OTUpdateEvent updatedEvent = new OTUpdateEvent(oldEvent, newEvent);
 		
+		this.client.updateEvent(updatedEvent);
 	}
 	// method for next day
 
