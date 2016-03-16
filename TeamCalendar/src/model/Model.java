@@ -76,6 +76,7 @@ public class Model extends Observable {
 
 	private boolean successfulLogin = false;
 	private boolean successfulRegistration = false;
+	private String hashedPassword;
 
 	// ------------------Event view information--------------------//
 	private ArrayList<Event> meetings = new ArrayList<Event>();
@@ -322,6 +323,11 @@ public class Model extends Observable {
 
 		this.client.checkLoginDetails(loginObject);
 	}
+	
+	public boolean checkPassword(String password){
+		return BCrypt.checkpw(password, this.hashedPassword);
+	}
+	
 
 	// --------Save information that returns from server----//
 
@@ -348,7 +354,11 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
-
+	
+	public void setHashedPassword(String hash) {
+		this.hashedPassword = hash;
+		
+	}
 		// --------End of information from server------------//
 
 	public void setUsername(String username) {
@@ -605,5 +615,7 @@ public class Model extends Observable {
 		notifyObservers();
 
 	}
+
+	
 
 }
