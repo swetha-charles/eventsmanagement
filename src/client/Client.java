@@ -111,6 +111,10 @@ public class Client {
 		}
 
 	}
+	
+	public boolean getError(){
+		return this.error;
+	}
 
 	private void runOT(ObjectTransferrable receivedOperation) {
 		switch (receivedOperation.getOpCode()) {
