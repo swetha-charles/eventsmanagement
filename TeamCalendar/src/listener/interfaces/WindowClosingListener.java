@@ -66,7 +66,7 @@ public interface WindowClosingListener extends WindowListener{
 	}
 
 	@Override
-	public default void windowClosing(WindowEvent e) {
+	public default void windowClosed(WindowEvent e) {
 	}
 	
 	@Override
