@@ -36,7 +36,7 @@ public class Model extends Observable {
 	private Login loginView;
 	private Registration registrationView;
 	private JPanel meeting;
-	private ErrorConnectionDown error;
+	private ErrorConnectionDown errorView;
 	private List listView;
 	private Profile profileView;
 	private Edit editView;
@@ -83,7 +83,6 @@ public class Model extends Observable {
 	private String displayMonth;
 	private String displayDay;
 	private ArrayList<Event> meetings = new ArrayList<Event>();
-	private boolean meetingCreationSuccessful = false;
 
 	public Model(Client client) {
 		this.client = client;
@@ -247,22 +246,27 @@ public class Model extends Observable {
 	
 	//-----------------Events --------------//
 	
-	public void promptRestart() {
-		if (this.error != null) {
-			this.error.promptRestart();
-		} else {
-			this.error = new ErrorConnectionDown(this);
-			this.error.promptRestart();
+	public void addEvents(String title, String eventDescription, String eventDate, String eventTime, String eventLocation){
+		
+	}
+	
+	public void promptUserToRestart() {
+		if (this.errorView == null) {
+			this.errorView = new ErrorConnectionDown(this);
 		}
-		this.changeCurrentState(ModelState.PROMPTRELOAD);
+		this.errorView.addRestartButton();
+		this.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 	}
 
+	public void userRequestedRestart(){
+		
+	}
 
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
 		OTLogin loginObject = new OTLogin(username);
-//		System.out.println(username);
-//		System.out.println(passwordAsString);
+		System.out.println(username);
+		System.out.println(passwordAsString);
 
 		setUsername(username);
 		setPasswordAsString(passwordAsString);
@@ -279,18 +283,7 @@ public class Model extends Observable {
 		this.displayDay = dayFormat.format(cal.getTime());
 		// this.client.getMeetings(this.username, cal);
 	}
-	
-	public void addEvents(Event event){
-		OTCreateEvent newEvent = new OTCreateEvent(event);
-		
-		this.client.addNewEvent(newEvent);
-	}
 
-	public void updateEvent(Event oldEvent, Event newEvent){
-		OTUpdateEvent updatedEvent = new OTUpdateEvent(oldEvent, newEvent);
-		
-		this.client.updateEvent(updatedEvent);
-	}
 	// method for next day
 
 	// method for previous day
@@ -452,14 +445,6 @@ public class Model extends Observable {
 /*		this.listView.getListPanel().addMeetings(this.meetings);*/
 	}
 
-	public boolean isMeetingCreationSuccessful() {
-		return meetingCreationSuccessful;
-	}
-
-	public void setMeetingCreationSuccessful(boolean meetingCreationSuccessful) {
-		this.meetingCreationSuccessful = meetingCreationSuccessful;
-	}
-
 	public synchronized void changeCurrentState(ModelState state) {
 		this.currentstate = state;
 
@@ -489,14 +474,14 @@ public class Model extends Observable {
 			break;
 
 		case ERRORCONNECTIONDOWN:
-			this.error = new ErrorConnectionDown(this);
-			setPanel(this.error);
+			this.errorView = new ErrorConnectionDown(this);
+			setPanel(this.errorView);
 			break;
-
-		case PROMPTRELOAD:
-			setPanel(this.error);
+			
+		case ERRORCONNECTIONDOWNSTILL:
+			this.errorView.connectionStillDown();
+			setPanel(this.errorView);
 			break;
-
 		case EXIT:
 			this.client.exitGracefully();
 			break;
