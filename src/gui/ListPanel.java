@@ -40,7 +40,7 @@ public class ListPanel extends JPanel{
 	Model model;
 	JPanel left = new JPanel();
 	
-	JPanel eventsListPanel = new JPanel();
+	JPanel list = new JPanel();
 	JScrollPane listscroll;
 	
 	JPanel event = new JPanel();
@@ -90,16 +90,14 @@ public class ListPanel extends JPanel{
 		setMaximumSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-200));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		
-		date= new JLabel(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR)));
-		
-//		date.setPreferredSize(new Dimension(100,50));
+		//creates JLabel with the date on
+		date = new JLabel(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR)));
 		date.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 25));
 		date.setForeground(Color.DARK_GRAY);
 		
 		//creates addEvent button
 		addEvent.setMargin(new Insets(0, 0, 0, 0));
-		addEvent.setBackground(Color.PINK);
-		addEvent.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 25));
+		addEvent.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
 		addEvent.setMinimumSize(new Dimension(35,35));
 		addEvent.setMaximumSize(new Dimension(35,35));
 		
@@ -116,7 +114,7 @@ public class ListPanel extends JPanel{
 		addMeetings(model.getMeetings());
 		
 		//adds list to listscroll and sets the size
-		listscroll = new JScrollPane(eventsListPanel);
+		listscroll = new JScrollPane(list);
 		listscroll.setPreferredSize(new Dimension(900,450));
 		listscroll.setMaximumSize(new Dimension(900,450));
 		listscroll.setMinimumSize(new Dimension(900,450));
@@ -143,7 +141,6 @@ public class ListPanel extends JPanel{
 		event.add(timeLabel);
 		event.add(locationLabel);
 		
-		
 		//----------------------Listeners----------------------//
 		
 		previous.addActionListener((e) -> {
@@ -164,20 +161,28 @@ public class ListPanel extends JPanel{
 		});
 		
 		addEvent.addActionListener((e) -> {
-			JPanel eventPopup = new JPanel();
-			event.setLayout(new GridLayout(7,2));
-			event.setPreferredSize(new Dimension(400,200));
-			event.setMinimumSize(new Dimension(400,200));
-			event.setMaximumSize(new Dimension(400,200));
-			setEvent(eventPopup, 1);
-		});
+		JPanel eventPopup = new JPanel();
+		event.setLayout(new GridLayout(7,2));
+		event.setPreferredSize(new Dimension(400,200));
+		event.setMinimumSize(new Dimension(400,200));
+		event.setMaximumSize(new Dimension(400,200));
+		setEvent(eventPopup, 1);
+	});
 		
 //		submit.addActionListener((e) -> ;
 	}
 	
 
 	
-	//---------------------Change Event Panel----------------------------//
+	//----------------------Change Date at the top of page------------------------------//
+	
+	public void setDate(){
+		this.date.setText(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR)));
+		this.revalidate();
+		this.repaint();
+	}
+	
+	//-----------------------Sets event popup---------------------------------------//
 	
 	public void setEvent(JPanel event, int a) {
 		if(a==1){
@@ -242,30 +247,22 @@ public class ListPanel extends JPanel{
 		this.repaint();
 	}
 	
-	//----------------------Change Date at the top of page------------------------------//
 	
-	public void setDate(){
-		this.date.setText(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH), c.get(Calendar.YEAR)));
-		this.revalidate();
-		this.repaint();
-		
-	}
-	
-		
 	//---------------------Add meeting panels to listscroll-------------------------//
 
 	public void addMeetings(ArrayList<Event> arraylist){
-		this.eventsListPanel.removeAll();
+			
+		list.removeAll();
 		events.clear();
 		if (arraylist.isEmpty()){
 			
-			eventsListPanel.setPreferredSize(new Dimension(650,800));
-			eventsListPanel.setLayout(new GridLayout(1,1));
+			list.setPreferredSize(new Dimension(650,800));
+			list.setLayout(new GridLayout(1,1));
 			
 			JLabel l = new JLabel("You have no events right now!");
 			l.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 			l.setForeground(Color.RED);
-			eventsListPanel.add(l);
+			list.add(l);
 			
 		} else {
 			
@@ -315,19 +312,20 @@ public class ListPanel extends JPanel{
 				p.add(Box.createRigidArea(new Dimension(0,10)));
 				p.add(edit);
 				events.add(p);	
+				
+//				edit.addActionListener((e) -> {
+//					
+//				};
 			}
 			
-		
-			eventsListPanel.setPreferredSize(new Dimension(650,800));
-			eventsListPanel.setLayout(new GridLayout(events.size(),1));
+			list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
 			
 			for(int i = 0; i<events.size(); i++){
-				eventsListPanel.add(events.get(i));
-				eventsListPanel.add(Box.createRigidArea(new Dimension(0,20)));
+				list.add(events.get(i));
+				list.add(Box.createRigidArea(new Dimension(0,20)));
 			}
 		}
-		
-		
+	
 	}
 	
 	//---------------------Says which event is clicked on--------------//
@@ -383,10 +381,6 @@ public class ListPanel extends JPanel{
 		s.append(" " + year);
 		
 		return s.toString();
-		
-	}
-	
-	public void getEventsListPanel(){
 		
 	}
 
