@@ -9,8 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -19,6 +19,7 @@ import javax.swing.SpringLayout;
 import client.Client;
 import model.Model;
 import model.ModelState;
+import objectTransferrable.OTUpdateUserProfile;
 
 public class EditPanel extends JPanel{
 	
@@ -112,9 +113,18 @@ public class EditPanel extends JPanel{
 		
 		//----------------------Listeners----------------------//
 		
-		submit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				
+		submit.addActionListener((e) -> {
+			String password = new String(this.passwordA.getPassword());
+			if(model.checkPassword(password)){
+				this.model.updateProfile(firstNameA.getText(),lastNameA.getText(),emailA.getText());
+				if(this.model.getUpdateProfileSuccess()){
+					JOptionPane.showMessageDialog(this, "Update Successful!");
+					this.model.changeCurrentState(ModelState.PROFILE);
+				} else {
+					JOptionPane.showMessageDialog(this, "Update unsuccessful, connection may be down");
+				}
+			}else {
+				JOptionPane.showMessageDialog(this, "Incorrect password");
 			}
 		});
 		
