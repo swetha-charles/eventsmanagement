@@ -151,6 +151,19 @@ public class QueryManager {
 			getServer().getServerModel().addToText(
 					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!");
 		}
+		//Deletes an event
+		else if (currentOperation.getOpCode().equals("0019")) {
+			deleteEvent(stmnt);
+		}
+		// This is a return message for sending meeting delete success to the client and
+		// should not be seen by server
+		else if (currentOperation.getOpCode().equals("0020")) {
+			setOperation(new OTErrorResponse(
+					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!",
+					false));
+			getServer().getServerModel().addToText(
+					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!");
+		}
 		// Unknown OP code response
 		else {
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false));
@@ -158,6 +171,33 @@ public class QueryManager {
 			.addToText("opcode of object not known by query manager! Responding with Error Object");
 		}
 
+	}
+
+	private void deleteEvent(Statement stmnt) {
+		OTDeleteEvent classifiedOperation = (OTDeleteEvent) getOperation();
+		Event eventToDelete = classifiedOperation.getEvent();
+
+		getServer().getServerModel()
+		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
+
+		String update = "DELETE FROM meetings " 
+				+"WHERE meetings.creatorID= '" + getClientInfo().getUserName() 
+				+ "', meetings.meetingDate= '"+eventToDelete.getDate().toString()
+				+"', meetings.meetingTitle= '"+eventToDelete.getEventTitle()
+				+"', meetings.meetingDescription= '"+eventToDelete.getEventDescription()
+				+"',meetings.meetingLocation= '"+eventToDelete.getLocation()
+				+"',meetings.meetingStartTime= '"+eventToDelete.getStartTime().toString()
+				+"',meetings.meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
+		
+		try {
+			stmnt.executeUpdate(update);
+			getServer().getServerModel().addToText("Successfully deleted event");
+			setOperation(new OTUpdateEventSuccessful());
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't delete meeting");
+			setOperation(new OTErrorResponse("Couldn't delete meeting", false));
+			e.printStackTrace();
+		}
 	}
 
 	private void updateEvent(Statement stmnt) {
