@@ -146,9 +146,9 @@ public class Client {
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
 				OTLoginSuccessful returnObject;
 				if (successfulLogin) {
-					returnObject = new OTLoginSuccessful(true, this.model.getUsername());
+					returnObject = new OTLoginSuccessful(this.model.getUsername());
 				} else {
-					returnObject = new OTLoginSuccessful(false, this.model.getUsername());
+					returnObject = new OTLoginSuccessful(this.model.getUsername());
 					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
 				informServerLoginSuccess(returnObject);
