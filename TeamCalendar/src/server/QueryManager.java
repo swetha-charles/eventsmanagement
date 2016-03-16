@@ -254,7 +254,7 @@ public class QueryManager {
 
 		getServer().getServerModel()
 		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
-
+		
 		String update = "DELETE FROM meetings " 
 				+"WHERE meetings.creatorID= '" + getClientInfo().getUserName() 
 				+ "', meetings.meetingDate= '"+eventToDelete.getDate().toString()
@@ -263,7 +263,8 @@ public class QueryManager {
 				+"',meetings.meetingLocation= '"+eventToDelete.getLocation()
 				+"',meetings.meetingStartTime= '"+eventToDelete.getStartTime().toString()
 				+"',meetings.meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
-		
+		getServer().getServerModel()
+		.addToText("Running this update: " + update + "\n");
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully deleted event\n");
