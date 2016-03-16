@@ -167,7 +167,6 @@ public class Client {
 		case "0016":
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
 			boolean proceed = proceedOrNot.getLoginProceed();
-			System.out.println("Proceed was: " + proceed);
 			if (proceed) {
 				this.model.setSuccessfulLogin(true);
 				this.model.setFirstName(proceedOrNot.getFirstName());
@@ -181,6 +180,10 @@ public class Client {
 				this.model.setEmail(null);
 				this.model.setUsername(null);
 			}
+			break;
+		case "0018":
+			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
+			this.model.setMeetingUpdateSuccessful(true);
 			break;
 		}
 

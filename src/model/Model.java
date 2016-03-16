@@ -84,6 +84,11 @@ public class Model extends Observable {
 	private String displayDay;
 	private ArrayList<Event> meetings = new ArrayList<Event>();
 
+	// ------------------Event create/update/delete--------------------//
+	private boolean meetingCreationSuccessful = false;
+	private boolean meetingUpdateSuccessful = false;
+	private boolean meetingDeleteSuccessful = false;
+
 	public Model(Client client) {
 		this.client = client;
 		this.currentstate = ModelState.LOGIN;
@@ -443,6 +448,22 @@ public class Model extends Observable {
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
 /*		this.listView.getListPanel().addMeetings(this.meetings);*/
+	}
+
+	public boolean isMeetingUpdateSuccessful() {
+		return meetingUpdateSuccessful;
+	}
+
+	public void setMeetingUpdateSuccessful(boolean meetingUpdateSuccessful) {
+		this.meetingUpdateSuccessful = meetingUpdateSuccessful;
+	}
+
+	public boolean isMeetingDeleteSuccessful() {
+		return meetingDeleteSuccessful;
+	}
+
+	public void setMeetingDeleteSuccessful(boolean meetingDeleteSuccessful) {
+		this.meetingDeleteSuccessful = meetingDeleteSuccessful;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {

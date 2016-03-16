@@ -67,7 +67,7 @@ public class QueryManager {
 		// OP CODE 0005 SPECIAL CASE TO EXIT PROGRAM
 		else if (currentOperation.getOpCode().equals("0005")) {
 			getServer().getServerModel()
-					.addToText("Specially reserved opcode for exiting program has arrived at query manager!");
+			.addToText("Specially reserved opcode for exiting program has arrived at query manager!");
 			// No reason to tell the client, they gone, possible shutdown
 			// communication?
 		}
@@ -138,19 +138,68 @@ public class QueryManager {
 			getServer().getServerModel().addToText(
 					"A message meant to be sent by the server (sending user details to client) has been found at the query manager!");
 		}
+		//Updates an events details
+		else if (currentOperation.getOpCode().equals("0017")) {
+			updateEvent(stmnt);
+		}
+		// This is a return message for sending meeting update success to the client and
+		// should not be seen by server
+		else if (currentOperation.getOpCode().equals("0018")) {
+			setOperation(new OTErrorResponse(
+					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!",
+					false));
+			getServer().getServerModel().addToText(
+					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!");
+		}
 		// Unknown OP code response
 		else {
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false));
 			getServer().getServerModel()
-					.addToText("opcode of object not known by query manager! Responding with Error Object");
+			.addToText("opcode of object not known by query manager! Responding with Error Object");
 		}
 
+	}
+
+	private void updateEvent(Statement stmnt) {
+		OTUpdateEvent classifiedOperation = (OTUpdateEvent) getOperation();
+		Event oldEvent = classifiedOperation.getOldEvent();
+		Event newEvent = classifiedOperation.getNewEvent();
+
+		getServer().getServerModel()
+		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
+
+		String update = "UPDATE meetings " 
+				+"SET meetings.creatorID= '" + getClientInfo().getUserName() 
+				+ "', meetings.meetingDate= '"+newEvent.getDate().toString()
+				+"', meetings.meetingTitle= '"+newEvent.getEventTitle()
+				+"', meetings.meetingDescription= '"+newEvent.getEventDescription()
+				+"',meetings.meetingLocation= '"+newEvent.getLocation()
+				+"',meetings.meetingStartTime= '"+newEvent.getStartTime().toString()
+				+"',meetings.meetingEndTime=, '"+newEvent.getEndTime().toString()
+				+"' "
+				+"WHERE meetings.creatorID= '" + getClientInfo().getUserName() 
+				+ "', meetings.meetingDate= '"+oldEvent.getDate().toString()
+				+"', meetings.meetingTitle= '"+oldEvent.getEventTitle()
+				+"', meetings.meetingDescription= '"+oldEvent.getEventDescription()
+				+"',meetings.meetingLocation= '"+oldEvent.getLocation()
+				+"',meetings.meetingStartTime= '"+oldEvent.getStartTime().toString()
+				+"',meetings.meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
+		
+		try {
+			stmnt.executeUpdate(update);
+			getServer().getServerModel().addToText("Successfully updated event");
+			setOperation(new OTUpdateEventSuccessful());
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't update meeting");
+			setOperation(new OTErrorResponse("Couldn't update meeting", false));
+			e.printStackTrace();
+		}
 	}
 
 	private void createEvent(Statement stmnt) {
 		OTCreateEvent classifiedOperation = (OTCreateEvent) getOperation();
 		getServer().getServerModel()
-				.addToText("Attempting to create a meeting for: " + getClientInfo().getUserName() + "\n");
+		.addToText("Attempting to create a meeting for: " + getClientInfo().getUserName() + "\n");
 		String update = "INSERT INTO meetings VALUES (DEFAULT, '" + getClientInfo().getUserName() + "', '"
 				+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
 				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
@@ -170,7 +219,7 @@ public class QueryManager {
 	private void checkUsername(Statement stmnt) {
 		OTUsernameCheck classifiedOperation = (OTUsernameCheck) getOperation();
 		getServer().getServerModel()
-				.addToText("Checking to see if " + classifiedOperation.getUsername() + " is in the database...\n");
+		.addToText("Checking to see if " + classifiedOperation.getUsername() + " is in the database...\n");
 		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = '"
 				+ classifiedOperation.getUsername() + "'";
 		try {
@@ -217,7 +266,7 @@ public class QueryManager {
 	private void checkRegistration(Statement stmnt) {
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation) getOperation();
 		getServer().getServerModel()
-				.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
+		.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
 		String update = "INSERT INTO users VALUES ('" + classifiedOperation.getUsername() + "', '"
 				+ classifiedOperation.getPwHash() + "', '" + classifiedOperation.getFirstname() + "', '"
 				+ classifiedOperation.getLastname() + "', '" + classifiedOperation.getEmail() + "')";
@@ -239,7 +288,7 @@ public class QueryManager {
 		// Is known error response can go here
 		if (error.getErrCode() == 0) {
 			System.err.println("Undefined error from client, Description: " + error.getErrorDescription()
-					+ " Communications being shut down? " + error.isShouldShutdownCommunication());
+			+ " Communications being shut down? " + error.isShouldShutdownCommunication());
 		} else {
 			/**
 			 * TODO any specific error handling can go here
@@ -270,7 +319,7 @@ public class QueryManager {
 			rs = stmnt.executeQuery(query);
 			ArrayList<Event> meetings = new ArrayList<Event>();
 			getServer().getServerModel()
-					.addToText("Requesting meeting information for " + getClientInfo().getUserName() + "\n");
+			.addToText("Requesting meeting information for " + getClientInfo().getUserName() + "\n");
 			while (rs.next()) {
 				String title = rs.getString(1);
 				String description = rs.getString(2);
@@ -302,18 +351,18 @@ public class QueryManager {
 
 			if (rs.next()) {
 				getServer().getServerModel()
-						.addToText("Retrieved user details for " + classifiedOperation.getUsername() + "\n");
+				.addToText("Retrieved user details for " + classifiedOperation.getUsername() + "\n");
 				String firstName, lastName, email;
 				firstName = rs.getString(1);
 				lastName = rs.getString(2);
 				email = rs.getString(3);
 				setOperation(new OTLoginProceed(true, firstName, lastName, email));
 				getServer().getServerModel()
-						.addToText("Set Client username to " + classifiedOperation.getUsername() + "\n");
+				.addToText("Set Client username to " + classifiedOperation.getUsername() + "\n");
 				getClientInfo().setUserName(classifiedOperation.getUsername());
 			} else {
 				getServer().getServerModel()
-						.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
+				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
 				setOperation(new OTLoginProceed(false, null, null, null));
 			}
 		} catch (SQLException e) {
@@ -340,7 +389,7 @@ public class QueryManager {
 
 			} else {
 				getServer().getServerModel()
-						.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
+				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
 				setOperation(new OTHashToClient(false, null));
 			}
 		} catch (SQLException e) {
