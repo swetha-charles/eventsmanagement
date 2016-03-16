@@ -17,12 +17,20 @@ public class ErrorConnectionDown extends JPanel {
 		this.model = model;
 		this.setLayout(new BorderLayout());
 		this.add(warning, BorderLayout.NORTH);
+		restart.addActionListener((e) -> {
+			model.userRequestedRestart();
+		});
 	}
 	
-	public void promptRestart(){
-		this.warning.setText("Reconnect internet and press restart");
-		this.add(restart, BorderLayout.SOUTH);
+	public void addRestartButton(){
+		warning.setText("Your connection is down. Reconnect internet and press restart");
+		this.add(restart, BorderLayout.CENTER);
+		repaint();
 	}
+	public void connectionStillDown(){
+		warning.setText("Your connection is still down, we apologies for the inconvenience.  \n RECONNECT THE INTERNET before pressing restart");
+		revalidate();
+		}
 	
 	
 }
