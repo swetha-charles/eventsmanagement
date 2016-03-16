@@ -308,6 +308,10 @@ public class Client {
 		OTHeartBeat othb = new OTHeartBeat();
 		this.writeToServer(othb, false, complementOpCode);
 	}
+	
+	public void updatePassword(OTUpdatePassword updatedPassword){
+		
+	}
 
 	// ----------writeToServer calls Ends---------------------------//
 	@SuppressWarnings("deprecation")
