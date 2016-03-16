@@ -62,12 +62,12 @@ public class QueryManager {
 		// OTRegistrationInformation = "0004"
 		else if (currentOperation.getOpCode().equals("0004")) {
 			setOperation(new OTErrorResponse("OP code currently out of use!", false, 0004));
-			getServer().getServerModel().addToText("opcode is presently depricated! Responding with Error Object");
+			getServer().getServerModel().addToText("opcode is presently depricated! Responding with Error Object\n");
 		}
 		// OP CODE 0005 SPECIAL CASE TO EXIT PROGRAM
 		else if (currentOperation.getOpCode().equals("0005")) {
 			getServer().getServerModel()
-			.addToText("Specially reserved opcode for exiting program has arrived at query manager!");
+			.addToText("Specially reserved opcode for exiting program has arrived at query manager!\n");
 			// No reason to tell the client, they gone, possible shutdown
 			// communication?
 		}
@@ -76,7 +76,7 @@ public class QueryManager {
 			setOperation(
 					new OTErrorResponse("Server specified confirmation message recieved from client!", false, 0006));
 			getServer().getServerModel().addToText(
-					"The object assocatied with this opcode should not be recieved from client! Responding with Error Object");
+					"The object assocatied with this opcode should not be recieved from client! Responding with Error Object\n");
 		}
 		// The client has returned an error, considering client passive previous
 		// server response was bad
@@ -93,7 +93,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (return list of meetings) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (return list of meetings) has been found at the query manager!");
+					"A message meant to be sent by the server (return list of meetings) has been found at the query manager!\n");
 		}
 		// Request to create an event from the client
 		else if (currentOperation.getOpCode().equals("0010")) {
@@ -106,7 +106,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sucessful event creation) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sucessful event creation) has been found at the query manager!");
+					"A message meant to be sent by the server (sucessful event creation) has been found at the query manager!\n");
 		}
 		// Get users hashed password for the client
 		else if (currentOperation.getOpCode().equals("0012")) {
@@ -127,7 +127,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending the hash to the client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending the hash to the client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending the hash to the client) has been found at the query manager!\n");
 		}
 		// This is a return message for sending user details to client and
 		// should not be seen by server
@@ -136,7 +136,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending user details to client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending user details to client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending user details to client) has been found at the query manager!\n");
 		}
 		//Updates an events details
 		else if (currentOperation.getOpCode().equals("0017")) {
@@ -149,7 +149,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!\n");
 		}
 		//Deletes an event
 		else if (currentOperation.getOpCode().equals("0019")) {
@@ -162,7 +162,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!\n");
 		}
 		//Updates a users profile
 		else if (currentOperation.getOpCode().equals("0021")) {
@@ -175,7 +175,7 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!\n");
 		}
 		//Updates a users password
 		else if (currentOperation.getOpCode().equals("0023")) {
@@ -188,13 +188,13 @@ public class QueryManager {
 					"A message meant to be sent by the server (sending update user password success to the client) has been found at the query manager!",
 					false));
 			getServer().getServerModel().addToText(
-					"A message meant to be sent by the server (sending update user password success to the client) has been found at the query manager!");
+					"A message meant to be sent by the server (sending update user password success to the client) has been found at the query manager!\n");
 		}
 		// Unknown OP code response
 		else {
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false));
 			getServer().getServerModel()
-			.addToText("opcode of object not known by query manager! Responding with Error Object");
+			.addToText("opcode of object not known by query manager! Responding with Error Object\n");
 		}
 
 	}
@@ -213,10 +213,10 @@ public class QueryManager {
 		
 		try {
 			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully updated user password");
+			getServer().getServerModel().addToText("Successfully updated user password\n");
 			setOperation(new OTUpdatePasswordSuccessful());
 		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't update user password");
+			getServer().getServerModel().addToText("Couldn't update user password\n");
 			setOperation(new OTErrorResponse("Couldn't update user password", false));
 			e.printStackTrace();
 		}
@@ -239,10 +239,10 @@ public class QueryManager {
 		
 		try {
 			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully updated user profile");
+			getServer().getServerModel().addToText("Successfully updated user profile\n");
 			setOperation(new OTUpdateUserProfileSuccessful(classifiedOperation.getFirstName(), classifiedOperation.getLastName(), classifiedOperation.getEmail()));
 		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't update user profile");
+			getServer().getServerModel().addToText("Couldn't update user profile\n");
 			setOperation(new OTErrorResponse("Couldn't update user profile", false));
 			e.printStackTrace();
 		}
@@ -266,10 +266,10 @@ public class QueryManager {
 		
 		try {
 			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully deleted event");
+			getServer().getServerModel().addToText("Successfully deleted event\n");
 			setOperation(new OTDeleteEventSuccessful());
 		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't delete event");
+			getServer().getServerModel().addToText("Couldn't delete event\n");
 			setOperation(new OTErrorResponse("Couldn't delete event", false));
 			e.printStackTrace();
 		}
@@ -301,10 +301,10 @@ public class QueryManager {
 		
 		try {
 			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully updated event");
+			getServer().getServerModel().addToText("Successfully updated event\n");
 			setOperation(new OTUpdateEventSuccessful());
 		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't update meeting");
+			getServer().getServerModel().addToText("Couldn't update meeting\n");
 			setOperation(new OTErrorResponse("Couldn't update meeting", false));
 			e.printStackTrace();
 		}
@@ -321,12 +321,14 @@ public class QueryManager {
 				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
 				+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
 				+ classifiedOperation.getEvent().getEndTime().toString() +"')";
+		getServer().getServerModel()
+		.addToText(update +"\n");
 		try {
 			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully created meeting");
+			getServer().getServerModel().addToText("Successfully created meeting\n");
 			setOperation(new OTCreateEventSucessful(classifiedOperation.getEvent()));
 		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't create meeting");
+			getServer().getServerModel().addToText("Couldn't create meeting\n");
 			setOperation(new OTErrorResponse("Couldn't create meeting", false));
 			e.printStackTrace();
 		}

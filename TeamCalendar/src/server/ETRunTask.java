@@ -45,11 +45,11 @@ public class ETRunTask implements ExecutableTask{
 
 		//get the updated object and pass it back to the client
 		try {
-			if(runQuery.getOperation().getOpCode() != "0014"){
+			if(!runQuery.getOperation().getOpCode().equals("0014")){
 				getMasterServer().getServerModel().addToText("Sending back Object with opCode " + runQuery.getOperation().getOpCode() + "\n");
 			}
 			getClientInfo().getClientOutput().writeObject(runQuery.getOperation());
-			if(runQuery.getOperation().getOpCode() != "0014"){
+			if(!runQuery.getOperation().getOpCode().equals("0014")){
 				getMasterServer().getServerModel().addToText("SENT" + "\n");
 			}
 		} catch (IOException e) {
