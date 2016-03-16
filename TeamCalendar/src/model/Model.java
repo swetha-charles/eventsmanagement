@@ -283,6 +283,10 @@ public class Model extends Observable {
 		
 	}
 
+	//------------------Profile editing------------//
+	
+	//--------------Profile editing ends-----------//
+	
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
 		OTLogin loginObject = new OTLogin(username);
@@ -294,32 +298,6 @@ public class Model extends Observable {
 
 		this.client.checkLoginDetails(loginObject);
 	}
-
-	// When the user presses "home" (MenuPanel) or right after successful login
-	// (LoginPanel), this method is called by the requisite listeners.
-	public void showListViewForToday() {
-		Calendar cal = Calendar.getInstance();
-		this.displayYear = yearFormat.format(cal.getTime());
-		this.displayMonth = monthFormat.format(cal.getTime());
-		this.displayDay = dayFormat.format(cal.getTime());
-		// this.client.getMeetings(this.username, cal);
-	}
-
-	// method for next day
-
-	// method for previous day
-
-	// method for add event
-
-	// method for
-
-	// method for next day
-
-	// method for previous day
-
-	// method for add event
-
-	// method for
 
 	// --------Save information that returns from server----//
 
@@ -344,12 +322,6 @@ public class Model extends Observable {
 			this.registrationView.getRegistrationPanel().setEmailLabel("Email*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
-
-	}
-
-	// method to get meetings
-
-	public void getMeetingsOnDay(String userName, Calendar dateRequest) {
 
 	}
 
