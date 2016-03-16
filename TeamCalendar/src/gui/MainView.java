@@ -21,7 +21,7 @@ import model.ModelState;
 public class MainView extends JFrame implements Observer {
 
 	Model model = null;
-	Client controller = null;
+	Client client = null;
 
 	JPanel login = null;
 	Registration registration = null;
@@ -29,9 +29,9 @@ public class MainView extends JFrame implements Observer {
 	JPanel loggedIn = null;
 
 	public MainView(Client client, Model model) {
-		this.controller = client;
+		this.client = client;
 		this.model = model;
-		this.login = new Login(this.controller, this.model);
+		this.login = new Login(this.client, this.model);
 
 		scroll = new JScrollPane(login);
 
@@ -45,8 +45,8 @@ public class MainView extends JFrame implements Observer {
 		// --------------Lambda Listeners-------------------//
 
 		this.addWindowListener((WindowClosingListener) (e) -> {
-			if(model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWN) || model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWNSTILL ) || model.getCurrentState().equals(ModelState.PROMPTRELOAD )){
-				//do nothing
+			if(client.getError()){
+				this.dispose();
 			} else {
 				model.changeCurrentState(ModelState.EXIT);
 			}
@@ -74,7 +74,7 @@ public class MainView extends JFrame implements Observer {
 	}
 
 	public void addController(Client controller) {
-		this.controller = controller;
+		this.client = controller;
 	}
 
 	@Override
