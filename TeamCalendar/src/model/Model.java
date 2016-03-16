@@ -163,8 +163,8 @@ public class Model extends Observable {
 
 	// checks confirm matches password field
 	public boolean checkConfirmMatchesPassword(char[] firstEntry, char[] secondEntry) {
-		String confirmPassword = new String(secondEntry);
-		String firstPassword = new String(firstEntry);
+		String confirmPassword = new String(firstEntry);
+		String firstPassword = new String(secondEntry);
 		if (confirmPassword.equals(firstPassword)) {
 			this.passwordMatchesConfirm = true;
 			return true;
@@ -271,15 +271,13 @@ public class Model extends Observable {
 	}
 	
 	public void promptUserToRestart() {
-		if (this.errorView == null) {
-			this.errorView = new ErrorConnectionDown(this);
-		}
 		this.errorView.addRestartButton();
-		this.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+		this.changeCurrentState(ModelState.PROMPTRELOAD);
 	}
-
+	
 	public void userRequestedRestart(){
-		
+		this.changeCurrentState(ModelState.PROMPTRELOAD);
+		this.client.restart();
 	}
 	//-----------------Events ends-----------------//
 	//------------------Profile editing------------//
@@ -328,7 +326,7 @@ public class Model extends Observable {
 
 	}
 
-	// --------End of information from server------------//
+		// --------End of information from server------------//
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -502,9 +500,15 @@ public class Model extends Observable {
 			break;
 			
 		case ERRORCONNECTIONDOWNSTILL:
+			System.out.println("Connection still down");
 			this.errorView.connectionStillDown();
 			setPanel(this.errorView);
 			break;
+			
+		case PROMPTRELOAD:
+			setPanel(this.errorView);
+			break;
+			
 		case EXIT:
 			this.client.exitGracefully();
 			break;
