@@ -164,6 +164,19 @@ public class QueryManager {
 			getServer().getServerModel().addToText(
 					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!");
 		}
+		//Updates a users profile
+		else if (currentOperation.getOpCode().equals("0021")) {
+			updateUserProfile(stmnt);
+		}
+		// This is a return message for sending update user profile success to the client and
+		// should not be seen by server
+		else if (currentOperation.getOpCode().equals("0022")) {
+			setOperation(new OTErrorResponse(
+					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!",
+					false));
+			getServer().getServerModel().addToText(
+					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!");
+		}
 		// Unknown OP code response
 		else {
 			setOperation(new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false));
@@ -171,6 +184,31 @@ public class QueryManager {
 			.addToText("opcode of object not known by query manager! Responding with Error Object");
 		}
 
+	}
+
+	private void updateUserProfile(Statement stmnt) {
+		OTUpdateUserProfile classifiedOperation = (OTUpdateUserProfile) getOperation();
+
+		getServer().getServerModel()
+		.addToText("Attempting to update the following users profile: " + getClientInfo().getUserName() + "\n");
+
+		String update = "UPDATE users " 
+				+"SET users.firstName= '" + classifiedOperation.getFirstName() 
+				+ "', users.lastName= '"+ classifiedOperation.getLastName()
+				+"', users.userEmail= '"+ classifiedOperation.getEmail()
+				+"' "
+				+"WHERE users.userName= '" + getClientInfo().getUserName()
+				+"'";
+		
+		try {
+			stmnt.executeUpdate(update);
+			getServer().getServerModel().addToText("Successfully updated user profile");
+			setOperation(new OTUpdateEventSuccessful());
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't update user");
+			setOperation(new OTErrorResponse("Couldn't update meeting", false));
+			e.printStackTrace();
+		}
 	}
 
 	private void deleteEvent(Statement stmnt) {
@@ -192,7 +230,7 @@ public class QueryManager {
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully deleted event");
-			setOperation(new OTUpdateEventSuccessful());
+			setOperation(new OTDeleteEventSuccessful());
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't delete meeting");
 			setOperation(new OTErrorResponse("Couldn't delete meeting", false));
@@ -209,8 +247,7 @@ public class QueryManager {
 		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
 
 		String update = "UPDATE meetings " 
-				+"SET meetings.creatorID= '" + getClientInfo().getUserName() 
-				+ "', meetings.meetingDate= '"+newEvent.getDate().toString()
+				+"SET meetings.meetingDate= '"+newEvent.getDate().toString()
 				+"', meetings.meetingTitle= '"+newEvent.getEventTitle()
 				+"', meetings.meetingDescription= '"+newEvent.getEventDescription()
 				+"',meetings.meetingLocation= '"+newEvent.getLocation()
