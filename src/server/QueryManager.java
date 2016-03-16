@@ -206,9 +206,9 @@ public class QueryManager {
 		.addToText("Attempting to update the following users password: " + getClientInfo().getUserName() + "\n");
 
 		String update = "UPDATE users " 
-				+"SET users.password= '" + classifiedOperation.getPwhash() 
+				+"SET password= '" + classifiedOperation.getPwhash() 
 				+"' "
-				+"WHERE users.userName= '" + getClientInfo().getUserName()
+				+"WHERE userName= '" + getClientInfo().getUserName()
 				+"'";
 		
 		try {
@@ -230,11 +230,11 @@ public class QueryManager {
 		.addToText("Attempting to update the following users profile: " + getClientInfo().getUserName() + "\n");
 
 		String update = "UPDATE users " 
-				+"SET users.firstName= '" + classifiedOperation.getFirstName() 
-				+ "', users.lastName= '"+ classifiedOperation.getLastName()
-				+"', users.userEmail= '"+ classifiedOperation.getEmail()
+				+"SET firstName= '" + classifiedOperation.getFirstName() 
+				+ "', lastName= '"+ classifiedOperation.getLastName()
+				+"', userEmail= '"+ classifiedOperation.getEmail()
 				+"' "
-				+"WHERE users.userName= '" + getClientInfo().getUserName()
+				+"WHERE userName= '" + getClientInfo().getUserName()
 				+"'";
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
@@ -257,13 +257,13 @@ public class QueryManager {
 		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
 		
 		String update = "DELETE FROM meetings " 
-				+"WHERE meetings.creatorID= '" + getClientInfo().getUserName() 
-				+ "', meetings.meetingDate= '"+eventToDelete.getDate().toString()
-				+"', meetings.meetingTitle= '"+eventToDelete.getEventTitle()
-				+"', meetings.meetingDescription= '"+eventToDelete.getEventDescription()
-				+"',meetings.meetingLocation= '"+eventToDelete.getLocation()
-				+"',meetings.meetingStartTime= '"+eventToDelete.getStartTime().toString()
-				+"',meetings.meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
+				+"WHERE creatorID= '" + getClientInfo().getUserName() 
+				+ "', meetingDate= '"+eventToDelete.getDate().toString()
+				+"', meetingTitle= '"+eventToDelete.getEventTitle()
+				+"', meetingDescription= '"+eventToDelete.getEventDescription()
+				+"', meetingLocation= '"+eventToDelete.getLocation()
+				+"', meetingStartTime= '"+eventToDelete.getStartTime().toString()
+				+"', meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
 
 		try {
 			stmnt.executeUpdate(update);
@@ -285,20 +285,20 @@ public class QueryManager {
 		.addToText("Attempting to update a meeting for: " + getClientInfo().getUserName() + "\n");
 
 		String update = "UPDATE meetings " 
-				+"SET meetings.meetingDate= '"+newEvent.getDate().toString()
-				+"', meetings.meetingTitle= '"+newEvent.getEventTitle()
-				+"', meetings.meetingDescription= '"+newEvent.getEventDescription()
-				+"',meetings.meetingLocation= '"+newEvent.getLocation()
-				+"',meetings.meetingStartTime= '"+newEvent.getStartTime().toString()
-				+"',meetings.meetingEndTime=, '"+newEvent.getEndTime().toString()
+				+"SET meetingDate= '"+newEvent.getDate().toString()
+				+"', meetingTitle= '"+newEvent.getEventTitle()
+				+"', meetingDescription= '"+newEvent.getEventDescription()
+				+"', meetingLocation= '"+newEvent.getLocation()
+				+"', meetingStartTime= '"+newEvent.getStartTime().toString()
+				+"', meetingEndTime=, '"+newEvent.getEndTime().toString()
 				+"' "
-				+"WHERE meetings.creatorID= '" + getClientInfo().getUserName() 
-				+ "', meetings.meetingDate= '"+oldEvent.getDate().toString()
-				+"', meetings.meetingTitle= '"+oldEvent.getEventTitle()
-				+"', meetings.meetingDescription= '"+oldEvent.getEventDescription()
-				+"',meetings.meetingLocation= '"+oldEvent.getLocation()
-				+"',meetings.meetingStartTime= '"+oldEvent.getStartTime().toString()
-				+"',meetings.meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
+				+"WHERE creatorID= '" + getClientInfo().getUserName() 
+				+ "', meetingDate= '"+oldEvent.getDate().toString()
+				+"', meetingTitle= '"+oldEvent.getEventTitle()
+				+"', meetingDescription= '"+oldEvent.getEventDescription()
+				+"', meetingLocation= '"+oldEvent.getLocation()
+				+"', meetingStartTime= '"+oldEvent.getStartTime().toString()
+				+"', meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
 		
 		try {
 			stmnt.executeUpdate(update);
