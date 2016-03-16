@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -24,8 +25,12 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import client.Client;
+import gui.RegistrationPanel.JTextFieldLimit;
 import model.Model;
 import model.ModelState;
 import objectTransferrable.Event;
@@ -72,8 +77,7 @@ public class ListPanel extends JPanel{
 	
 	ArrayList<JLabel> times = new ArrayList<JLabel>();
 	static ArrayList<JPanel> events = new ArrayList<JPanel>();
-	
-	Event clickedEvent;
+
 	
 	//----------------------Constructor------------------------------//
 	
@@ -81,7 +85,6 @@ public class ListPanel extends JPanel{
 		
 		this.controller = controller;
 		this.model = model;
-		//clickedEvent = new Event(null);
 		
 		//sets dimension and layout of the panel
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
@@ -199,12 +202,32 @@ public class ListPanel extends JPanel{
 			event.add(newEventTitle);
 		
 			event.add(dateLabel);
+			JPanel date = new JPanel();
 			JTextField newEventDate= new JTextField();
-			event.add(newEventDate);
+			JTextField newEventMonth= new JTextField();
+			JTextField newEventYear= new JTextField();
+			newEventDate.setDocument(new JTextFieldLimit(2));
+			newEventMonth.setDocument(new JTextFieldLimit(2));
+			newEventYear.setDocument(new JTextFieldLimit(2));
+			date.setLayout(new BoxLayout(date, BoxLayout.LINE_AXIS));
+			date.add(newEventDate);
+			date.add(Box.createRigidArea(new Dimension(10, 0)));
+			date.add(newEventMonth);
+			date.add(Box.createRigidArea(new Dimension(10, 0)));
+			date.add(newEventYear);
+			event.add(date);
 			
 			event.add(timeLabel);
-			JTextField newEventTime= new JTextField();
-			event.add(newEventTime);
+			JPanel time = new JPanel();
+			JTextField newEventHours= new JTextField();
+			JTextField newEventMinutes= new JTextField();
+			newEventHours.setDocument(new JTextFieldLimit(2));
+			newEventMinutes.setDocument(new JTextFieldLimit(2));
+			time.setLayout(new BoxLayout(time, BoxLayout.LINE_AXIS));
+			time.add(newEventHours);
+			time.add(Box.createRigidArea(new Dimension(30, 0)));
+			time.add(newEventMinutes);
+			event.add(time);
 			
 			event.add(locationLabel);
 			JTextField newEventLocation  = new JTextField();
@@ -322,13 +345,6 @@ public class ListPanel extends JPanel{
 	
 	}
 	
-	//---------------------Says which event is clicked on--------------//
-	
-//	public static void setEventClickedOn(){
-//		Event eventClicked = new Event()
-//		
-//	}
-	
 	//-------------------Creates JLabel for date-----------------------//
 		
 
@@ -378,5 +394,37 @@ public static String getDate(int day, int date, int month, int year){
 		return s.toString();
 		
 	}
+
+	public class JTextFieldLimit extends PlainDocument {
+	
+		private static final long serialVersionUID = 3693304660903406545L;
+		private int limit;
+
+		JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
+			}
+		}
+	}
+	
+	//--------------------converts string to time----------------//
+	
+	public Time stringToTime(String hours, String minutes){
+		
+		int h = Integer.parseInt(hours);
+		int m = Integer.parseInt(minutes);
+	
+		return new Time((h*3600000)+(m*60000));
+		
+	}
+	
 
 }

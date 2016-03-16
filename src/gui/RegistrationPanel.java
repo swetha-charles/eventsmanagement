@@ -397,6 +397,8 @@ public class RegistrationPanel extends JPanel {
 	}
 	// ------ End Email & User labels ---------//
 
+	//--------------Inner class to limit textField---------------------//
+	
 	public class JTextFieldLimit extends PlainDocument {
 		private int limit;
 
