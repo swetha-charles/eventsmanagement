@@ -161,12 +161,12 @@ public class ListPanel extends JPanel{
 		});
 		
 		addEvent.addActionListener((e) -> {
-		JPanel eventPopup = new JPanel();
-		event.setLayout(new GridLayout(7,2));
-		event.setPreferredSize(new Dimension(400,200));
-		event.setMinimumSize(new Dimension(400,200));
-		event.setMaximumSize(new Dimension(400,200));
-		setEvent(eventPopup, 1);
+			JPanel eventPopup = new JPanel();
+			event.setLayout(new GridLayout(7,2));
+			event.setPreferredSize(new Dimension(400,200));
+			event.setMinimumSize(new Dimension(400,200));
+			event.setMaximumSize(new Dimension(400,200));
+			setEvent(eventPopup, 1);
 	});
 		
 //		submit.addActionListener((e) -> ;
@@ -185,6 +185,7 @@ public class ListPanel extends JPanel{
 	//-----------------------Sets event popup---------------------------------------//
 	
 	public void setEvent(JPanel event, int a) {
+		
 		if(a==1){
 			
 			event.setLayout(new GridLayout(7,2));
@@ -196,10 +197,6 @@ public class ListPanel extends JPanel{
 			event.add(name);
 			JTextField newEventTitle = new JTextField();
 			event.add(newEventTitle);
-			
-			event.add(descriptionLabel);
-			JTextField newEventDescription = new JTextField();
-			event.add(newEventDescription);
 		
 			event.add(dateLabel);
 			JTextField newEventDate= new JTextField();
@@ -212,34 +209,25 @@ public class ListPanel extends JPanel{
 			event.add(locationLabel);
 			JTextField newEventLocation  = new JTextField();
 			event.add(newEventLocation);
-
-			event.add(submit);
+			
+			event.add(descriptionLabel);
+			JTextField newEventDescription = new JTextField();
+			event.add(newEventDescription);
+			
 			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-			 if (result == JOptionPane.OK_OPTION) {
-				 // TODO the argument to this should be an Event object.
-		           model.addEvents(newEventTitle.getText(), newEventDescription.getText(), 
-		        		   newEventDate.getText(), newEventTime.getText(), newEventLocation.getText());
-		        } 
+				if (result == JOptionPane.OK_OPTION) {
+				 
+//		           model.addEvents(new Event(newEventTitle.getText(), newEventDescription.getText(), 
+//		        		   newEventDate.getText(), newEventTime.getText(), newEventLocation.getText()));
+				}
 			
 		} else {
-//			set panel as event clicked on
-			eventName = new JLabel();
-			decription = new JLabel();
-			dateA = new JLabel();
-			timeA = new JLabel();
-			locationA = new JLabel();
 			
-			event.add(eventName);
-			event.add(empty);
-			event.add(descriptionLabel);
-			event.add(decription);
-			event.add(dateLabel);
-			event.add(dateA);
-			event.add(timeLabel);
-			event.add(timeA);
-			event.add(locationLabel);
-			event.add(locationA);
-			event.add(edit);
+			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			 	if (result == JOptionPane.OK_OPTION) {
+//			 		model.addEvents(event.getFirstNameA().getText(), event.getLastNameA().getText(), 
+//		        		   event.getEmailA().getText(), event,getPasswordA().getText(), event.getNotesA().getText());
+			 	}	
 		}
 		
 		this.event = event;
@@ -257,7 +245,7 @@ public class ListPanel extends JPanel{
 		if (arraylist.isEmpty()){
 			
 			list.setPreferredSize(new Dimension(650,800));
-			list.setLayout(new GridLayout(1,1));
+			list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
 			
 			JLabel l = new JLabel("You have no events right now!");
 			l.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
@@ -312,10 +300,16 @@ public class ListPanel extends JPanel{
 				p.add(Box.createRigidArea(new Dimension(0,10)));
 				p.add(edit);
 				events.add(p);	
+				Event clickedevent = arraylist.get(i);
 				
-//				edit.addActionListener((e) -> {
-//					
-//				};
+				edit.addActionListener((e) -> {
+					JPanel eventPopup = new EditEventPanel(controller, model, clickedevent);
+					event.setLayout(new GridLayout(7,2));
+					event.setPreferredSize(new Dimension(500,260));
+					event.setMinimumSize(new Dimension(500,260));
+					event.setMaximumSize(new Dimension(500,260));
+					setEvent(eventPopup, 2);
+				});
 			}
 			
 			list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
@@ -337,7 +331,8 @@ public class ListPanel extends JPanel{
 	
 	//-------------------Creates JLabel for date-----------------------//
 		
-	public static String getDate(int day, int date, int month, int year){
+
+public static String getDate(int day, int date, int month, int year){
 		
 		StringBuffer s = new StringBuffer();
 		
