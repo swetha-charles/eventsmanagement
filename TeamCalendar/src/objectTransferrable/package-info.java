@@ -31,6 +31,8 @@
  * {@link objectTransferrable.OTDeleteEventSuccessful} = "0020"
  * {@link objectTransferrable.OTUpdateUserProfile} = "0021"
  * {@link objectTransferrable.OTUpdateUserProfileSuccessful} = "0022"
+ * {@link objectTransferrable.OTUpdatePassword} = "0023"
+ * {@link objectTransferrable.OTUpdatePasswordSuccessful} = "0024"
  * {@link objectTransferrable.Event}
  * @author tmd668
  *

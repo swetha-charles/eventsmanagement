@@ -88,8 +88,9 @@ public class Model extends Observable {
 	// -----------------------Profile update--------------------------//
 	private boolean updateProfileSuccess = false;
 	private boolean updatePasswordSuccess = false;
-	private boolean oldPasswordCorrect;
-	private boolean newPasswordsMatch;
+	private boolean oldPasswordCorrect = false;
+	private boolean newPasswordsMatch = false;
+	private char[] intermediatePwStorage;
 
 	
 	public Model(Client client) {
@@ -289,9 +290,25 @@ public class Model extends Observable {
 		
 	}
 	
-	public void updatePassword(char[] oldpassword, char [] newPassword){
+	public void updatePassword(char[] oldPassword, char[] firstNewPassword, char[] secondNewPassword){
 		
+		if(!checkConfirmMatchesPassword(this.getPassword(), oldPassword)){
+			setOldPasswordCorrect(false);
+			return;
+		} else if(!checkConfirmMatchesPassword(firstNewPassword, secondNewPassword)){
+			setNewPasswordsMatch(false);
+			return;
+		} else {
+			setIntermediatePwStorage(firstNewPassword);
+			setOldPasswordCorrect(true);
+			setNewPasswordsMatch(true);
+			String firstNewPasswordString = new String(firstNewPassword);
+			String pwHash = BCrypt.hashpw(firstNewPasswordString, BCrypt.gensalt());
+			OTUpdatePassword newPassword = new OTUpdatePassword(pwHash);
+			client.updatePassword(newPassword);
+		}
 	}
+
 	//--------------Profile editing ends-----------//
 	
 	public void login(String username, char[] password) {
@@ -472,6 +489,14 @@ public class Model extends Observable {
 		this.updateProfileSuccess = updateProfileSuccess;
 	}
 
+	public boolean getUpdatePasswordSuccess() {
+		return updatePasswordSuccess;
+	}
+
+	public void setUpdatePasswordSuccess(boolean updatePasswordSuccess) {
+		this.updatePasswordSuccess = updatePasswordSuccess;
+	}
+
 	public boolean getOldPasswordCorrect() {
 		return oldPasswordCorrect;
 	}
@@ -486,6 +511,14 @@ public class Model extends Observable {
 
 	public void setNewPasswordsMatch(boolean newPasswordsMatch) {
 		this.newPasswordsMatch = newPasswordsMatch;
+	}
+
+	public char[] getIntermediatePwStorage() {
+		return intermediatePwStorage;
+	}
+
+	public void setIntermediatePwStorage(char[] intermediatePwStorage) {
+		this.intermediatePwStorage = intermediatePwStorage;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
