@@ -57,9 +57,11 @@ public class ETSearchForObject implements ExecutableTask {
 //				getMasterServer().getServerModel().addToText("Server tried to cast object: " + receivedOperation.getOpCode() + "\n");
 
 				if (receivedOperation != null) {
+					if( receivedOperation.getOpCode() != "0014"){
 					getMasterServer().getServerModel()
 							.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
 									+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+					}
 					// Create and ETRunTask object, and place it in the
 					// ExecutorService
 					ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
