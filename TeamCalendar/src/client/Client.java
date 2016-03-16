@@ -38,7 +38,7 @@ public class Client {
 			this.hb.start();
 
 		} catch (IOException e) {
-			model.changeCurrentState(ModelState.UNABLETOOPENSTREAMS);
+			model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 			e.printStackTrace();
 		}
 
@@ -61,9 +61,8 @@ public class Client {
 				this.readFromServer(complementOpCode);
 			}
 		} catch (IOException e) {
-			// Connection is down, what do we do?
-			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 			System.out.println("Connection malfunctioned");
+			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 			this.attemptRecovery();
 
 		}
@@ -89,13 +88,17 @@ public class Client {
 			}
 			this.runOT(receivedOperation);
 		} catch (ClassNotFoundException e) {
-			// When the ObjectTransferrable isn't the right class
+			// When the object recieved is not an Object Transferrable. 
+			//Likely to be that an exception has come in from server. 
 			System.out.println("OT from server could not be read");
+			this.attemptRecovery();
+			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
 		} catch (IOException e2) {
 			System.out.println("Server connection is down");
+			this.attemptRecovery();
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-			return;
+			
 		}
 	}
 
@@ -124,6 +127,7 @@ public class Client {
 			break;
 		case "0006":
 			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
+
 			if (regConf.getRegistrationSuccess()) {
 				this.model.setSuccessfulRegistration(true);
 				this.model.changeCurrentState(ModelState.LOGIN);
@@ -133,12 +137,10 @@ public class Client {
 			break;
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
+			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-		case "0011":
-			OTCreateEventSucessful eventSuccess = (OTCreateEventSucessful) receivedOperation;
-			this.model.setMeetingCreationSuccessful(true);
-			break;
+
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
@@ -148,11 +150,11 @@ public class Client {
 				OTLoginSuccessful returnObject;
 				if (successfulLogin) {
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
-					informServerLoginSuccess(returnObject);
 				} else {
+					returnObject = new OTLoginSuccessful(this.model.getUsername());
 					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
-
+				informServerLoginSuccess(returnObject);
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
@@ -231,21 +233,6 @@ public class Client {
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(requestObject, false, complementOpCode);
 	}
-	
-	public void addNewEvent(OTCreateEvent newEvent) {
-		String complementOpCode = "0011";
-		System.out.println("Client: Sent OT with opcode " + newEvent.getOpCode());
-		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(newEvent, false, complementOpCode);
-		
-	}
-	
-	public void updateEvent(OTUpdateEvent updatedEvent) {
-		String complementOpCode = "0018";
-		System.out.println("Client: Sent OT with opcode " + updatedEvent.getOpCode());
-		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(updatedEvent, false, complementOpCode);
-	}
 
 	public void sendHeartBeat() {
 		String complementOpCode = "0014";
@@ -253,18 +240,21 @@ public class Client {
 		this.writeToServer(othb, false, complementOpCode);
 	}
 
+	
+	// ----------writeToServer calls Ends---------------------------//
+	@SuppressWarnings("deprecation")
 	public void waitForHeartBeat(){
 		try {
 			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
 			future.get(1000, TimeUnit.MILLISECONDS);
 			System.out.println("Heartbeat received from server");
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException | TimeoutException e) {
+			this.hb.stop();
 			System.out.println("Hearbeat dead");
 			this.attemptRecovery();
 		}  
 	}
-	// ----------writeToServer calls Ends---------------------------//
-
+	
 	// --------------------- Exit -------------------------------------//
 	public void exitGracefully() {
 		if (s != null) {
@@ -291,6 +281,7 @@ public class Client {
 	}
 
 	private void attemptToCloseConnections() {
+		
 		if (s != null) {
 			try {
 				s.shutdownOutput();
@@ -304,7 +295,6 @@ public class Client {
 			try {
 				s.shutdownInput();
 				System.out.println("Output stream to server has been shutdown");
-
 			} catch (IOException e1) {
 				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
 				toServer = null;
@@ -321,15 +311,40 @@ public class Client {
 	}
 
 	private void attemptRecovery() {
+		System.out.println("Client is attempting recovery");
+		this.hb.stop();
 		int count = 0;
-		while (!s.isClosed() && count <= 2) {
+		while (!s.isClosed() && count <= 3) {
+			count++;
+			System.out.println("Client closing connections, attempt " + count);
 			this.attemptToCloseConnections();
+					
 		}
-		model.promptRestart();
+		model.promptUserToRestart();
+	}
+	
+	public void restart(){
+		System.out.println("Client will attempt to reopen connections");
+		attemptToOpenConnections();
+	}
+	private void attemptToOpenConnections(){
+		try {
+			s = new Socket("localhost", portnumber);
+			System.out.println("Client connected to port " + portnumber);
+			toServer = new ObjectOutputStream(s.getOutputStream());
+			fromServer = new ObjectInputStream(s.getInputStream());
+			this.hb = new Thread(new HeartBeatThread(this));
+			this.hb.start();
 
+		} catch (IOException e) {
+			model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
+			this.attemptToCloseConnections();
+			
+		}
 	}
 
 	public static void main(String[] args) {
-		Client C = new Client(4449);
+		Client C = new Client(4444);
 	}
+
 }
