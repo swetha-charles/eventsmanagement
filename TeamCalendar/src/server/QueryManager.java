@@ -210,7 +210,8 @@ public class QueryManager {
 				+"' "
 				+"WHERE userName= '" + getClientInfo().getUserName()
 				+"'";
-		
+		getServer().getServerModel()
+		.addToText("Running this update: " + update + "\n");
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated user password\n");
@@ -236,6 +237,7 @@ public class QueryManager {
 				+"' "
 				+"WHERE userName= '" + getClientInfo().getUserName()
 				+"'";
+		
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
 		try {
@@ -265,6 +267,9 @@ public class QueryManager {
 				+"', meetingStartTime= '"+eventToDelete.getStartTime().toString()
 				+"', meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
 
+		getServer().getServerModel()
+		.addToText("Running this update: " + update + "\n");
+		
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully deleted event\n");
@@ -300,6 +305,9 @@ public class QueryManager {
 				+"', meetingStartTime= '"+oldEvent.getStartTime().toString()
 				+"', meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
 		
+		getServer().getServerModel()
+		.addToText("Running this update: " + update + "\n");
+		
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated event\n");
@@ -322,8 +330,10 @@ public class QueryManager {
 				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
 				+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
 				+ classifiedOperation.getEvent().getEndTime().toString() +"')";
+		
 		getServer().getServerModel()
-		.addToText(update +"\n");
+		.addToText("Running this update: " + update + "\n");
+		
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully created meeting\n");
