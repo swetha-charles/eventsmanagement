@@ -91,7 +91,7 @@ public class Model extends Observable {
 	private boolean oldPasswordCorrect;
 	private boolean newPasswordsMatch;
 
-
+	
 	public Model(Client client) {
 		this.client = client;
 		this.currentstate = ModelState.LOGIN;
@@ -289,7 +289,9 @@ public class Model extends Observable {
 		
 	}
 	
-	public void updatePassword(char[] oldpassword, char [])
+	public void updatePassword(char[] oldpassword, char [] newPassword){
+		
+	}
 	//--------------Profile editing ends-----------//
 	
 	public void login(String username, char[] password) {
