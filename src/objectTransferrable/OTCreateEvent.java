@@ -9,22 +9,15 @@ package objectTransferrable;
  *
  */
 public class OTCreateEvent extends ObjectTransferrable {
-	private String username;
 	private Event event;
 	/**
 	 * @param opCode
 	 */
-	public OTCreateEvent(String username, Event event) {
+	public OTCreateEvent(Event event) {
 		super("0010");
-		this.username = username;
 		this.event = event;
 	}
-	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return username;
-	}
+	
 	/**
 	 * @return the event
 	 */
