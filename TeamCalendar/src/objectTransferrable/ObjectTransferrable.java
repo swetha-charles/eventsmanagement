@@ -11,5 +11,4 @@ public abstract class ObjectTransferrable implements java.io.Serializable{
 	public String getOpCode(){
 		return opCode;
 	}
-
 }

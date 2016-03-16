@@ -83,6 +83,7 @@ public class Model extends Observable {
 	private String displayMonth;
 	private String displayDay;
 	private ArrayList<Event> meetings = new ArrayList<Event>();
+	private boolean meetingCreationSuccessful = false;
 
 	public Model(Client client) {
 		this.client = client;
@@ -246,10 +247,6 @@ public class Model extends Observable {
 	
 	//-----------------Events --------------//
 	
-	public void addEvents(String title, String eventDescription, String eventDate, String eventTime, String eventLocation){
-		
-	}
-	
 	public void promptRestart() {
 		if (this.error != null) {
 			this.error.promptRestart();
@@ -264,8 +261,8 @@ public class Model extends Observable {
 	public void login(String username, char[] password) {
 		String passwordAsString = new String(password);
 		OTLogin loginObject = new OTLogin(username);
-		System.out.println(username);
-		System.out.println(passwordAsString);
+//		System.out.println(username);
+//		System.out.println(passwordAsString);
 
 		setUsername(username);
 		setPasswordAsString(passwordAsString);
@@ -282,7 +279,16 @@ public class Model extends Observable {
 		this.displayDay = dayFormat.format(cal.getTime());
 		// this.client.getMeetings(this.username, cal);
 	}
+	
+	public void addEvents(Event event){
+		OTCreateEvent newEvent = new OTCreateEvent(event);
+		
+		this.client.addNewEvent(newEvent);
+	}
 
+	public void updateEvent(Event oldEvent, Event newEvent){
+		
+	}
 	// method for next day
 
 	// method for previous day
@@ -442,6 +448,14 @@ public class Model extends Observable {
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
 /*		this.listView.getListPanel().addMeetings(this.meetings);*/
+	}
+
+	public boolean isMeetingCreationSuccessful() {
+		return meetingCreationSuccessful;
+	}
+
+	public void setMeetingCreationSuccessful(boolean meetingCreationSuccessful) {
+		this.meetingCreationSuccessful = meetingCreationSuccessful;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {

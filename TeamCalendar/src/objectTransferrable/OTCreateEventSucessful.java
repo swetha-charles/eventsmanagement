@@ -10,10 +10,13 @@ package objectTransferrable;
  *
  */
 public class OTCreateEventSucessful extends ObjectTransferrable {
+	private Event event;
 
-
-	public OTCreateEventSucessful() {
+	public OTCreateEventSucessful(Event event) {
 		super("0011");
 	}
 
+	public Event getEvent() {
+		return event;
+	}
 }

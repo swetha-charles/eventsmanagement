@@ -36,7 +36,6 @@ public class QueryManager {
 	public void runOperation() throws SQLException {
 
 		ObjectTransferrable currentOperation = getOperation();
-		String query = null;
 		Connection dbconnection = getServer().getDatabase().getConnection();
 		// Prepared st?
 		Statement stmnt = dbconnection.createStatement();
@@ -50,15 +49,15 @@ public class QueryManager {
 		 */
 		// OTUsernameCheck "0001"
 		if (currentOperation.getOpCode().equals("0001")) {
-			query = checkUsername(stmnt);
+			checkUsername(stmnt);
 		}
 		// OTEmailCheck = "0002"
 		else if (currentOperation.getOpCode().equals("0002")) {
-			query = checkEmailvalid(stmnt);
+			checkEmailvalid(stmnt);
 		}
 		// OTRegistrationCheck = "0003"
 		else if (currentOperation.getOpCode().equals("0003")) {
-			query = checkRegistration(stmnt);
+			checkRegistration(stmnt);
 		}
 		// OTRegistrationInformation = "0004"
 		else if (currentOperation.getOpCode().equals("0004")) {
@@ -98,7 +97,7 @@ public class QueryManager {
 		}
 		// Request to create an event from the client
 		else if (currentOperation.getOpCode().equals("0010")) {
-			// createEvent(stmnt);
+			createEvent(stmnt);
 		}
 		// This is a return message for event creation successful and should not
 		// be seen by server
@@ -148,7 +147,27 @@ public class QueryManager {
 
 	}
 
-	private String checkUsername(Statement stmnt) {
+	private void createEvent(Statement stmnt) {
+		OTCreateEvent classifiedOperation = (OTCreateEvent) getOperation();
+		getServer().getServerModel()
+				.addToText("Attempting to create a meeting for: " + getClientInfo().getUserName() + "\n");
+		String update = "INSERT INTO meetings VALUES (DEFAULT, '" + getClientInfo().getUserName() + "', '"
+				+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
+				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
+				+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
+				+ classifiedOperation.getEvent().getEndTime().toString() +"')";
+		try {
+			stmnt.executeUpdate(update);
+			getServer().getServerModel().addToText("Successfully created meeting");
+			setOperation(new OTCreateEventSucessful(classifiedOperation.getEvent()));
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't create meeting");
+			setOperation(new OTErrorResponse("Couldn't create meeting", false));
+			e.printStackTrace();
+		}
+	}
+
+	private void checkUsername(Statement stmnt) {
 		OTUsernameCheck classifiedOperation = (OTUsernameCheck) getOperation();
 		getServer().getServerModel()
 				.addToText("Checking to see if " + classifiedOperation.getUsername() + " is in the database...\n");
@@ -168,13 +187,10 @@ public class QueryManager {
 		} catch (SQLException e) {
 			setOperation(new OTErrorResponse("SQL Server failed with username query", false));
 			e.printStackTrace();
-
 		}
-
-		return query;
 	}
 
-	private String checkEmailvalid(Statement stmnt) {
+	private void checkEmailvalid(Statement stmnt) {
 		OTEmailCheck classifiedOperation = (OTEmailCheck) getOperation();
 		getServer().getServerModel().addToText("Email received: " + classifiedOperation.getEmail() + "\n");
 		// not sure what field name of email is? inserted guess
@@ -195,12 +211,10 @@ public class QueryManager {
 		} catch (SQLException e) {
 			setOperation(new OTErrorResponse("SQL Server failed with email query", false));
 			e.printStackTrace();
-
 		}
-		return "";
 	}
 
-	private String checkRegistration(Statement stmnt) {
+	private void checkRegistration(Statement stmnt) {
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation) getOperation();
 		getServer().getServerModel()
 				.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
@@ -217,7 +231,6 @@ public class QueryManager {
 			e.printStackTrace();
 		}
 
-		return "";
 	}
 
 	private String dealWithError() {
@@ -265,7 +278,7 @@ public class QueryManager {
 				Time startTime = rs.getTime(4);
 				Time endTime = rs.getTime(5);
 
-				Event event = new Event(startTime, endTime, description, title, location);
+				Event event = new Event(startTime, endTime, description, title, location, classifiedOperation.getDate());
 				meetings.add(event);
 			}
 			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
