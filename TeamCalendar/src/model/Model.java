@@ -162,9 +162,9 @@ public class Model extends Observable {
 	}
 
 	// checks confirm matches password field
-	public boolean checkConfirmMatchesPassword(char[] confirm) {
-		String confirmPassword = new String(confirm);
-		String firstPassword = new String(password);
+	public boolean checkConfirmMatchesPassword(char[] firstEntry, char[] secondEntry) {
+		String confirmPassword = new String(secondEntry);
+		String firstPassword = new String(firstEntry);
 		if (confirmPassword.equals(firstPassword)) {
 			this.passwordMatchesConfirm = true;
 			return true;

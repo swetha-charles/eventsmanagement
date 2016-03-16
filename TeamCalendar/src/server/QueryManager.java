@@ -203,7 +203,7 @@ public class QueryManager {
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated user profile");
-			setOperation(new OTUpdateEventSuccessful());
+			setOperation(new OTUpdateUserProfileSuccessful(classifiedOperation.getFirstName(), classifiedOperation.getLastName(), classifiedOperation.getEmail()));
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't update user");
 			setOperation(new OTErrorResponse("Couldn't update meeting", false));

@@ -194,6 +194,9 @@ public class Client {
 		case "0022":
 			OTUpdateUserProfileSuccessful updateProfileSuccess = (OTUpdateUserProfileSuccessful) receivedOperation;
 			this.model.setUpdateProfileSuccess(true);
+			this.model.setFirstName(updateProfileSuccess.getFirstName());
+			this.model.setLastname(updateProfileSuccess.getLastName());
+			this.model.setEmail(updateProfileSuccess.getEmail());
 			break;
 		}
 
