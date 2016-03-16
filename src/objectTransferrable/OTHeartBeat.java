@@ -49,8 +49,12 @@ public class OTHeartBeat extends ObjectTransferrable implements Future{
 
 	@Override
 	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		// TODO Auto-generated method stub
-		return null;
+		String opcode = this.getOpCode();
+		if(opcode.equals("0014")){
+			return true;
+		} else {
+			throw new IllegalArgumentException();			
+		}
 	}
 
 }
