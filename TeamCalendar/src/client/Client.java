@@ -17,12 +17,13 @@ import objectTransferrable.*;
 
 public class Client {
 	private int portnumber;
-	private Thread hb;
+	private HeartBeatThread hb;
 	private ObjectOutputStream toServer = null;
 	private ObjectInputStream fromServer = null;
 	private Model model;
 	private MainView view;
 	private Socket s;
+	private boolean error = false;
 
 	public Client(int portnumber) {
 		model = new Model(this);
@@ -34,10 +35,11 @@ public class Client {
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
-			this.hb = new Thread(new HeartBeatThread(this));
-			this.hb.start();
+			this.hb = new HeartBeatThread(this);
+			(new Thread(this.hb)).start();
 
 		} catch (IOException e) {
+			error = true;
 			model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 			e.printStackTrace();
 		}
@@ -55,51 +57,59 @@ public class Client {
 	 * @param OT
 	 */
 	private void writeToServer(ObjectTransferrable OT, boolean exit, String complementOpCode) {
-		try {
-			this.toServer.writeObject(OT);
-			if (!exit) {
-				this.readFromServer(complementOpCode);
-			}
-		} catch (IOException e) {
-			System.out.println("Connection malfunctioned");
-			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-			this.attemptRecovery();
+		if (!error) {
+			try {
+				this.toServer.writeObject(OT);
+				if (!exit) {
+					this.readFromServer(complementOpCode);
+				}
+			} catch (IOException e) {
+				System.out.println("Connection malfunctioned");
+				this.error = true;
+				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+				this.attemptRecovery();
 
+			}
 		}
+
 	}
 
 	// read from server
 	public void readFromServer(String waitingForOpcode) {
-		ObjectTransferrable receivedOperation = null;
-		//if what was last sent was a heartbeat, use the waitForHeartBeat() method
-		if (waitingForOpcode.equals("0014")) {
-			waitForHeartBeat();
-			return;
-		}
-		try {
+		if (!error) {
+			ObjectTransferrable receivedOperation = null;
+			// if what was last sent was a heartbeat, use the waitForHeartBeat()
+			// method
+			if (waitingForOpcode.equals("0014")) {
+				waitForHeartBeat();
+				return;
+			}
+			try {
 
-			receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
-			System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
-			if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-				System.out.println("Client was expecting OT with OpCode " + waitingForOpcode
-						+ "but received OT with OpCode " + receivedOperation.getOpCode());
-				throw new UnexpectedOTReceivedException();
+				receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
+				System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
+				if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
+					System.out.println("Client was expecting OT with OpCode " + waitingForOpcode
+							+ "but received OT with OpCode " + receivedOperation.getOpCode());
+					throw new UnexpectedOTReceivedException();
+
+				}
+				this.runOT(receivedOperation);
+			} catch (ClassNotFoundException e) {
+				// When the object recieved is not an Object Transferrable.
+				// Likely to be that an exception has come in from server.
+				System.out.println("OT from server could not be read");
+				this.attemptRecovery();
+				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+
+			} catch (IOException e2) {
+				System.out.println("Server connection is down");
+				this.attemptRecovery();
+				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
 			}
-			this.runOT(receivedOperation);
-		} catch (ClassNotFoundException e) {
-			// When the object recieved is not an Object Transferrable. 
-			//Likely to be that an exception has come in from server. 
-			System.out.println("OT from server could not be read");
-			this.attemptRecovery();
-			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-
-		} catch (IOException e2) {
-			System.out.println("Server connection is down");
-			this.attemptRecovery();
-			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-
 		}
+
 	}
 
 	private void runOT(ObjectTransferrable receivedOperation) {
@@ -137,12 +147,10 @@ public class Client {
 			break;
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
+			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-		case "0011":
-			OTCreateEventSucessful createSuccess = (OTCreateEventSucessful) receivedOperation;
-			this.model.setMeetingCreationSuccessful(true);
-			break;	
+
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
@@ -169,6 +177,7 @@ public class Client {
 		case "0016":
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
 			boolean proceed = proceedOrNot.getLoginProceed();
+			System.out.println("Proceed was: " + proceed);
 			if (proceed) {
 				this.model.setSuccessfulLogin(true);
 				this.model.setFirstName(proceedOrNot.getFirstName());
@@ -183,6 +192,7 @@ public class Client {
 				this.model.setUsername(null);
 			}
 			break;
+
 		case "0018":
 			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
 			this.model.setMeetingUpdateSuccessful(true);
@@ -288,19 +298,18 @@ public class Client {
 		this.writeToServer(othb, false, complementOpCode);
 	}
 
-
 	// ----------writeToServer calls Ends---------------------------//
 	@SuppressWarnings("deprecation")
-	public void waitForHeartBeat(){
+	public void waitForHeartBeat() {
 		try {
 			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
 			future.get(1000, TimeUnit.MILLISECONDS);
 			System.out.println("Heartbeat received from server");
-		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException | TimeoutException e) {
-			this.hb.stop();
+		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
+				| TimeoutException e) {
 			System.out.println("Hearbeat dead");
 			this.attemptRecovery();
-		}  
+		}
 	}
 
 	// --------------------- Exit -------------------------------------//
@@ -318,6 +327,14 @@ public class Client {
 				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
 				toServer = null;
 			}
+			try {
+				fromServer.close();
+				System.out.println("Input stream to server has been shutdown");
+
+			} catch (IOException e1) {
+				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
+				fromServer = null;
+			}
 
 			try {
 				s.close();
@@ -326,6 +343,20 @@ public class Client {
 				s = null;
 			}
 		}
+	}
+
+	private void attemptRecovery() {
+		System.out.println("Client is attempting recovery");
+		this.hb.setRunningToFalse();
+		this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+		int count = 0;
+		while (!s.isClosed() && count < 2) {
+			count++;
+			System.out.println("Client closing connections, attempt " + count + ". Is socket closed? " + s.isClosed());
+			this.attemptToCloseConnections();
+			}
+		System.out.println("prompting user to restart");
+		model.promptUserToRestart();
 	}
 
 	private void attemptToCloseConnections() {
@@ -342,51 +373,57 @@ public class Client {
 
 			try {
 				s.shutdownInput();
-				System.out.println("Output stream to server has been shutdown");
+				System.out.println("Input stream to server has been shutdown");
 			} catch (IOException e1) {
-				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
+				System.out.println("Input stream to server is malfunctioning. \n Setting output stream to null");
 				toServer = null;
 			}
 
 			try {
 				s.close();
+				System.out.println("Socket has been shutdown");
 			} catch (IOException e) {
 				s = null;
 				System.out.println("Socket is malfunctinoning. \n Setting socket to null");
+				
 			}
 		}
 
 	}
 
-	private void attemptRecovery() {
-		System.out.println("Client is attempting recovery");
-		this.hb.stop();
-		int count = 0;
-		while (!s.isClosed() && count <= 3) {
-			count++;
-			System.out.println("Client closing connections, attempt " + count);
-			this.attemptToCloseConnections();
-
-		}
-		model.promptUserToRestart();
-	}
-
-	public void restart(){
+	public void restart() {
 		System.out.println("Client will attempt to reopen connections");
 		attemptToOpenConnections();
 	}
-	private void attemptToOpenConnections(){
+
+	private void attemptToOpenConnections() {
 		try {
 			s = new Socket("localhost", portnumber);
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
-			this.hb = new Thread(new HeartBeatThread(this));
-			this.hb.start();
-
+			this.view.dispose();
+			System.out.println("Woohooo, all streams are open again!");
+			model = new Model(this);
+			System.out.println("New model made");
+			view = new MainView(this, model);
+			System.out.println("New view made");
+			model.addObserver(view);
+			System.out.println("New view is observing new model");
+			this.hb = new HeartBeatThread(this);
+			(new Thread(this.hb)).start();
+			System.out.println("New heartbeat started");
+			this.error = false;
 		} catch (IOException e) {
-			model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
-			this.attemptToCloseConnections();
+			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
+			try {
+				Thread.currentThread();
+				Thread.sleep(4000);
+			} catch (InterruptedException e1) {
+				System.out.println("Client was interrupted");
+			}
+			
+			System.out.println("Hey, the server or internet connection is not working!");
 
 		}
 	}
@@ -394,4 +431,5 @@ public class Client {
 	public static void main(String[] args) {
 		Client C = new Client(4444);
 	}
+
 }
