@@ -85,8 +85,12 @@ public class Model extends Observable {
 	private boolean meetingUpdateSuccessful = false;
 	private boolean meetingDeleteSuccessful = false;
 	
-	// ------------------Event create/update/delete--------------------//
+	// -----------------------Profile update--------------------------//
 	private boolean updateProfileSuccess = false;
+	private boolean updatePasswordSuccess = false;
+	private boolean oldPasswordCorrect;
+	private boolean newPasswordsMatch;
+
 
 	public Model(Client client) {
 		this.client = client;
@@ -156,9 +160,7 @@ public class Model extends Observable {
 			this.lastNameNameLessThan30 = false;
 			this.registrationView.getRegistrationPanel().setLastLabel("Last Name*: incorrect format");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
-
 		}
-
 	}
 
 	// checks confirm matches password field
@@ -286,6 +288,8 @@ public class Model extends Observable {
 		this.client.updateProfile(updatedUserInfo);
 		
 	}
+	
+	public void updatePassword(char[] oldpassword, char [])
 	//--------------Profile editing ends-----------//
 	
 	public void login(String username, char[] password) {
@@ -458,12 +462,28 @@ public class Model extends Observable {
 		this.meetingDeleteSuccessful = meetingDeleteSuccessful;
 	}
 
-	public boolean isUpdateProfileSuccess() {
+	public boolean getUpdateProfileSuccess() {
 		return updateProfileSuccess;
 	}
 
 	public void setUpdateProfileSuccess(boolean updateProfileSuccess) {
 		this.updateProfileSuccess = updateProfileSuccess;
+	}
+
+	public boolean getOldPasswordCorrect() {
+		return oldPasswordCorrect;
+	}
+
+	public void setOldPasswordCorrect(boolean oldPasswordCorrect) {
+		this.oldPasswordCorrect = oldPasswordCorrect;
+	}
+
+	public boolean getNewPasswordsMatch() {
+		return newPasswordsMatch;
+	}
+
+	public void setNewPasswordsMatch(boolean newPasswordsMatch) {
+		this.newPasswordsMatch = newPasswordsMatch;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
