@@ -13,8 +13,8 @@ public class HeartBeatThread implements Runnable {
 		while (running) {
 			Thread.currentThread();
 			try {
-				// send heartbeat every 10 seconds
-				Thread.sleep(10000);
+				// send heartbeat every 3 seconds
+				Thread.sleep(3000);
 				System.out.println("Sending Heartbeat to server");
 				this.client.sendHeartBeat();
 			} catch (InterruptedException e) {
@@ -23,10 +23,13 @@ public class HeartBeatThread implements Runnable {
 			}
 
 		}
-
+		System.out.println("HBThread stopped");
 	}
 
-	public void stop(){
+	public void setRunningToFalse(){
+		System.out.println("HBThread asked to stop");
 		this.running = false;
+		System.out.println("HBThread running set to false");
+		return;
 	}
 }
