@@ -117,8 +117,8 @@ public class QueryManager {
 			getUserDetails(stmnt);
 		} else if (currentOperation.getOpCode().equals("0014")) {
 			setOperation(new OTHeartBeat());
-			getServer().getServerModel().addToText(
-					"Server received heartbeat and has responded");
+			//getServer().getServerModel().addToText(
+			//		"Server received heartbeat and has responded");
 		}
 		// This is a return message for sending the hash to the client and
 		// should not be seen by server
@@ -398,7 +398,7 @@ public class QueryManager {
 
 	}
 
-	private String dealWithError() {
+	private void dealWithError() {
 
 		OTErrorResponse error = (OTErrorResponse) getOperation();
 		// Is known error response can go here
@@ -419,7 +419,6 @@ public class QueryManager {
 			 */
 
 		}
-		return "";
 	}
 
 	private void getMeetings(Statement stmnt) {
