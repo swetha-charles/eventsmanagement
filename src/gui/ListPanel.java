@@ -216,7 +216,7 @@ public class ListPanel extends JPanel{
 			event.add(submit);
 			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			 if (result == JOptionPane.OK_OPTION) {
-				 
+				 // TODO the argument to this should be an Event object.
 		           model.addEvents(newEventTitle.getText(), newEventDescription.getText(), 
 		        		   newEventDate.getText(), newEventTime.getText(), newEventLocation.getText());
 		        } 

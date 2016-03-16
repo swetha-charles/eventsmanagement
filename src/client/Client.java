@@ -124,7 +124,6 @@ public class Client {
 			break;
 		case "0006":
 			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
-
 			if (regConf.getRegistrationSuccess()) {
 				this.model.setSuccessfulRegistration(true);
 				this.model.changeCurrentState(ModelState.LOGIN);
@@ -134,10 +133,12 @@ public class Client {
 			break;
 		case "0009":
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
-			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-
+		case "0011":
+			OTCreateEventSucessful eventSuccess = (OTCreateEventSucessful) receivedOperation;
+			this.model.setMeetingCreationSuccessful(true);
+			break;
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			String passwordAsString = this.model.getPasswordAsString();
@@ -146,12 +147,20 @@ public class Client {
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
 				OTLoginSuccessful returnObject;
 				if (successfulLogin) {
+<<<<<<< .mine
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
+					informServerLoginSuccess(returnObject);
+=======
+					returnObject = new OTLoginSuccessful(this.model.getUsername());
+>>>>>>> .r260
 				} else {
+<<<<<<< .mine
+=======
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
+>>>>>>> .r260
 					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 				}
-				informServerLoginSuccess(returnObject);
+
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
@@ -229,6 +238,14 @@ public class Client {
 		System.out.println("Client: Sent OT with opcode " + requestObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(requestObject, false, complementOpCode);
+	}
+	
+	public void addNewEvent(OTCreateEvent newEvent) {
+		String complementOpCode = "0011";
+		System.out.println("Client: Sent OT with opcode " + newEvent.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(newEvent, false, complementOpCode);
+		
 	}
 
 	public void sendHeartBeat() {
