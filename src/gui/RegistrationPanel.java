@@ -306,7 +306,7 @@ public class RegistrationPanel extends JPanel {
 				JOptionPane.showMessageDialog(this, "Username already exists! Pick another ones");
 			} else if (!this.model.isEmailMatchesRegex()) {
 				JOptionPane.showMessageDialog(this, "Incorrect email format");
-			} else if (!this.model.checkConfirmMatchesPassword(confirm.getPassword())) {
+			} else if (!this.model.checkConfirmMatchesPassword(confirm.getPassword(), password.getPassword())) {
 				JOptionPane.showMessageDialog(this, "Passwords do not match");
 			} else {
 				model.checkRegistrationInformation();
@@ -397,8 +397,6 @@ public class RegistrationPanel extends JPanel {
 	}
 	// ------ End Email & User labels ---------//
 
-	//--------------Inner class to limit textField---------------------//
-	
 	public class JTextFieldLimit extends PlainDocument {
 		private int limit;
 

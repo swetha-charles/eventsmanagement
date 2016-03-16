@@ -44,7 +44,14 @@ public class MainView extends JFrame implements Observer {
 
 		// --------------Lambda Listeners-------------------//
 
-		this.addWindowListener((WindowClosingListener) (e) -> model.changeCurrentState(ModelState.EXIT));
+		this.addWindowListener((WindowClosingListener) (e) -> {
+			if(model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWN) || model.getCurrentState().equals(ModelState.ERRORCONNECTIONDOWNSTILL ) || model.getCurrentState().equals(ModelState.PROMPTRELOAD )){
+				//do nothing
+			} else {
+				model.changeCurrentState(ModelState.EXIT);
+			}
+		
+		});
 
 		// -------------End Lambda Listeners---------------//
 

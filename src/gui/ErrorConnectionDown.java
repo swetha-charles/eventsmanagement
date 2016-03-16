@@ -18,19 +18,28 @@ public class ErrorConnectionDown extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(warning, BorderLayout.NORTH);
 		restart.addActionListener((e) -> {
+			removeRestartButton();
 			model.userRequestedRestart();
+			
 		});
 	}
 	
 	public void addRestartButton(){
 		warning.setText("Your connection is down. Reconnect internet and press restart");
-		this.add(restart, BorderLayout.CENTER);
-		repaint();
+		this.add(restart, BorderLayout.SOUTH);
+	}
+	
+	public void removeRestartButton(){
+		warning.setText("Attempting to revive connection...");
+		this.remove(restart);
 	}
 	public void connectionStillDown(){
-		warning.setText("Your connection is still down, we apologies for the inconvenience.  \n RECONNECT THE INTERNET before pressing restart");
+		
+		this.warning.setText("Your connection is still down, we apologize for the inconvenience." + 
+	"\n If your internet is connected, then the server is down. Press restart to try again.");
+		this.add(restart,  BorderLayout.SOUTH);
 		revalidate();
-		}
+	}
 	
 	
 }
