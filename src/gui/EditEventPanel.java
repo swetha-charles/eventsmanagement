@@ -162,6 +162,9 @@ public class EditEventPanel extends JPanel{
 
 	}
 
+	public Event getEvent() {
+		return event;
+	}
 
 	public JTextField getNameA() {
 		return nameA;

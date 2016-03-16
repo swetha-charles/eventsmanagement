@@ -322,7 +322,7 @@ public class Client {
 		try {
 			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
 			future.get(1000, TimeUnit.MILLISECONDS);
-			System.out.println("Heartbeat received from server");
+//			System.out.println("Heartbeat received from server");
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
 				| TimeoutException e) {
 			System.out.println("Hearbeat dead");
