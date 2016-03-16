@@ -78,10 +78,6 @@ public class Model extends Observable {
 	private boolean successfulRegistration = false;
 
 	// ------------------Event view information--------------------//
-
-	private String displayYear;
-	private String displayMonth;
-	private String displayDay;
 	private ArrayList<Event> meetings = new ArrayList<Event>();
 
 	// ------------------Event create/update/delete--------------------//
