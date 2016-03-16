@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -50,16 +52,12 @@ public class ListPanel extends JPanel{
 	
 	JPanel event = new JPanel();
 	JLabel name = new JLabel("Event title");
-	JLabel eventName;
 	JLabel empty = new JLabel("");
 	JLabel descriptionLabel = new JLabel("Description");
-	JLabel decription;
-	JLabel dateLabel = new JLabel("Date");
-	JLabel dateA;
-	JLabel timeLabel = new JLabel("Time");
-	JLabel timeA;
+	JLabel dateLabel = new JLabel("Date  (dd/mm/yyyy)");
+	JLabel stimeLabel = new JLabel("Start Time  (mm/hh)");
+	JLabel etimeLabel = new JLabel("End Time  (mm/hh)");
 	JLabel locationLabel = new JLabel("Location");
-	JLabel locationA;
 	JButton edit = new JButton("Edit Event");
 	JButton submit = new JButton("Add Event");
 	
@@ -138,12 +136,6 @@ public class ListPanel extends JPanel{
 		add(listscroll);
 		add(changeDay);
 		
-		event.add(name);
-		event.add(descriptionLabel);
-		event.add(dateLabel);
-		event.add(timeLabel);
-		event.add(locationLabel);
-		
 		//----------------------Listeners----------------------//
 		
 		previous.addActionListener((e) -> {
@@ -191,7 +183,7 @@ public class ListPanel extends JPanel{
 		
 		if(a==1){
 			
-			event.setLayout(new GridLayout(7,2));
+			event.setLayout(new GridLayout(6,2));
 			event.setPreferredSize(new Dimension(400,200));
 			event.setMinimumSize(new Dimension(400,200));
 			event.setMaximumSize(new Dimension(400,200));
@@ -208,7 +200,7 @@ public class ListPanel extends JPanel{
 			JTextField newEventYear= new JTextField();
 			newEventDate.setDocument(new JTextFieldLimit(2));
 			newEventMonth.setDocument(new JTextFieldLimit(2));
-			newEventYear.setDocument(new JTextFieldLimit(2));
+			newEventYear.setDocument(new JTextFieldLimit(4));
 			date.setLayout(new BoxLayout(date, BoxLayout.LINE_AXIS));
 			date.add(newEventDate);
 			date.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -217,18 +209,30 @@ public class ListPanel extends JPanel{
 			date.add(newEventYear);
 			event.add(date);
 			
-			event.add(timeLabel);
-			JPanel time = new JPanel();
+			event.add(stimeLabel);
+			JPanel starttime = new JPanel();
 			JTextField newEventHours= new JTextField();
 			JTextField newEventMinutes= new JTextField();
 			newEventHours.setDocument(new JTextFieldLimit(2));
 			newEventMinutes.setDocument(new JTextFieldLimit(2));
-			time.setLayout(new BoxLayout(time, BoxLayout.LINE_AXIS));
-			time.add(newEventHours);
-			time.add(Box.createRigidArea(new Dimension(30, 0)));
-			time.add(newEventMinutes);
-			event.add(time);
+			starttime.setLayout(new BoxLayout(starttime, BoxLayout.LINE_AXIS));
+			starttime.add(newEventHours);
+			starttime.add(Box.createRigidArea(new Dimension(30, 0)));
+			starttime.add(newEventMinutes);
+			event.add(starttime);
 			
+			event.add(etimeLabel);
+			JPanel endtime = new JPanel();
+			JTextField newEventHoursEnd= new JTextField();
+			JTextField newEventMinutesEnd= new JTextField();
+			newEventHoursEnd.setDocument(new JTextFieldLimit(2));
+			newEventMinutesEnd.setDocument(new JTextFieldLimit(2));
+			endtime.setLayout(new BoxLayout(endtime, BoxLayout.LINE_AXIS));
+			endtime.add(newEventHoursEnd);
+			endtime.add(Box.createRigidArea(new Dimension(30, 0)));
+			endtime.add(newEventMinutesEnd);
+			event.add(endtime);
+//			
 			event.add(locationLabel);
 			JTextField newEventLocation  = new JTextField();
 			event.add(newEventLocation);
@@ -239,9 +243,26 @@ public class ListPanel extends JPanel{
 			
 			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (result == JOptionPane.OK_OPTION) {
-				 
-//		           model.addEvents(new Event(newEventTitle.getText(), newEventDescription.getText(), 
-//		        		   newEventDate.getText(), newEventTime.getText(), newEventLocation.getText()));
+					
+					Time st = stringToTime(newEventHours.getText(), newEventMinutes.getText());
+					Time et = stringToTime(newEventHoursEnd.getText(), newEventMinutesEnd.getText());
+					Date d = new Date(0);
+					try {
+						d = stringToDate(newEventDate.getText(), newEventMonth.getText(), newEventYear.getText());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					System.out.println("new date d = " + d.toString());
+					model.addEvents(new Event(st, et, newEventDescription.getText(), newEventTitle.getText(), newEventLocation.getText(), d));
+					
+					if(model.getMeetingCreationSuccessful() == true){
+						model.setMeetingCreationSuccessful(false);
+						model.updateMeetings(new Date(c.getTimeInMillis()));
+						addMeetings(model.getMeetings());
+					} else {
+						//error
+					}
+				
 				}
 			
 		} else {
@@ -423,6 +444,18 @@ public static String getDate(int day, int date, int month, int year){
 		int m = Integer.parseInt(minutes);
 	
 		return new Time((h*3600000)+(m*60000));
+		
+	}
+	
+	public Date stringToDate(String day, String month, String year) throws ParseException{
+		
+		String s = day + "." + month + "." + year;
+		System.out.println("string s = " + s);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		java.util.Date d = sdf.parse(s);
+		System.out.println("date d = " + d.toString());
+		
+		return new Date(d.getTime());
 		
 	}
 	
