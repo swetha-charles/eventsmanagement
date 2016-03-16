@@ -236,7 +236,8 @@ public class QueryManager {
 				+"' "
 				+"WHERE users.userName= '" + getClientInfo().getUserName()
 				+"'";
-		
+		getServer().getServerModel()
+		.addToText("Running this update: " + update + "\n");
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated user profile\n");
@@ -263,8 +264,7 @@ public class QueryManager {
 				+"',meetings.meetingLocation= '"+eventToDelete.getLocation()
 				+"',meetings.meetingStartTime= '"+eventToDelete.getStartTime().toString()
 				+"',meetings.meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
-		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
+
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully deleted event\n");
