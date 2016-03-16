@@ -212,6 +212,12 @@ public class Client {
 			this.model.setLastname(updateProfileSuccess.getLastName());
 			this.model.setEmail(updateProfileSuccess.getEmail());
 			break;
+		case "0024":
+			OTUpdatePasswordSuccessful updatePwSuccess = (OTUpdatePasswordSuccessful) receivedOperation;
+			this.model.setUpdatePasswordSuccess(true);
+			this.model.setPassword(this.model.getIntermediatePwStorage());
+			this.model.setIntermediatePwStorage(null);
+			break;
 		}
 
 	}
@@ -293,6 +299,14 @@ public class Client {
 		System.out.println("Client: Sent OT with opcode " + updatedUserInfo.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(updatedUserInfo, false, complementOpCode);
+		
+	}
+	
+	public void updatePassword(OTUpdatePassword newPassword) {
+		String complementOpCode = "0024";
+		System.out.println("Client: Sent OT with opcode " + newPassword.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(newPassword, false, complementOpCode);
 		
 	}
 	
@@ -435,5 +449,4 @@ public class Client {
 	public static void main(String[] args) {
 		Client C = new Client(4444);
 	}
-
 }
