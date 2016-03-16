@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -89,9 +88,7 @@ public class Client {
 				receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 				System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
 				if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-					System.out.println("Client was expecting OT with OpCode " + waitingForOpcode
-							+ "but received OT with OpCode " + receivedOperation.getOpCode());
-					throw new UnexpectedOTReceivedException();
+					dealWithError(receivedOperation);
 
 				}
 				this.runOT(receivedOperation);
@@ -111,8 +108,8 @@ public class Client {
 		}
 
 	}
-	
-	public boolean getError(){
+
+	public boolean getError() {
 		return this.error;
 	}
 
@@ -163,6 +160,7 @@ public class Client {
 				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
 				OTLoginSuccessful returnObject;
 				if (successfulLogin) {
+					model.setHashedPassword(userHash.getHash());
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
 				} else {
 					returnObject = new OTLoginSuccessful(this.model.getUsername());
@@ -177,6 +175,7 @@ public class Client {
 				this.model.setUsername(null);
 				this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
 			}
+
 			break;
 		case "0016":
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
@@ -212,14 +211,16 @@ public class Client {
 			this.model.setLastname(updateProfileSuccess.getLastName());
 			this.model.setEmail(updateProfileSuccess.getEmail());
 			break;
-		case "0024":
-			OTUpdatePasswordSuccessful updatePwSuccess = (OTUpdatePasswordSuccessful) receivedOperation;
-			this.model.setUpdatePasswordSuccess(true);
-			this.model.setPassword(this.model.getIntermediatePwStorage());
-			this.model.setIntermediatePwStorage(null);
-			break;
 		}
 
+	}
+	public void dealWithError(ObjectTransferrable ot){
+		if(ot.getOpCode().equals("0007")){
+			OTErrorResponse oter = (OTErrorResponse) ot;
+			 System.out.println("Client received error message from server: " + oter.getErrorDescription());
+		} else {
+			throw new UnexpectedOTReceivedException();
+		}
 	}
 
 	// ---------------- writeToServer calls -----------------------//
@@ -293,23 +294,15 @@ public class Client {
 		this.writeToServer(deleteEvent, false, complementOpCode);
 
 	}
-	
+
 	public void updateProfile(OTUpdateUserProfile updatedUserInfo) {
 		String complementOpCode = "0022";
 		System.out.println("Client: Sent OT with opcode " + updatedUserInfo.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
 		this.writeToServer(updatedUserInfo, false, complementOpCode);
-		
+
 	}
-	
-	public void updatePassword(OTUpdatePassword newPassword) {
-		String complementOpCode = "0024";
-		System.out.println("Client: Sent OT with opcode " + newPassword.getOpCode());
-		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(newPassword, false, complementOpCode);
-		
-	}
-	
+
 	public void sendHeartBeat() {
 		String complementOpCode = "0014";
 		OTHeartBeat othb = new OTHeartBeat();
@@ -322,7 +315,6 @@ public class Client {
 		try {
 			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
 			future.get(1000, TimeUnit.MILLISECONDS);
-//			System.out.println("Heartbeat received from server");
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
 				| TimeoutException e) {
 			System.out.println("Hearbeat dead");
@@ -372,7 +364,7 @@ public class Client {
 			count++;
 			System.out.println("Client closing connections, attempt " + count + ". Is socket closed? " + s.isClosed());
 			this.attemptToCloseConnections();
-			}
+		}
 		System.out.println("prompting user to restart");
 		model.promptUserToRestart();
 	}
@@ -403,7 +395,7 @@ public class Client {
 			} catch (IOException e) {
 				s = null;
 				System.out.println("Socket is malfunctinoning. \n Setting socket to null");
-				
+
 			}
 		}
 
@@ -440,7 +432,7 @@ public class Client {
 			} catch (InterruptedException e1) {
 				System.out.println("Client was interrupted");
 			}
-			
+
 			System.out.println("Hey, the server or internet connection is not working!");
 
 		}
@@ -449,4 +441,5 @@ public class Client {
 	public static void main(String[] args) {
 		Client C = new Client(4444);
 	}
+
 }
