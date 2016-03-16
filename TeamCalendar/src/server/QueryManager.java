@@ -314,6 +314,8 @@ public class QueryManager {
 		OTCreateEvent classifiedOperation = (OTCreateEvent) getOperation();
 		getServer().getServerModel()
 		.addToText("Attempting to create a meeting for: " + getClientInfo().getUserName() + "\n");
+		getServer().getServerModel()
+		.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
 		String update = "INSERT INTO meetings VALUES (DEFAULT, '" + getClientInfo().getUserName() + "', '"
 				+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
 				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
