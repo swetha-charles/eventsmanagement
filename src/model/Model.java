@@ -88,6 +88,9 @@ public class Model extends Observable {
 	private boolean meetingCreationSuccessful = false;
 	private boolean meetingUpdateSuccessful = false;
 	private boolean meetingDeleteSuccessful = false;
+	
+	// ------------------Event create/update/delete--------------------//
+	private boolean updateProfileSuccess = false;
 
 	public Model(Client client) {
 		this.client = client;
@@ -282,9 +285,13 @@ public class Model extends Observable {
 	public void userRequestedRestart(){
 		
 	}
-
+	//-----------------Events ends-----------------//
 	//------------------Profile editing------------//
-	
+	public void updateProfile(String firstName, String lastName, String email){
+		OTUpdateUserProfile updatedUserInfo = new  OTUpdateUserProfile(firstName, lastName, email);
+		this.client.updateProfile(updatedUserInfo);
+		
+	}
 	//--------------Profile editing ends-----------//
 	
 	public void login(String username, char[] password) {
@@ -455,6 +462,14 @@ public class Model extends Observable {
 
 	public void setMeetingDeleteSuccessful(boolean meetingDeleteSuccessful) {
 		this.meetingDeleteSuccessful = meetingDeleteSuccessful;
+	}
+
+	public boolean isUpdateProfileSuccess() {
+		return updateProfileSuccess;
+	}
+
+	public void setUpdateProfileSuccess(boolean updateProfileSuccess) {
+		this.updateProfileSuccess = updateProfileSuccess;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {

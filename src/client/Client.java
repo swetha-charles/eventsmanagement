@@ -191,6 +191,10 @@ public class Client {
 			OTDeleteEventSuccessful deleteSuccess = (OTDeleteEventSuccessful) receivedOperation;
 			this.model.setMeetingDeleteSuccessful(true);
 			break;
+		case "0022":
+			OTUpdateUserProfileSuccessful updateProfileSuccess = (OTUpdateUserProfileSuccessful) receivedOperation;
+			this.model.setUpdateProfileSuccess(true);
+			break;
 		}
 
 	}
@@ -266,6 +270,15 @@ public class Client {
 		this.writeToServer(deleteEvent, false, complementOpCode);
 
 	}
+	
+	public void updateProfile(OTUpdateUserProfile updatedUserInfo) {
+		String complementOpCode = "0022";
+		System.out.println("Client: Sent OT with opcode " + updatedUserInfo.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(updatedUserInfo, false, complementOpCode);
+		
+	}
+	
 	public void sendHeartBeat() {
 		String complementOpCode = "0014";
 		OTHeartBeat othb = new OTHeartBeat();
@@ -378,5 +391,4 @@ public class Client {
 	public static void main(String[] args) {
 		Client C = new Client(4444);
 	}
-
 }
