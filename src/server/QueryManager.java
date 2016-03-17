@@ -129,7 +129,7 @@ public class QueryManager {
 		}
 		//Updates an events details
 		else if (currentOperation.getOpCode().equals("0017")) {
-			return updateEvent(stmnt, currentOperation, client);
+			return updateEvent(dbconnection, currentOperation, client);
 		}
 		// This is a return message for sending meeting update success to the client and
 		// should not be seen by server
@@ -143,7 +143,7 @@ public class QueryManager {
 		}
 		//Deletes an event
 		else if (currentOperation.getOpCode().equals("0019")) {
-			return deleteEvent(stmnt, currentOperation, client);
+			return deleteEvent(stmnt, dbconnection, currentOperation, client);
 		}
 		// This is a return message for sending meeting delete success to the client and
 		// should not be seen by server
@@ -246,88 +246,190 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable deleteEvent(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable deleteEvent(Statement stmnt, Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTDeleteEvent classifiedOperation = (OTDeleteEvent) operation;
 		Event eventToDelete = classifiedOperation.getEvent();
-
-		getServer().getServerModel()
-		.addToText("Attempting to update a meeting for: " + client.getUserName() + "\n");
-
-		String update = "DELETE FROM meetings " 
-				+"WHERE creatorID= '" + client.getUserName() 
-				+ "', meetingDate= '"+eventToDelete.getDate().toString()
-				+"', meetingTitle= '"+eventToDelete.getEventTitle()
-				+"', meetingDescription= '"+eventToDelete.getEventDescription()
-				+"', meetingLocation= '"+eventToDelete.getLocation()
-				+"', meetingStartTime= '"+eventToDelete.getStartTime().toString()
-				+"', meetingEndTime=, '"+eventToDelete.getEndTime().toString()+"'";
-
-		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
-
 		try {
-			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully deleted event\n");
-			return new OTDeleteEventSuccessful();
+			if(getAMeeting(con, eventToDelete, client)){
+				String creator;
+				if(eventToDelete.getGlobalEvent()){
+					creator = "global";
+				} else {
+					creator = client.getUserName();
+				}
+
+				getServer().getServerModel()
+				.addToText("Attempting to delete a meeting for: " + creator + "\n");
+
+				String update = "DELETE FROM meetings " 
+						+"WHERE creatorID= '" + client.getUserName() 
+						+ "', meetingDate= '"+eventToDelete.getDate().toString()
+						+"', meetingTitle= '"+eventToDelete.getEventTitle()
+						+"', meetingDescription= '"+eventToDelete.getEventDescription()
+						+"', meetingLocation= '"+eventToDelete.getLocation()
+						+"', meetingStartTime= '"+eventToDelete.getStartTime().toString()
+						+"', meetingEndTime=, '"+eventToDelete.getEndTime().toString()
+						+"', lockVersion=, "+eventToDelete.getLockVersion()
+						+"";
+
+				getServer().getServerModel()
+				.addToText("Running this update: " + update + "\n");
+
+				stmnt.executeUpdate(update);
+
+				getServer().getServerModel().addToText("Successfully deleted event\n");
+				return new OTDeleteEventSuccessful(true);
+			} else {
+				getServer().getServerModel().addToText("Couldn't delete event - stale lock version\n");
+				return new OTDeleteEventSuccessful(false);
+			}
+
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't delete event\n");
 			e.printStackTrace();
 			return new OTErrorResponse("Couldn't delete event", false);
-
 		}
 	}
 
-	private synchronized ObjectTransferrable updateEvent(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private synchronized ObjectTransferrable updateEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdateEvent classifiedOperation = (OTUpdateEvent) operation;
 		Event oldEvent = classifiedOperation.getOldEvent();
 		Event newEvent = classifiedOperation.getNewEvent();
 
-		getServer().getServerModel()
-		.addToText("Attempting to update a meeting for: " + client.getUserName() + "\n");
+		Time oldStartTime = oldEvent.getStartTime(); 
+		Time oldEndTime = oldEvent.getEndTime();
+		String oldEventDescription = oldEvent.getEventDescription();
+		String oldEventTitle = oldEvent.getEventTitle();
+		String oldLocation = oldEvent.getLocation();
+		Date oldDate = oldEvent.getDate();
+		boolean oldGlobalEvent = oldEvent.getGlobalEvent();
+		int oldLockVersion = oldEvent.getLockVersion();
 
-		String update = "UPDATE meetings " 
-				+"SET meetingDate= '"+newEvent.getDate().toString()
-				+"', meetingTitle= '"+newEvent.getEventTitle()
-				+"', meetingDescription= '"+newEvent.getEventDescription()
-				+"', meetingLocation= '"+newEvent.getLocation()
-				+"', meetingStartTime= '"+newEvent.getStartTime().toString()
-				+"', meetingEndTime=, '"+newEvent.getEndTime().toString()
-				+"' "
-				+"WHERE creatorID= '" + client.getUserName() 
-				+ "', meetingDate= '"+oldEvent.getDate().toString()
-				+"', meetingTitle= '"+oldEvent.getEventTitle()
-				+"', meetingDescription= '"+oldEvent.getEventDescription()
-				+"', meetingLocation= '"+oldEvent.getLocation()
-				+"', meetingStartTime= '"+oldEvent.getStartTime().toString()
-				+"', meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
-
-		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
+		Time newStartTime = newEvent.getStartTime(); 
+		Time newEndTime = newEvent.getEndTime();
+		String newEventDescription = newEvent.getEventDescription();
+		String newEventTitle = newEvent.getEventTitle();
+		String newLocation = newEvent.getLocation();
+		Date newDate = newEvent.getDate();
+		int newLockVersion = newEvent.getLockVersion();
 
 		try {
-			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Successfully updated event\n");
-			return new OTUpdateEventSuccessful();
-		} catch (SQLException e) {
-			getServer().getServerModel().addToText("Couldn't update meeting\n");
-			e.printStackTrace();
-			return new OTErrorResponse("Couldn't update meeting", false);
+			if(getAMeeting(con, oldEvent, client)){
+				String creator;
+				if(oldGlobalEvent){
+					creator = "global";
+				} else {
+					creator = client.getUserName();
+				}
 
+
+				String update = "UPDATE meetings " 
+						+"SET meetingDate= ?, meetingTitle= ?, meetingDescription= ?, "
+						+"meetingLocation= ?, meetingStartTime= ?, meetingEndTime= ?, lockVersion= ? "
+
+						+"WHERE creatorID= ?, meetingDate= ?, meetingTitle= '?"
+						+", meetingDescription= ?, meetingLocation= ?"
+						+", meetingStartTime= ?, meetingEndTime=, ?";
+
+
+				PreparedStatement updateEvent = con.prepareStatement(update);
+
+				updateEvent.setDate(1, oldDate);
+				updateEvent.setString(2, oldEventTitle);
+				updateEvent.setString(3, oldEventDescription);
+				updateEvent.setString(4, oldLocation);
+				updateEvent.setTime(5, oldStartTime);
+				updateEvent.setTime(6, oldEndTime);
+				updateEvent.setInt(8, oldLockVersion);
+
+				updateEvent.setString(8, creator);
+				updateEvent.setDate(9, newDate);
+				updateEvent.setString(10, newEventTitle);
+				updateEvent.setString(11, newEventDescription);
+				updateEvent.setString(12, newLocation);
+				updateEvent.setTime(13, newStartTime);
+				updateEvent.setTime(14, newEndTime);
+				updateEvent.setInt(15, newLockVersion);
+
+				updateEvent.executeUpdate();
+				getServer().getServerModel().addToText("Successfully updated event\n");
+				return new OTUpdateEventSuccessful(true);
+			} else {
+				getServer().getServerModel().addToText("Failed to update event - stale lock version\n");
+				return new OTUpdateEventSuccessful(false);
+			}
+		} catch (SQLException e) {
+			getServer().getServerModel().addToText("Couldn't update meeting - SQL Exception\n");
+			e.printStackTrace();
+			return new OTErrorResponse("Couldn't update meeting - SQL Exception", false);
 		}
+	}
+
+	private boolean getAMeeting(Connection con, Event event, ClientInfo client) throws SQLException{
+		String query = "SELECT * "
+				+"FROM meetings m "
+				+"WHERE creatorID= ?, meetingDate= ?, meetingTitle= '?"
+				+", meetingDescription= ?, meetingLocation= ?"
+				+", meetingStartTime= ?, meetingEndTime=, ?"
+				+", lockVersion = ?";
+
+		PreparedStatement meetingQuery;
+
+		meetingQuery = con.prepareStatement(query);
+
+		String creator;
+		if(event.getGlobalEvent()){
+			creator = "global";
+		} else {
+			creator = client.getUserName();
+		}
+
+		meetingQuery.setString(1, creator);
+		meetingQuery.setDate(2, event.getDate());
+		meetingQuery.setString(3, event.getEventTitle());
+		meetingQuery.setString(4, event.getEventDescription());
+		meetingQuery.setString(5, event.getLocation());
+		meetingQuery.setTime(6, event.getStartTime());
+		meetingQuery.setTime(7, event.getEndTime());
+		meetingQuery.setInt(8, event.getLockVersion());
+
+		ResultSet rs = meetingQuery.executeQuery();
+
+		if (rs.next()) {
+			getServer().getServerModel().addToText("Found matching username, returning true.\n");
+			return true;
+		} else {
+			getServer().getServerModel().addToText("Found no such user, returning false.\n");
+			return false;
+		}
+
 	}
 
 	private ObjectTransferrable createEvent(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
 		OTCreateEvent classifiedOperation = (OTCreateEvent) operation;
-		getServer().getServerModel()
-		.addToText("Attempting to create a meeting for: " + client.getUserName() + "\n");
-		getServer().getServerModel()
-		.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
-		String update = "INSERT INTO meetings VALUES (DEFAULT, '" + client.getUserName() + "', '"
-				+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
-				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
-				+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
-				+ classifiedOperation.getEvent().getEndTime().toString() +"')";
 
+		String update;
+		if(classifiedOperation.getEvent().getGlobalEvent()){
+			getServer().getServerModel()
+			.addToText("Attempting to create a meeting for: global\n");
+			getServer().getServerModel()
+			.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
+			update = "INSERT INTO meetings VALUES (DEFAULT, 'global', '"
+					+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
+					+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
+					+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
+					+ classifiedOperation.getEvent().getEndTime().toString() +"', 1)";
+		} else {
+			getServer().getServerModel()
+			.addToText("Attempting to create a meeting for: " + client.getUserName() + "\n");
+			getServer().getServerModel()
+			.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
+			update = "INSERT INTO meetings VALUES (DEFAULT, '" + client.getUserName() + "', '"
+					+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
+					+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
+					+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
+					+ classifiedOperation.getEvent().getEndTime().toString() +"', 1)";
+		}
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
 
@@ -436,12 +538,6 @@ public class QueryManager {
 	private ObjectTransferrable getMeetings(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
 		OTRequestMeetingsOnDay classifiedOperation = (OTRequestMeetingsOnDay) operation;
 
-		String query = "SELECT m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime "
-				+ "FROM meetings m " + "WHERE m.creatorid = '" + client.getUserName()
-				+ "' AND m.meetingdate = '" + classifiedOperation.getDate().toString() + "' "
-				+ "ORDER BY m.meetingstarttime ASC";
-
-		ResultSet rs;
 		try {
 			ArrayList<Event> meetings = retrieveMeetingsFromDB(classifiedOperation.getDate(), client, stmnt);
 			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
@@ -514,6 +610,7 @@ public class QueryManager {
 	}
 
 	private ArrayList<Event> retrieveMeetingsFromDB(Date date, ClientInfo client, Statement stmnt) throws SQLException {
+
 		String query = "SELECT m.creatorID, m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime, m.lockVersion "
 				+ "FROM meetings m " + "WHERE (m.creatorid = '" + client.getUserName()
 				+ "' OR m.creatorid = 'global') AND m.meetingdate = '" + date.toString() + "' "
@@ -534,7 +631,7 @@ public class QueryManager {
 			Time endTime = rs.getTime(6);
 			int lockVersion = rs.getInt(7);
 			Event event;
-			
+
 			if(creator.equals("global")){
 				event = new Event(startTime, endTime, description, title, location, date, true, lockVersion);
 			} else {
