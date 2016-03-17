@@ -79,6 +79,15 @@ public class Model extends Observable {
 	// ------------------Event view information--------------------//
 	private ArrayList<Event> meetings = new ArrayList<Event>();
 
+	//--------------------Event editing-------------------//
+		//--Data here has passed Validation-----//
+
+	private String newStartTimeHours;
+	private String newStartTimeMinutes;
+	private String newEndTimeHours;
+	private String newEndTimeMinutes;
+	private java.util.Date newDate;
+	
 	// ------------------Event create/update/delete--------------------//
 	private boolean meetingCreationSuccessful = false;
 	private boolean meetingUpdateSuccessful = false;
@@ -278,6 +287,45 @@ public class Model extends Observable {
 		this.client.restart();
 	}
 
+	public boolean validateNewStartTime(String hours, String minutes){
+		if(DataValidation.isThisTimeValid(hours, minutes)){
+			this.newStartTimeHours = hours;
+			this.newStartTimeMinutes = minutes;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean validateNewEndTime(String hours, String minutes){
+		if(DataValidation.isThisTimeValid(hours, minutes)){
+			this.newEndTimeHours = hours;
+			this.newEndTimeMinutes = minutes;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean validateNewDate(String day, String month, String year){
+		if(DataValidation.isThisDateValid(day, month, year)){
+			java.util.Date sanitizedDate = (Date) DataValidation.sanitizeDate(day, month, year);
+			this.newDate = sanitizedDate;
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * returns null if date is not valid 
+	 * @param day
+	 * @param month
+	 * @param year
+	 * @return
+	 */
+	public Date sanitizeDateAndMakeSQLDate(String day, String month, String year){
+		return (Date) DataValidation.sanitizeDate(day, month, year);
+	}
+	
 	// -----------------Events ends-----------------//
 	// ------------------Profile editing------------//
 	public void updateProfile(String firstName, String lastName, String email) {
