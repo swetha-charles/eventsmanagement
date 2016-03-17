@@ -44,7 +44,6 @@ public class LoginPanel extends JPanel{
 	JLabel error = new JLabel("");
 	JButton login = new JButton("Login");
 	public static JLabel signup = new JLabel("Sign Up");
-	JPanel input = new JPanel();
 	
 	/** This constructor builds a login panel where the user can input
 	 * their username and password.
@@ -58,7 +57,7 @@ public class LoginPanel extends JPanel{
 		setMinimumSize(new Dimension(420,410));
 				
 		//Sets dimension of textFields
-		Dimension size1 = new Dimension(300,18);
+		Dimension size1 = new Dimension(300,30);
 		username.setPreferredSize(size1);
 		password.setPreferredSize(size1);
 		username.setMinimumSize(size1);
@@ -72,6 +71,11 @@ public class LoginPanel extends JPanel{
 		userPanel.setMinimumSize(size2);
 		passwordPanel.setMaximumSize(size2);
 		passwordPanel.setMinimumSize(size2);
+		Dimension size3 = new Dimension(120, 40);
+		userLabel.setMaximumSize(size3);
+		userLabel.setMinimumSize(size3);
+		passwordLabel.setMaximumSize(size3);
+		passwordLabel.setMinimumSize(size3);
 		
 		//sets dimension of panel containing logo
 		logoPanel.setMinimumSize(new Dimension(350, 200));
@@ -83,7 +87,6 @@ public class LoginPanel extends JPanel{
 		userPanel.setBackground(Color.DARK_GRAY);
 		passwordPanel.setBackground(Color.DARK_GRAY);
 		logoPanel.setBackground(Color.DARK_GRAY);
-		input.setBackground(Color.DARK_GRAY);
 		
 		//sets colour of text in JLabels
 		userLabel.setForeground(Color.WHITE);
@@ -104,17 +107,12 @@ public class LoginPanel extends JPanel{
 		login.setPreferredSize(new Dimension(100,40));
 		
 		//adds Labels and text fields to user and password panels
-		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.X_AXIS));
-		passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.X_AXIS));
-		GridLayout grid = new GridLayout(2,1);
-		grid.setVgap(10);
-		input.setLayout(grid);
+		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
+		passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.LINE_AXIS));
 		userPanel.add(userLabel);
 		passwordPanel.add(passwordLabel);
 		userPanel.add(username);
 		passwordPanel.add(password);
-		input.add(passwordPanel);
-		input.add(userPanel);
 		
 		//sets layout of loginPanel 
 		GridBagLayout layout = new GridBagLayout();

@@ -25,9 +25,11 @@ public class DeleteEvent extends JPanel{
 		this.model = model;
 		this.event = event;
 		
-		setPreferredSize(new Dimension(500,260));
+		setPreferredSize(new Dimension(200,160));
 		headingLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 18));
 		headingLabel.setForeground(Color.DARK_GRAY);
+		
+		add(headingLabel);
 		
 	}
 
