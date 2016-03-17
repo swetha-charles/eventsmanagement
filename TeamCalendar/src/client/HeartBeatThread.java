@@ -11,17 +11,17 @@ public class HeartBeatThread implements Runnable {
 	@Override
 	public void run() {
 		while (running) {
-			Thread.currentThread();
 			try {
-				// send heartbeat every 3 seconds
-				Thread.sleep(3000);
-			
-				this.client.sendHeartBeat();
+				// send heartbeat every 1 second
+				Thread.currentThread();
+				Thread.sleep(1000);
+				if(!client.isBusy()){
+					this.client.sendHeartBeat();
+				}
 			} catch (InterruptedException e) {
 				System.out.println("Heartbeat was interrupted and is going to sleep");
 				this.running = false;
 			}
-
 		}
 		System.out.println("HBThread stopped");
 	}
