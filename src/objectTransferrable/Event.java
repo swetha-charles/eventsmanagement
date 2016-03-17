@@ -13,14 +13,16 @@ public class Event implements java.io.Serializable{
 	private String eventTitle;
 	private String location;
 	private Date date;
+	private boolean globalEvent;
 	
-	public Event(Time startTime, Time endTime, String eventDescription, String eventTitle, String location, Date date){
+	public Event(Time startTime, Time endTime, String eventDescription, String eventTitle, String location, Date date, boolean globalEvent){
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.eventDescription = eventDescription;
 		this.eventTitle = eventTitle;
 		this.location = location;
 		this.date = date;
+		this.globalEvent = globalEvent;
 	}
 
 	public Time getStartTime() {
@@ -45,6 +47,10 @@ public class Event implements java.io.Serializable{
 
 	public Date getDate() {
 		return date;
+	}
+	
+	public boolean getGlobalEvent() {
+		return globalEvent;
 	}
 	
 }

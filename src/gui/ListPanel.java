@@ -156,11 +156,11 @@ public class ListPanel extends JPanel{
 		});
 		
 		addEvent.addActionListener((e) -> {
-			JPanel eventPopup = new JPanel();
+			JPanel eventPopup = new NewEvent(controller, model);
 			event.setLayout(new GridLayout(7,2));
-			event.setPreferredSize(new Dimension(400,200));
-			event.setMinimumSize(new Dimension(400,200));
-			event.setMaximumSize(new Dimension(400,200));
+			event.setPreferredSize(new Dimension(500,260));
+			event.setMinimumSize(new Dimension(500,260));
+			event.setMaximumSize(new Dimension(500,260));
 			setEvent(eventPopup, 1);
 	});
 		
@@ -183,77 +183,21 @@ public class ListPanel extends JPanel{
 		
 		if(a==1){
 			
-			event.setLayout(new GridLayout(6,2));
-			event.setPreferredSize(new Dimension(400,200));
-			event.setMinimumSize(new Dimension(400,200));
-			event.setMaximumSize(new Dimension(400,200));
-			
-//			set panel as add new event
-			event.add(name);
-			JTextField newEventTitle = new JTextField();
-			event.add(newEventTitle);
-		
-			event.add(dateLabel);
-			JPanel date = new JPanel();
-			JTextField newEventDate= new JTextField();
-			JTextField newEventMonth= new JTextField();
-			JTextField newEventYear= new JTextField();
-			newEventDate.setDocument(new JTextFieldLimit(2));
-			newEventMonth.setDocument(new JTextFieldLimit(2));
-			newEventYear.setDocument(new JTextFieldLimit(4));
-			date.setLayout(new BoxLayout(date, BoxLayout.LINE_AXIS));
-			date.add(newEventDate);
-			date.add(Box.createRigidArea(new Dimension(10, 0)));
-			date.add(newEventMonth);
-			date.add(Box.createRigidArea(new Dimension(10, 0)));
-			date.add(newEventYear);
-			event.add(date);
-			
-			event.add(stimeLabel);
-			JPanel starttime = new JPanel();
-			JTextField newEventHours= new JTextField();
-			JTextField newEventMinutes= new JTextField();
-			newEventHours.setDocument(new JTextFieldLimit(2));
-			newEventMinutes.setDocument(new JTextFieldLimit(2));
-			starttime.setLayout(new BoxLayout(starttime, BoxLayout.LINE_AXIS));
-			starttime.add(newEventHours);
-			starttime.add(Box.createRigidArea(new Dimension(30, 0)));
-			starttime.add(newEventMinutes);
-			event.add(starttime);
-			
-			event.add(etimeLabel);
-			JPanel endtime = new JPanel();
-			JTextField newEventHoursEnd= new JTextField();
-			JTextField newEventMinutesEnd= new JTextField();
-			newEventHoursEnd.setDocument(new JTextFieldLimit(2));
-			newEventMinutesEnd.setDocument(new JTextFieldLimit(2));
-			endtime.setLayout(new BoxLayout(endtime, BoxLayout.LINE_AXIS));
-			endtime.add(newEventHoursEnd);
-			endtime.add(Box.createRigidArea(new Dimension(30, 0)));
-			endtime.add(newEventMinutesEnd);
-			event.add(endtime);
-//			
-			event.add(locationLabel);
-			JTextField newEventLocation  = new JTextField();
-			event.add(newEventLocation);
-			
-			event.add(descriptionLabel);
-			JTextField newEventDescription = new JTextField();
-			event.add(newEventDescription);
-			
 			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				if (result == JOptionPane.OK_OPTION) {
 					
-					Time st = stringToTime(newEventHours.getText(), newEventMinutes.getText());
-					Time et = stringToTime(newEventHoursEnd.getText(), newEventMinutesEnd.getText());
+					Time st = stringToTime(((NewEvent) event).getShoursA().getText(), ((NewEvent) event).getSminutesA().getText());
+					Time et = stringToTime(((NewEvent) event).getEhoursA().getText(), ((NewEvent) event).getEminutesA().getText());
 					Date d = new Date(0);
 					try {
-						d = stringToDate(newEventDate.getText(), newEventMonth.getText(), newEventYear.getText());
+						d = stringToDate(((NewEvent) event).getDateA().getText(), ((NewEvent) event).getMonthA().getText(), ((NewEvent) event).getYearA().getText());
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
 					System.out.println("new date d = " + d.toString());
-					model.addEvents(new Event(st, et, newEventDescription.getText(), newEventTitle.getText(), newEventLocation.getText(), d));
+					
+					if (((NewEvent) event).getGlobal().getState());
+					model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(), ((NewEvent) event).getNameA().getText(), ((NewEvent) event).getLocationA().getText(), d, true));
 					
 					if(model.getMeetingCreationSuccessful() == true){
 						model.setMeetingCreationSuccessful(false);
@@ -282,7 +226,7 @@ public class ListPanel extends JPanel{
 					}
 			 		
 					Event changedEvent = new Event(st, et, ((EditEventPanel) event).getNotesA().getText(), ((EditEventPanel) event).getNameA().getText(), 
-							((EditEventPanel) event).getLocationA().getText(), d);
+							((EditEventPanel) event).getLocationA().getText(), d, ((EditEventPanel) event).getEvent().getGlobalEvent());
 							
 			 		model.updateEvent(((EditEventPanel) event).getEvent(), changedEvent);
 			 		
@@ -364,16 +308,8 @@ public class ListPanel extends JPanel{
 			
 				// creates title border with time of each event
 				String s = arraylist.get(i).getStartTime().toString().substring(0, 5) + " - " + arraylist.get(i).getEndTime().toString().substring(0, 5);
-//				Border line = BorderFactory.createLineBorder(Color.red);
 				border = BorderFactory.createTitledBorder(s);
 				border.setTitleFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
-				
-//				JPanel buttons = new JPanel();
-//				buttons.setPreferredSize(new Dimension(200,50));
-//				buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
-//				buttons.add(edit);
-////				buttons.add(Box.createRigidArea(new Dimension(70,0)));
-//				buttons.add(delete);
 				
 				// creates new JPanel with title border
 				JPanel p = new JPanel();
