@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import gui.MainView;
-import jBCrypt.BCrypt;
 import model.Model;
 import model.ModelState;
 import objectTransferrable.*;
@@ -55,7 +54,7 @@ public class Client {
 	 * 
 	 * @param OT
 	 */
-	private void writeToServer(ObjectTransferrable OT, boolean exit, String complementOpCode) {
+	private synchronized void writeToServer(ObjectTransferrable OT, boolean exit, String complementOpCode) {
 		if (!error) {
 			try {
 				this.toServer.writeObject(OT);
@@ -69,42 +68,43 @@ public class Client {
 				this.attemptRecovery();
 
 			}
+		} else {
+			return;
 		}
 
 	}
 
 	// read from server
-	public void readFromServer(String waitingForOpcode) {
+	public synchronized void readFromServer(String waitingForOpcode) {
 		if (!error) {
 			ObjectTransferrable receivedOperation = null;
 			// if what was last sent was a heartbeat, use the waitForHeartBeat()
 			// method
 			if (waitingForOpcode.equals("0014")) {
-				waitForHeartBeat();
-				return;
-			}
-			try {
+				this.waitForHeartBeat();
+			} else {
+				try {
+					receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
+					System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
+					if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
+						dealWithError(receivedOperation);
+					}
+					this.runOT(receivedOperation);
+				} catch (ClassNotFoundException e) {
+					// When the object recieved is not an Object Transferrable.
+					// Likely to be that an exception has come in from server.
+					System.out.println("OT from server could not be read");
+					this.attemptRecovery();
+					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
-				receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
-				System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
-				if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-					dealWithError(receivedOperation);
+				} catch (IOException e2) {
+					System.out.println("Server connection is down");
+					this.attemptRecovery();
+					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
 				}
-				this.runOT(receivedOperation);
-			} catch (ClassNotFoundException e) {
-				// When the object recieved is not an Object Transferrable.
-				// Likely to be that an exception has come in from server.
-				System.out.println("OT from server could not be read");
-				this.attemptRecovery();
-				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-
-			} catch (IOException e2) {
-				System.out.println("Server connection is down");
-				this.attemptRecovery();
-				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-
 			}
+
 		}
 
 	}
@@ -151,31 +151,22 @@ public class Client {
 			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
-
+		case "0014":
+			System.err.println("WARNING: Received heartbeat in main runOT()");
+			break;
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
-			String passwordAsString = this.model.getPasswordAsString();
 			boolean userExists = userHash.getUserExists();
 			if (userExists) {
-				boolean successfulLogin = BCrypt.checkpw(passwordAsString, userHash.getHash());
-				OTLoginSuccessful returnObject;
-				if (successfulLogin) {
-					model.setHashedPassword(userHash.getHash());
-					returnObject = new OTLoginSuccessful(this.model.getUsername());
-				} else {
-					returnObject = new OTLoginSuccessful(this.model.getUsername());
-					this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
-				}
-				informServerLoginSuccess(returnObject);
+				model.setHashedPassword(userHash.getHash());
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
 				this.model.setLastname(null);
 				this.model.setEmail(null);
 				this.model.setUsername(null);
-				this.model.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
+				this.model.setHashedPassword(null);
 			}
-
 			break;
 		case "0016":
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
@@ -211,13 +202,19 @@ public class Client {
 			this.model.setLastname(updateProfileSuccess.getLastName());
 			this.model.setEmail(updateProfileSuccess.getEmail());
 			break;
-		}
 
+		case "0024":
+			this.model.setUpdatePasswordSuccess(true);
+			System.out.println("Client: Password has been updated");
+			break;
+		}
+		
 	}
-	public void dealWithError(ObjectTransferrable ot){
-		if(ot.getOpCode().equals("0007")){
+
+	public void dealWithError(ObjectTransferrable ot) {
+		if (ot.getOpCode().equals("0007")) {
 			OTErrorResponse oter = (OTErrorResponse) ot;
-			 System.out.println("Client received error message from server: " + oter.getErrorDescription());
+			System.out.println("Client received error message from server: " + oter.getErrorDescription());
 		} else {
 			throw new UnexpectedOTReceivedException();
 		}
@@ -303,22 +300,26 @@ public class Client {
 
 	}
 
-	public void sendHeartBeat() {
-		String complementOpCode = "0014";
-		OTHeartBeat othb = new OTHeartBeat();
-		this.writeToServer(othb, false, complementOpCode);
-	}
-	
-	public void updatePassword(OTUpdatePassword updatedPassword){
-		
+	public void updatePassword(OTUpdatePassword updatedPassword) {
+		String complementOpCode = "0024";
+		System.out.println("Client: Sent OT with opcode " + updatedPassword.getOpCode());
+		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
+		this.writeToServer(updatedPassword, false, complementOpCode);
 	}
 
+	public synchronized void sendHeartBeat() {
+			String complementOpCode = "0014";
+			OTHeartBeat othb = new OTHeartBeat();
+			this.writeToServer(othb, false, complementOpCode);
+		}
+
 	// ----------writeToServer calls Ends---------------------------//
-	@SuppressWarnings("deprecation")
-	public void waitForHeartBeat() {
+	public synchronized void waitForHeartBeat() {
+		OTHeartBeat OT = null;
 		try {
-			OTHeartBeat future = (OTHeartBeat) this.fromServer.readObject();
-			future.get(1000, TimeUnit.MILLISECONDS);
+			OT = (OTHeartBeat) this.fromServer.readObject();
+			OT.get(500, TimeUnit.MILLISECONDS);
+
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
 				| TimeoutException e) {
 			System.out.println("Hearbeat dead");
