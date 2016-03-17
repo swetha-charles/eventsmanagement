@@ -57,8 +57,7 @@ public class Model extends Observable {
 	private String firstName;
 	private String lastname;
 	private String dob;
-	private char[] password;
-	private String passwordAsString;
+	private String hashedPassword = null;
 
 	// --------------Boolean values for registration--------------//
 	private boolean usernameUnique = false;
@@ -76,7 +75,6 @@ public class Model extends Observable {
 
 	private boolean successfulLogin = false;
 	private boolean successfulRegistration = false;
-	private String hashedPassword;
 
 	// ------------------Event view information--------------------//
 	private ArrayList<Event> meetings = new ArrayList<Event>();
@@ -85,15 +83,12 @@ public class Model extends Observable {
 	private boolean meetingCreationSuccessful = false;
 	private boolean meetingUpdateSuccessful = false;
 	private boolean meetingDeleteSuccessful = false;
-	
+
 	// -----------------------Profile update--------------------------//
 	private boolean updateProfileSuccess = false;
 	private boolean updatePasswordSuccess = false;
-	private boolean oldPasswordCorrect = false;
-	private boolean newPasswordsMatch = false;
-	private char[] intermediatePwStorage;
+	private String intermediateHashedPwStorage;
 
-	
 	public Model(Client client) {
 		this.client = client;
 		this.currentstate = ModelState.LOGIN;
@@ -209,40 +204,39 @@ public class Model extends Observable {
 	}
 
 	public void validatePassword(char[] password) {
-		this.password = password;
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
 			this.registrationView.getRegistrationPanel()
 					.setPasswordLabel("Password*: must be between 8 and 60 characters");
-			
+
 		} else if (password.length > 60) {
 			this.password60orLess = false;
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*: must be less than 60 characters");
 		} else {
 			this.password60orLess = true;
 			this.passwordatleast8 = true;
+			String hashedPassword = BCrypt.hashpw(new String(password), BCrypt.gensalt());
+			this.hashedPassword = hashedPassword;
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
-	
+
 	private boolean registrationDataValidated() {
-		try{
+		try {
 			return (this.username20orLess && this.emailMatchesRegex && this.emailUnique && this.firstNameLessThan30
 					&& this.lastNameNameLessThan30 && this.passwordMatchesConfirm && this.password60orLess
 					&& this.passwordatleast8 && this.oldEnough);
-		} catch (NullPointerException e){
+		} catch (NullPointerException e) {
 			return false;
 		}
-	
+
 	}
 
 	public void checkRegistrationInformation() {
 		if (this.usernameUnique && this.emailUnique && registrationDataValidated()) {
-			String passwordAsString = new String(password);
-			String hashedPassword = BCrypt.hashpw(passwordAsString, BCrypt.gensalt());
 			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
-					this.lastname, hashedPassword);
+					this.lastname, this.hashedPassword);
 			this.client.checkRegistration(otri);
 
 		} else {
@@ -250,84 +244,80 @@ public class Model extends Observable {
 		}
 
 	}
-	//------------------Reg ends------------//
-	
-	//-----------------Events --------------//
-	
-	public void addEvents(Event event){
+	// ------------------Reg ends------------//
+
+	// -----------------Events --------------//
+
+	public void addEvents(Event event) {
 		OTCreateEvent newEvent = new OTCreateEvent(event);
 		this.client.createEvent(newEvent);
 	}
-	
-	public void updateEvent(Event oldEvent, Event newEvent){
+
+	public void updateEvent(Event oldEvent, Event newEvent) {
 		OTUpdateEvent changeEvent = new OTUpdateEvent(oldEvent, newEvent);
 		this.client.updateEvent(changeEvent);
 	}
-	
-	public void deleteEvent(Event event){
+
+	public void deleteEvent(Event event) {
 		OTDeleteEvent deleteEvent = new OTDeleteEvent(event);
 		this.client.deleteEvent(deleteEvent);
 	}
-	
+
 	public void updateMeetings(Date date) {
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
-	
+
 	public void promptUserToRestart() {
 		this.errorView.addRestartButton();
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
 	}
-	
-	public void userRequestedRestart(){
+
+	public void userRequestedRestart() {
 		this.changeCurrentState(ModelState.PROMPTRELOAD);
 		this.client.restart();
 	}
-	//-----------------Events ends-----------------//
-	//------------------Profile editing------------//
-	public void updateProfile(String firstName, String lastName, String email){
-		OTUpdateUserProfile updatedUserInfo = new  OTUpdateUserProfile(firstName, lastName, email);
+
+	// -----------------Events ends-----------------//
+	// ------------------Profile editing------------//
+	public void updateProfile(String firstName, String lastName, String email) {
+		OTUpdateUserProfile updatedUserInfo = new OTUpdateUserProfile(firstName, lastName, email);
 		this.client.updateProfile(updatedUserInfo);
-		
-	}
-	
-	public void updatePassword(char[] oldPassword, char[] firstNewPassword, char[] secondNewPassword){
-		
-		if(!checkConfirmMatchesPassword(this.getPassword(), oldPassword)){
-			setOldPasswordCorrect(false);
-			return;
-		} else if(!checkConfirmMatchesPassword(firstNewPassword, secondNewPassword)){
-			setNewPasswordsMatch(false);
-			return;
-		} else {
-			setIntermediatePwStorage(firstNewPassword);
-			setOldPasswordCorrect(true);
-			setNewPasswordsMatch(true);
-			String firstNewPasswordString = new String(firstNewPassword);
-			String pwHash = BCrypt.hashpw(firstNewPasswordString, BCrypt.gensalt());
-			OTUpdatePassword newPassword = new OTUpdatePassword(pwHash);
-			client.updatePassword(newPassword);
-		}
+
 	}
 
-	//--------------Profile editing ends-----------//
-	
+	public void updatePassword(String newPassword) {
+		String pwHash = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+		setIntermediatePwStorage(pwHash);
+		OTUpdatePassword updatePassword = new OTUpdatePassword(pwHash);
+		client.updatePassword(updatePassword);
+
+	}
+
+	// --------------Profile editing ends-----------//
+
 	public void login(String username, char[] password) {
-		String passwordAsString = new String(password);
 		OTLogin loginObject = new OTLogin(username);
-		System.out.println(username);
-		System.out.println(passwordAsString);
-
 		setUsername(username);
-		setPasswordAsString(passwordAsString);
-
-		this.client.checkLoginDetails(loginObject);
+		this.client.checkLoginDetails(loginObject);// this will set model's
+													// hashed password
+		OTLoginSuccessful returnObject;
+		if(this.hashedPassword == null){
+			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
+			return;
+		} else if (checkPassword(new String(password))) {
+			this.changeCurrentState(ModelState.EVENTS);
+			returnObject = new OTLoginSuccessful(this.username);
+			this.client.informServerLoginSuccess(returnObject);
+		} else if(!checkPassword(new String(password))){
+			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
+		}
+		
 	}
-	
-	public boolean checkPassword(String password){
+
+	public boolean checkPassword(String password) {
 		return BCrypt.checkpw(password, this.hashedPassword);
 	}
-	
 
 	// --------Save information that returns from server----//
 
@@ -354,12 +344,12 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 
 	}
-	
+
 	public void setHashedPassword(String hash) {
 		this.hashedPassword = hash;
-		
+
 	}
-		// --------End of information from server------------//
+	// --------End of information from server------------//
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -434,14 +424,6 @@ public class Model extends Observable {
 		this.dob = dob;
 	}
 
-	public char[] getPassword() {
-		return password;
-	}
-
-	public void setPassword(char[] password) {
-		this.password = password;
-	}
-
 	public boolean isSuccessfulRegistration() {
 		return successfulRegistration;
 	}
@@ -454,19 +436,11 @@ public class Model extends Observable {
 		return meetings;
 	}
 
-	public String getPasswordAsString() {
-		return passwordAsString;
-	}
-
-	public void setPasswordAsString(String passwordAsString) {
-		this.passwordAsString = passwordAsString;
-	}
-
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
-/*		this.listView.getListPanel().addMeetings(this.meetings);*/
+		/* this.listView.getListPanel().addMeetings(this.meetings); */
 	}
-	
+
 	public boolean getMeetingCreationSuccessful() {
 		return meetingCreationSuccessful;
 	}
@@ -497,6 +471,7 @@ public class Model extends Observable {
 
 	public void setUpdateProfileSuccess(boolean updateProfileSuccess) {
 		this.updateProfileSuccess = updateProfileSuccess;
+		
 	}
 
 	public boolean getUpdatePasswordSuccess() {
@@ -505,30 +480,12 @@ public class Model extends Observable {
 
 	public void setUpdatePasswordSuccess(boolean updatePasswordSuccess) {
 		this.updatePasswordSuccess = updatePasswordSuccess;
+		JOptionPane.showMessageDialog(this.currentPanel, "Password successfully changed!");
+		this.changeCurrentState(ModelState.PROFILE);
 	}
 
-	public boolean getOldPasswordCorrect() {
-		return oldPasswordCorrect;
-	}
-
-	public void setOldPasswordCorrect(boolean oldPasswordCorrect) {
-		this.oldPasswordCorrect = oldPasswordCorrect;
-	}
-
-	public boolean getNewPasswordsMatch() {
-		return newPasswordsMatch;
-	}
-
-	public void setNewPasswordsMatch(boolean newPasswordsMatch) {
-		this.newPasswordsMatch = newPasswordsMatch;
-	}
-
-	public char[] getIntermediatePwStorage() {
-		return intermediatePwStorage;
-	}
-
-	public void setIntermediatePwStorage(char[] intermediatePwStorage) {
-		this.intermediatePwStorage = intermediatePwStorage;
+	public void setIntermediatePwStorage(String intermediatePwStorage) {
+		this.intermediateHashedPwStorage = intermediatePwStorage;
 	}
 
 	public synchronized void changeCurrentState(ModelState state) {
@@ -550,11 +507,11 @@ public class Model extends Observable {
 		case LOGINUNSUCCESSFULWRONGUSERNAME:
 			JOptionPane.showMessageDialog(this.getCurrentPanel(), "No such user");
 			break;
-			
+
 		case LOGINUNSUCCESSFULWRONGPASSWORD:
 			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Password incorrect");
 			break;
-			
+
 		case REGISTRATIONUPDATE:
 			setPanel(this.registrationView);
 			break;
@@ -563,17 +520,17 @@ public class Model extends Observable {
 			this.errorView = new ErrorConnectionDown(this);
 			setPanel(this.errorView);
 			break;
-			
+
 		case ERRORCONNECTIONDOWNSTILL:
 			System.out.println("Connection still down");
 			this.errorView.connectionStillDown();
 			setPanel(this.errorView);
 			break;
-			
+
 		case PROMPTRELOAD:
 			setPanel(this.errorView);
 			break;
-			
+
 		case EXIT:
 			this.client.exitGracefully();
 			break;
@@ -615,7 +572,5 @@ public class Model extends Observable {
 		notifyObservers();
 
 	}
-
-	
 
 }
