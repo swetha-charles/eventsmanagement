@@ -15,6 +15,7 @@ public class Server extends Thread{
 	private ExecutorService threadPool;
 	private boolean serverActive;
 	private ServerModel serverModel;
+	private QueryManager queryManager;
 	
 	public Server(int portNumber, ServerModel model) throws IOException{
 		this.serverModel = model;
@@ -29,6 +30,7 @@ public class Server extends Thread{
 		this.socketArray = new ArrayList<ClientInfo>();
 		//create the threadpool
 		this.threadPool = Executors.newFixedThreadPool(4);
+		this.queryManager = new QueryManager(this);
 	}
 	
 	public void run(){
@@ -85,6 +87,10 @@ public class Server extends Thread{
 	
     public ServerModel getServerModel() {
 		return serverModel;
+	}
+
+	public QueryManager getQueryManager() {
+		return queryManager;
 	}
 
 	public synchronized void serverStop(){
