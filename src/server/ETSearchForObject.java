@@ -29,15 +29,14 @@ public class ETSearchForObject implements ExecutableTask {
 		if (getMasterServer().isServerActive() == true) {
 			try {
 				receivedObject = getClientInfo().getClientInput().readObject();
-//				getMasterServer().getServerModel().addToText("Server received object: " + receivedObject.toString() + "\n");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
-				//EOFexception
+				// EOFexception
 			} catch (SocketTimeoutException e) {
-				//TimeoutException
+				// TimeoutException
 			} catch (IOException e2) {
-				getMasterServer().getServerModel().addToText("\nServer - IOException");
+				getMasterServer().getServerModel().addToText("\nServer (ETSFO) - IOException");
 			}
 			if (receivedObject == null) {
 				// create a new ETSearchForObject task with the same info and
@@ -50,17 +49,28 @@ public class ETSearchForObject implements ExecutableTask {
 				ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 				getMasterServer().getThreadPool().execute(refreshedSearch);
 			} else {
-//				getMasterServer().getServerModel().addToText("Object not null, server will try to cast this object\n");
-
 				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
-
-//				getMasterServer().getServerModel().addToText("Server tried to cast object: " + receivedOperation.getOpCode() + "\n");
-
-				if (receivedOperation != null) {
-					if(!receivedOperation.getOpCode().equals("0014")){
+				if(receivedOperation.getOpCode().equals("0005")){
 					getMasterServer().getServerModel()
-							.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
-									+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+					.addToText("Specially reserved opcode for exiting program has arrived at server!"
+							+ "\n");
+					getMasterServer().getServerModel()
+					.addToText("Will now attempt to close connections \n");
+					try {
+						this.clientInfo.getClientSocket().shutdownInput();
+						this.clientInfo.getClientSocket().shutdownOutput();
+						this.clientInfo.getClientSocket().close();
+					} catch (IOException e) {
+						getMasterServer().getServerModel()
+						.addToText("Could not close connections \n");
+					}
+					return;
+				} else if (receivedOperation != null) {
+					if (!receivedOperation.getOpCode().equals("0014")) {
+						getMasterServer().getServerModel()
+								.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
+										+ " from client with port " + getClientInfo().getClientSocket().getPort()
+										+ "\n");
 					}
 					// Create and ETRunTask object, and place it in the
 					// ExecutorService
