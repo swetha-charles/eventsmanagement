@@ -1,6 +1,7 @@
 package server;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 import objectTransferrable.*;
 
@@ -18,7 +19,7 @@ public class QueryManager {
 	}
 
 	public ObjectTransferrable runOperation(ObjectTransferrable currentOperation, ClientInfo client) throws SQLException {
-		
+
 		Connection dbconnection = getServer().getDatabase().getConnection();
 		// Prepared st?
 		Statement stmnt = dbconnection.createStatement();
@@ -60,7 +61,7 @@ public class QueryManager {
 			getServer().getServerModel().addToText(
 					"The object assocatied with this opcode should not be recieved from client! Responding with Error Object\n");
 			return new OTErrorResponse("Server specified confirmation message recieved from client!", false, 0006);
-			
+
 		}
 		// The client has returned an error, considering client passive previous
 		// server response was bad
@@ -78,7 +79,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (return list of meetings) has been found at the query manager!",
 					false);
-			
+
 		}
 		// Request to create an event from the client
 		else if (currentOperation.getOpCode().equals("0010")) {
@@ -92,7 +93,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sucessful event creation) has been found at the query manager!",
 					false);
-			
+
 		}
 		// Get users hashed password for the client
 		else if (currentOperation.getOpCode().equals("0012")) {
@@ -114,7 +115,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending the hash to the client) has been found at the query manager!",
 					false);
-			
+
 		}
 		// This is a return message for sending user details to client and
 		// should not be seen by server
@@ -124,7 +125,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending user details to client) has been found at the query manager!",
 					false);
-			
+
 		}
 		//Updates an events details
 		else if (currentOperation.getOpCode().equals("0017")) {
@@ -138,7 +139,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending meeting update success to the client) has been found at the query manager!",
 					false);
-			
+
 		}
 		//Deletes an event
 		else if (currentOperation.getOpCode().equals("0019")) {
@@ -152,7 +153,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending meeting delete success to the client) has been found at the query manager!",
 					false);
-			
+
 		}
 		//Updates a users profile
 		else if (currentOperation.getOpCode().equals("0021")) {
@@ -166,7 +167,7 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending update user profile success to the client) has been found at the query manager!",
 					false);
-			
+
 		}
 		//Updates a users password
 		else if (currentOperation.getOpCode().equals("0023")) {
@@ -180,14 +181,14 @@ public class QueryManager {
 			return new OTErrorResponse(
 					"A message meant to be sent by the server (sending update user password success to the client) has been found at the query manager!",
 					false);
-			
+
 		}
 		// Unknown OP code response
 		else {
 			getServer().getServerModel()
 			.addToText("opcode of object not known by query manager! Responding with Error Object\n");
 			return new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false);
-			
+
 		}
 
 	}
@@ -213,9 +214,9 @@ public class QueryManager {
 			getServer().getServerModel().addToText("Couldn't update user password\n");
 			e.printStackTrace();
 			return new OTErrorResponse("Couldn't update user password", false);
-			
+
 		}
-		
+
 	}
 
 	private ObjectTransferrable updateUserProfile(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
@@ -231,7 +232,7 @@ public class QueryManager {
 				+"' "
 				+"WHERE userName= '" + client.getUserName()
 				+"'";
-		
+
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
 		try {
@@ -251,7 +252,7 @@ public class QueryManager {
 
 		getServer().getServerModel()
 		.addToText("Attempting to update a meeting for: " + client.getUserName() + "\n");
-		
+
 		String update = "DELETE FROM meetings " 
 				+"WHERE creatorID= '" + client.getUserName() 
 				+ "', meetingDate= '"+eventToDelete.getDate().toString()
@@ -263,7 +264,7 @@ public class QueryManager {
 
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
-		
+
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully deleted event\n");
@@ -272,7 +273,7 @@ public class QueryManager {
 			getServer().getServerModel().addToText("Couldn't delete event\n");
 			e.printStackTrace();
 			return new OTErrorResponse("Couldn't delete event", false);
-			
+
 		}
 	}
 
@@ -299,10 +300,10 @@ public class QueryManager {
 				+"', meetingLocation= '"+oldEvent.getLocation()
 				+"', meetingStartTime= '"+oldEvent.getStartTime().toString()
 				+"', meetingEndTime=, '"+oldEvent.getEndTime().toString()+"'";
-		
+
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
-		
+
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated event\n");
@@ -311,7 +312,7 @@ public class QueryManager {
 			getServer().getServerModel().addToText("Couldn't update meeting\n");
 			e.printStackTrace();
 			return new OTErrorResponse("Couldn't update meeting", false);
-			
+
 		}
 	}
 
@@ -326,10 +327,10 @@ public class QueryManager {
 				+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
 				+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
 				+ classifiedOperation.getEvent().getEndTime().toString() +"')";
-		
+
 		getServer().getServerModel()
 		.addToText("Running this update: " + update + "\n");
-		
+
 		try {
 			stmnt.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully created meeting\n");
@@ -442,20 +443,7 @@ public class QueryManager {
 
 		ResultSet rs;
 		try {
-			rs = stmnt.executeQuery(query);
-			ArrayList<Event> meetings = new ArrayList<Event>();
-			getServer().getServerModel()
-			.addToText("Requesting meeting information for " + client.getUserName() + "\n");
-			while (rs.next()) {
-				String title = rs.getString(1);
-				String description = rs.getString(2);
-				String location = rs.getString(3);
-				Time startTime = rs.getTime(4);
-				Time endTime = rs.getTime(5);
-
-				Event event = new Event(startTime, endTime, description, title, location, classifiedOperation.getDate());
-				meetings.add(event);
-			}
+			ArrayList<Event> meetings = retrieveMeetingsFromDB(classifiedOperation.getDate(), client, stmnt);
 			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
 			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
 			return returnEvents;
@@ -523,6 +511,39 @@ public class QueryManager {
 			e.printStackTrace();
 			return new OTErrorResponse("SQL Server failed with hash request", false);
 		}
+	}
+
+	private ArrayList<Event> retrieveMeetingsFromDB(Date date, ClientInfo client, Statement stmnt) throws SQLException {
+		String query = "SELECT m.creatorID, m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime, m.lockVersion "
+				+ "FROM meetings m " + "WHERE (m.creatorid = '" + client.getUserName()
+				+ "' OR m.creatorid = 'global') AND m.meetingdate = '" + date.toString() + "' "
+				+ "ORDER BY m.meetingstarttime ASC";
+
+		ResultSet rs;
+
+		rs = stmnt.executeQuery(query);
+		ArrayList<Event> meetings = new ArrayList<Event>();
+		getServer().getServerModel()
+		.addToText("Requesting meeting information for " + client.getUserName() + "\n");
+		while (rs.next()) {
+			String creator = rs.getString(1);
+			String title = rs.getString(2);
+			String description = rs.getString(3);
+			String location = rs.getString(4);
+			Time startTime = rs.getTime(5);
+			Time endTime = rs.getTime(6);
+			int lockVersion = rs.getInt(7);
+			Event event;
+			
+			if(creator.equals("global")){
+				event = new Event(startTime, endTime, description, title, location, date, true, lockVersion);
+			} else {
+				event = new Event(startTime, endTime, description, title, location, date, false, lockVersion);
+			}
+			meetings.add(event);
+		}
+		return meetings;
+
 	}
 
 }

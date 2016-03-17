@@ -14,8 +14,9 @@ public class Event implements java.io.Serializable{
 	private String location;
 	private Date date;
 	private boolean globalEvent;
+	private int lockVersion;
 	
-	public Event(Time startTime, Time endTime, String eventDescription, String eventTitle, String location, Date date, boolean globalEvent){
+	public Event(Time startTime, Time endTime, String eventDescription, String eventTitle, String location, Date date, boolean globalEvent, int lockVersion){
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.eventDescription = eventDescription;
@@ -23,6 +24,7 @@ public class Event implements java.io.Serializable{
 		this.location = location;
 		this.date = date;
 		this.globalEvent = globalEvent;
+		this.lockVersion = lockVersion;
 	}
 
 	public Time getStartTime() {
@@ -51,6 +53,10 @@ public class Event implements java.io.Serializable{
 	
 	public boolean getGlobalEvent() {
 		return globalEvent;
+	}
+
+	public int getLockVersion() {
+		return lockVersion;
 	}
 	
 }
