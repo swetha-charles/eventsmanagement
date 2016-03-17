@@ -196,11 +196,19 @@ public class Client {
 
 		case "0018":
 			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
-			this.model.setMeetingUpdateSuccessful(true);
+			if(updateSuccess.getSuccessful()){
+				this.model.setMeetingUpdateSuccessful(true);
+			} else {
+				this.model.setMeetingUpdateSuccessful(false);
+			}
 			break;
 		case "0020":
 			OTDeleteEventSuccessful deleteSuccess = (OTDeleteEventSuccessful) receivedOperation;
-			this.model.setMeetingDeleteSuccessful(true);
+			if(deleteSuccess.getSuccessful()){
+				this.model.setMeetingDeleteSuccessful(true);
+			} else {
+				this.model.setMeetingDeleteSuccessful(false);
+			}
 			break;
 		case "0022":
 			OTUpdateUserProfileSuccessful updateProfileSuccess = (OTUpdateUserProfileSuccessful) receivedOperation;
