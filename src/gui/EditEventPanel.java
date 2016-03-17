@@ -91,8 +91,8 @@ public class EditEventPanel extends JPanel{
 		locationA = new JTextField(event.getLocation());
 		notesA = new JTextField(event.getEventDescription());
 		
-		Dimension dimension = new Dimension(500,260);
-		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
+	
+		setPreferredSize(new Dimension(500,260));
 	
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
