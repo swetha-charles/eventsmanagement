@@ -86,10 +86,17 @@ public class Client {
 				try {
 					receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 					System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
-					if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-						dealWithError(receivedOperation);
+					if (receivedOperation.getOpCode().equals("0007")) {
+						// received an error response from server
+						OTErrorResponse oter = (OTErrorResponse) receivedOperation;
+						System.out.println("Client received error message from server: " + oter.getErrorDescription());
+					} else if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
+						// not an error and not what was expected
+						throw new UnexpectedOTReceivedException();
+					} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
+						// what was expected, then run.
+						this.runOT(receivedOperation);
 					}
-					this.runOT(receivedOperation);
 				} catch (ClassNotFoundException e) {
 					// When the object recieved is not an Object Transferrable.
 					// Likely to be that an exception has come in from server.
@@ -208,16 +215,7 @@ public class Client {
 			System.out.println("Client: Password has been updated");
 			break;
 		}
-		
-	}
 
-	public void dealWithError(ObjectTransferrable ot) {
-		if (ot.getOpCode().equals("0007")) {
-			OTErrorResponse oter = (OTErrorResponse) ot;
-			System.out.println("Client received error message from server: " + oter.getErrorDescription());
-		} else {
-			throw new UnexpectedOTReceivedException();
-		}
 	}
 
 	// ---------------- writeToServer calls -----------------------//
@@ -308,10 +306,10 @@ public class Client {
 	}
 
 	public synchronized void sendHeartBeat() {
-			String complementOpCode = "0014";
-			OTHeartBeat othb = new OTHeartBeat();
-			this.writeToServer(othb, false, complementOpCode);
-		}
+		String complementOpCode = "0014";
+		OTHeartBeat othb = new OTHeartBeat();
+		this.writeToServer(othb, false, complementOpCode);
+	}
 
 	// ----------writeToServer calls Ends---------------------------//
 	public synchronized void waitForHeartBeat() {
