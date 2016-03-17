@@ -259,19 +259,62 @@ public class ListPanel extends JPanel{
 						model.setMeetingCreationSuccessful(false);
 						model.updateMeetings(new Date(c.getTimeInMillis()));
 						addMeetings(model.getMeetings());
+						
+						JOptionPane.showMessageDialog(this, "Meeting successfully created!");
 					} else {
-						//error
+						JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be created.");
 					}
 				
 				}
 			
+		} else if (a==2){
+			
+			int result = JOptionPane.showConfirmDialog(this, event, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			 	if (result == JOptionPane.OK_OPTION) {
+			 		
+			 		Time st = stringToTime(((EditEventPanel) event).getShoursA().getText(), ((EditEventPanel) event).getSminutesA().getText());
+					Time et = stringToTime(((EditEventPanel) event).getEhoursA().getText(), ((EditEventPanel) event).getEminutesA().getText());
+					Date d = new Date(0);
+					try {
+						d = stringToDate(((EditEventPanel) event).getDateA().getText(), ((EditEventPanel) event).getMonthA().getText(), ((EditEventPanel) event).getYearA().getText());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+			 		
+					Event changedEvent = new Event(st, et, ((EditEventPanel) event).getNotesA().getText(), ((EditEventPanel) event).getNameA().getText(), 
+							((EditEventPanel) event).getLocationA().getText(), d);
+							
+			 		model.updateEvent(((EditEventPanel) event).getEvent(), changedEvent);
+			 		
+			 		if(model.getMeetingUpdateSuccessful() == true){
+						model.setMeetingUpdateSuccessful(false);
+						model.updateMeetings(new Date(c.getTimeInMillis()));
+						addMeetings(model.getMeetings());
+						
+						JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
+					} else {
+						JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be changed.");
+					}
+			 	}	
 		} else {
 			
-			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-			 	if (result == JOptionPane.OK_OPTION) {
-//			 		model.addEvents(event.getFirstNameA().getText(), event.getLastNameA().getText(), 
-//		        		   event.getEmailA().getText(), event,getPasswordA().getText(), event.getNotesA().getText());
-			 	}	
+			int result = JOptionPane.showConfirmDialog(this, event, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		 	if (result == JOptionPane.OK_OPTION) {
+		 		
+						
+		 		model.deleteEvent(((DeleteEvent) event).getEvent());
+		 		
+		 		if(model.getMeetingDeleteSuccessful() == true){
+					model.setMeetingDeleteSuccessful(false);
+					model.updateMeetings(new Date(c.getTimeInMillis()));
+					addMeetings(model.getMeetings());
+					
+					JOptionPane.showMessageDialog(this, "Meeting successfully deleted!");
+				} else {
+					JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be deleted.");
+				}
+		 	}
+			
 		}
 		
 		this.event = event;
@@ -301,22 +344,19 @@ public class ListPanel extends JPanel{
 			for(int i=0; i<arraylist.size(); i++){
 			
 				//creates new JLabel of event name for each event
-				JLabel title = new JLabel(arraylist.get(i).getEventTitle(), SwingConstants.LEFT);
+				JLabel title = new JLabel(arraylist.get(i).getEventTitle());
 				String a = "Notes :  " + arraylist.get(i).getEventDescription();
 				JLabel description = new JLabel(a);
 				String b = "Location :  " + arraylist.get(i).getLocation();
 				JLabel location = new JLabel(b);
 				JButton edit = new JButton("Edit event");
-				
-				title.setVerticalAlignment(SwingConstants.CENTER);
-				description.setVerticalAlignment(SwingConstants.CENTER);
-				location.setVerticalAlignment(SwingConstants.CENTER);
-				edit.setVerticalAlignment(SwingConstants.CENTER);
+				JButton delete = new JButton("Delete event");
 				
 				title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 				description.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				location.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
+				delete.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				
 				title.setForeground(Color.RED);
 				description.setForeground(Color.DARK_GRAY);
@@ -327,6 +367,13 @@ public class ListPanel extends JPanel{
 //				Border line = BorderFactory.createLineBorder(Color.red);
 				border = BorderFactory.createTitledBorder(s);
 				border.setTitleFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
+				
+//				JPanel buttons = new JPanel();
+//				buttons.setPreferredSize(new Dimension(200,50));
+//				buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
+//				buttons.add(edit);
+////				buttons.add(Box.createRigidArea(new Dimension(70,0)));
+//				buttons.add(delete);
 				
 				// creates new JPanel with title border
 				JPanel p = new JPanel();
@@ -343,16 +390,24 @@ public class ListPanel extends JPanel{
 				p.add(description);
 				p.add(Box.createRigidArea(new Dimension(0,10)));
 				p.add(edit);
+				p.add(delete);
 				events.add(p);	
 				Event clickedevent = arraylist.get(i);
 				
 				edit.addActionListener((e) -> {
 					JPanel eventPopup = new EditEventPanel(controller, model, clickedevent);
-					event.setLayout(new GridLayout(7,2));
 					event.setPreferredSize(new Dimension(500,260));
 					event.setMinimumSize(new Dimension(500,260));
 					event.setMaximumSize(new Dimension(500,260));
 					setEvent(eventPopup, 2);
+				});
+				
+				delete.addActionListener((e) -> {
+					JPanel deleteEvent = new DeleteEvent(controller, model, clickedevent);
+					event.setPreferredSize(new Dimension(500,260));
+					event.setMinimumSize(new Dimension(500,260));
+					event.setMaximumSize(new Dimension(500,260));
+					setEvent(deleteEvent, 3);
 				});
 			}
 			
@@ -436,7 +491,7 @@ public static String getDate(int day, int date, int month, int year){
 		}
 	}
 	
-	//--------------------converts string to time----------------//
+	//--------------------converts string to time and date----------------//
 	
 	public Time stringToTime(String hours, String minutes){
 		
