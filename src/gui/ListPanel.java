@@ -103,8 +103,8 @@ public class ListPanel extends JPanel{
 		addEvent.setMinimumSize(new Dimension(35,35));
 		addEvent.setMaximumSize(new Dimension(35,35));
 		refresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-		refresh.setMinimumSize(new Dimension(50,35));
-		refresh.setMaximumSize(new Dimension(50,35));
+		refresh.setMinimumSize(new Dimension(100,35));
+		refresh.setMaximumSize(new Dimension(100,35));
 		
 		//creates panel containing date label and addEvent button
 		top.setMaximumSize(new Dimension(900,70));
@@ -113,7 +113,7 @@ public class ListPanel extends JPanel{
 		top.add(date);
 		top.add(Box.createRigidArea(new Dimension(20,0)));
 		top.add(addEvent);
-		top.add(Box.createRigidArea(new Dimension(200,0)));
+		top.add(Box.createRigidArea(new Dimension(420,0)));
 		top.add(refresh);
 		
 		//updates model with the meetings for today and adds them to panel list
