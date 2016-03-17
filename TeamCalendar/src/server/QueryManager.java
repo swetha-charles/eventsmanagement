@@ -327,30 +327,31 @@ public class QueryManager {
 						+"SET meetingDate= ?, meetingTitle= ?, meetingDescription= ?, "
 						+"meetingLocation= ?, meetingStartTime= ?, meetingEndTime= ?, lockVersion= ? "
 
-						+"WHERE creatorID= ?, meetingDate= ?, meetingTitle= '?"
-						+", meetingDescription= ?, meetingLocation= ?"
-						+", meetingStartTime= ?, meetingEndTime=, ?";
+						+"WHERE creatorID= ? AND meetingDate= ? AND meetingTitle= ? "
+						+"AND meetingDescription= ? AND meetingLocation= ? "
+						+"AND meetingStartTime= ? AND meetingEndTime= ? AND lockVersion= ?";
 
 
 				PreparedStatement updateEvent = con.prepareStatement(update);
-
-				updateEvent.setDate(1, oldDate);
-				updateEvent.setString(2, oldEventTitle);
-				updateEvent.setString(3, oldEventDescription);
-				updateEvent.setString(4, oldLocation);
-				updateEvent.setTime(5, oldStartTime);
-				updateEvent.setTime(6, oldEndTime);
-				updateEvent.setInt(8, oldLockVersion);
-
+				
+				updateEvent.setDate(1, newDate);
+				updateEvent.setString(2, newEventTitle);
+				updateEvent.setString(3, newEventDescription);
+				updateEvent.setString(4, newLocation);
+				updateEvent.setTime(5, newStartTime);
+				updateEvent.setTime(6, newEndTime);
+				updateEvent.setInt(7, newLockVersion);
+				
 				updateEvent.setString(8, creator);
-				updateEvent.setDate(9, newDate);
-				updateEvent.setString(10, newEventTitle);
-				updateEvent.setString(11, newEventDescription);
-				updateEvent.setString(12, newLocation);
-				updateEvent.setTime(13, newStartTime);
-				updateEvent.setTime(14, newEndTime);
-				updateEvent.setInt(15, newLockVersion);
-
+				updateEvent.setDate(9, oldDate);
+				updateEvent.setString(10, oldEventTitle);
+				updateEvent.setString(11, oldEventDescription);
+				updateEvent.setString(12, oldLocation);
+				updateEvent.setTime(13, oldStartTime);
+				updateEvent.setTime(14, oldEndTime);
+				updateEvent.setInt(15, oldLockVersion);
+				
+				getServer().getServerModel().addToText("QUERY: " +updateEvent.toString()+"\n");
 				updateEvent.executeUpdate();
 				getServer().getServerModel().addToText("Successfully updated event\n");
 				return new OTUpdateEventSuccessful(true);
@@ -368,13 +369,15 @@ public class QueryManager {
 	private boolean getAMeeting(Connection con, Event event, ClientInfo client) throws SQLException{
 		String query = "SELECT * "
 				+"FROM meetings m "
-				+"WHERE creatorID= ?, meetingDate= ?, meetingTitle= '?"
-				+", meetingDescription= ?, meetingLocation= ?"
-				+", meetingStartTime= ?, meetingEndTime=, ?"
-				+", lockVersion = ?";
+				+"WHERE creatorID= ? AND meetingDate= ? AND meetingTitle= ? "
+				+"AND meetingDescription= ? AND meetingLocation= ? "
+				+"AND meetingStartTime= ? AND meetingEndTime= ? "
+				+"AND lockVersion = ?";
 
 		PreparedStatement meetingQuery;
 
+		
+		
 		meetingQuery = con.prepareStatement(query);
 
 		String creator;
@@ -392,14 +395,19 @@ public class QueryManager {
 		meetingQuery.setTime(6, event.getStartTime());
 		meetingQuery.setTime(7, event.getEndTime());
 		meetingQuery.setInt(8, event.getLockVersion());
-
+		
+		getServer().getServerModel().addToText("Lock Version of received event: " + event.getLockVersion() + "\n");
+		getServer().getServerModel().addToText("Creator of received event: " + creator + "\n");
+		getServer().getServerModel().addToText("QUERY: " + meetingQuery.toString() + "\n");
+		
 		ResultSet rs = meetingQuery.executeQuery();
 
 		if (rs.next()) {
-			getServer().getServerModel().addToText("Found matching username, returning true.\n");
+			getServer().getServerModel().addToText("Found matching meeting, returning true.\n");
 			return true;
 		} else {
-			getServer().getServerModel().addToText("Found no such user, returning false.\n");
+			
+			getServer().getServerModel().addToText("Found no such meeting, returning false.\n");
 			return false;
 		}
 
