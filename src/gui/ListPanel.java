@@ -255,7 +255,8 @@ public class ListPanel extends JPanel{
 						
 						JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
 					} else {
-						JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be changed.");
+						JOptionPane.showMessageDialog(this, "I'm sorry, this is not the most up to date version of this meeting. "
+								+ "\n Please close, refresh your events and try again, thank you!");
 					}
 			 	}
 			 	
@@ -274,7 +275,8 @@ public class ListPanel extends JPanel{
 					
 					JOptionPane.showMessageDialog(this, "Meeting successfully deleted!");
 				} else {
-					JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be deleted.");
+					JOptionPane.showMessageDialog(this, "I'm sorry, this is not the most up to date version of this meeting. "
+							+ "\n Please refresh your events and try again, thank you!");
 				}
 		 	}
 			
