@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
@@ -97,9 +98,17 @@ public class PasswordPanel extends JPanel{
 		
 		//----------------------Listeners----------------------//
 		
-		submit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-						
+		submit.addActionListener((e) -> {
+			if(this.model.checkPassword(new String(oldPasswordA.getPassword()))){
+				String password1 = new String(confirmNewA.getPassword());
+				String password2 = new String(newPasswordA.getPassword());
+				if(password1.equals(password2)){
+					this.model.updatePassword(password1);
+				} else {
+					JOptionPane.showMessageDialog(this, "Your new passwords do not match");
+				}
+			}else {
+				JOptionPane.showMessageDialog(this, "Correctly enter your old password");
 			}
 		});
 		
