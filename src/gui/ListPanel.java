@@ -175,6 +175,7 @@ public class ListPanel extends JPanel{
 		refresh.addActionListener((e) -> {
 			model.updateMeetings(new Date(getC().getTimeInMillis()));
 			addMeetings(model.getMeetings());
+			model.changeCurrentState(ModelState.EVENTSUPDATE);
 		});
 		
 //		submit.addActionListener((e) -> ;
@@ -246,7 +247,7 @@ public class ListPanel extends JPanel{
 					Event changedEvent = new Event(st, et, ((EditEventPanel) event).getNotesA().getText(), ((EditEventPanel) event).getNameA().getText(), 
 							((EditEventPanel) event).getLocationA().getText(), d, ((EditEventPanel) event).getEvent().getGlobalEvent(), ((EditEventPanel) event).getEvent().getLockVersion() + 1);
 							
-			 		model.updateEvent(changedEvent, ((EditEventPanel) event).getEvent());
+			 		model.updateEvent(((EditEventPanel) event).getEvent(), changedEvent);
 			 		
 			 		if(model.getMeetingUpdateSuccessful() == true){
 						model.setMeetingUpdateSuccessful(false);
