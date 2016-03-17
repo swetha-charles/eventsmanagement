@@ -66,6 +66,7 @@ public class ListPanel extends JPanel{
 	JPanel top = new JPanel();
 	JLabel date;
 	JButton addEvent = new JButton("+");
+	JButton refresh = new JButton("Refresh");
 	
 	JPanel changeDay = new JPanel();
 	JButton previous = new JButton("Previous Day");
@@ -101,6 +102,9 @@ public class ListPanel extends JPanel{
 		addEvent.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
 		addEvent.setMinimumSize(new Dimension(35,35));
 		addEvent.setMaximumSize(new Dimension(35,35));
+		refresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
+		refresh.setMinimumSize(new Dimension(50,35));
+		refresh.setMaximumSize(new Dimension(50,35));
 		
 		//creates panel containing date label and addEvent button
 		top.setMaximumSize(new Dimension(900,70));
@@ -109,6 +113,8 @@ public class ListPanel extends JPanel{
 		top.add(date);
 		top.add(Box.createRigidArea(new Dimension(20,0)));
 		top.add(addEvent);
+		top.add(Box.createRigidArea(new Dimension(200,0)));
+		top.add(refresh);
 		
 		//updates model with the meetings for today and adds them to panel list
 		model.updateMeetings(new Date(c.getTimeInMillis()));
@@ -140,6 +146,7 @@ public class ListPanel extends JPanel{
 		
 		previous.addActionListener((e) -> {
 			c.add(Calendar.DATE, -1);
+			setC(c);
 			setDate();
 			model.updateMeetings(new Date(c.getTimeInMillis()));
 			addMeetings(model.getMeetings());
@@ -148,6 +155,7 @@ public class ListPanel extends JPanel{
 		
 		next.addActionListener((e) -> {
 			c.add(Calendar.DATE, 1);
+			setC(c);
 			setDate();
 			model.updateMeetings(new Date(c.getTimeInMillis()));
 			addMeetings(model.getMeetings());
@@ -162,7 +170,12 @@ public class ListPanel extends JPanel{
 			event.setMinimumSize(new Dimension(500,260));
 			event.setMaximumSize(new Dimension(500,260));
 			setEvent(eventPopup, 1);
-	});
+		});
+		
+		refresh.addActionListener((e) -> {
+			model.updateMeetings(new Date(getC().getTimeInMillis()));
+			addMeetings(model.getMeetings());
+		});
 		
 //		submit.addActionListener((e) -> ;
 	}
@@ -196,8 +209,13 @@ public class ListPanel extends JPanel{
 					}
 					System.out.println("new date d = " + d.toString());
 					
-					if (((NewEvent) event).getGlobal().getState());
-					model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(), ((NewEvent) event).getNameA().getText(), ((NewEvent) event).getLocationA().getText(), d, true));
+					if (((NewEvent) event).getGlobal() == true){
+						model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(), ((NewEvent) event).getNameA().getText(), 
+								((NewEvent) event).getLocationA().getText(), d, true, 1));
+					} else {
+						model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(), ((NewEvent) event).getNameA().getText(), 
+								((NewEvent) event).getLocationA().getText(), d, false, 1));
+					}
 					
 					if(model.getMeetingCreationSuccessful() == true){
 						model.setMeetingCreationSuccessful(false);
@@ -226,9 +244,9 @@ public class ListPanel extends JPanel{
 					}
 			 		
 					Event changedEvent = new Event(st, et, ((EditEventPanel) event).getNotesA().getText(), ((EditEventPanel) event).getNameA().getText(), 
-							((EditEventPanel) event).getLocationA().getText(), d, ((EditEventPanel) event).getEvent().getGlobalEvent());
+							((EditEventPanel) event).getLocationA().getText(), d, ((EditEventPanel) event).getEvent().getGlobalEvent(), ((EditEventPanel) event).getEvent().getLockVersion() + 1);
 							
-			 		model.updateEvent(((EditEventPanel) event).getEvent(), changedEvent);
+			 		model.updateEvent(changedEvent, ((EditEventPanel) event).getEvent());
 			 		
 			 		if(model.getMeetingUpdateSuccessful() == true){
 						model.setMeetingUpdateSuccessful(false);
@@ -239,7 +257,8 @@ public class ListPanel extends JPanel{
 					} else {
 						JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be changed.");
 					}
-			 	}	
+			 	}
+			 	
 		} else {
 			
 			int result = JOptionPane.showConfirmDialog(this, event, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -286,9 +305,22 @@ public class ListPanel extends JPanel{
 		} else {
 			
 			for(int i=0; i<arraylist.size(); i++){
-			
+
+				JLabel title = new JLabel();
+				
+				if(arraylist.get(i).getGlobalEvent() == true){
+					String s = arraylist.get(i).getEventTitle() + " - Global Event!";
+					title.setText(s);
+					title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
+					title.setForeground(Color.ORANGE);
+				} else {
+					title.setText(arraylist.get(i).getEventTitle());
+					title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
+					title.setForeground(Color.RED);
+				}
+				
 				//creates new JLabel of event name for each event
-				JLabel title = new JLabel(arraylist.get(i).getEventTitle());
+				
 				String a = "Notes :  " + arraylist.get(i).getEventDescription();
 				JLabel description = new JLabel(a);
 				String b = "Location :  " + arraylist.get(i).getLocation();
@@ -296,13 +328,11 @@ public class ListPanel extends JPanel{
 				JButton edit = new JButton("Edit event");
 				JButton delete = new JButton("Delete event");
 				
-				title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
 				description.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				location.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				delete.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				
-				title.setForeground(Color.RED);
 				description.setForeground(Color.DARK_GRAY);
 				location.setForeground(Color.DARK_GRAY);
 			
@@ -450,5 +480,14 @@ public static String getDate(int day, int date, int month, int year){
 		
 	}
 	
+	//--------------------------getters and setters-------------------------------------//
+	
+	public Calendar getC() {
+		return c;
+	}
+
+	public void setC(Calendar c) {
+		this.c = c;
+	}
 
 }

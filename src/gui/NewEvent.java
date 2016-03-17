@@ -1,6 +1,8 @@
 package gui;
 
+import java.awt.Checkbox;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -50,7 +52,7 @@ public class NewEvent extends JPanel{
 	JTextField eminutesA;
 	JTextField locationA;
 	JTextField notesA;
-	JCheckBox global;
+	Checkbox global;
 	
 	
 	public NewEvent(Client controller, Model model){
@@ -121,7 +123,7 @@ public class NewEvent extends JPanel{
 		fullEndTime.add(Box.createRigidArea(new Dimension(30, 0)));
 		fullEndTime.add(eminutesA);
 		
-		global = new JCheckBox("Make meeting global");
+		global = new Checkbox("Make meeting global");
 		global.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		
 		detailsPanel.setLayout(new GridLayout(7,2));
@@ -199,8 +201,8 @@ public class NewEvent extends JPanel{
 		return notesA;
 	}
 	
-	public JCheckBox getGlobal() {
-		return global;
+	public boolean getGlobal() {
+		return global.getState();
 	}
 
 	public class JTextFieldLimit extends PlainDocument {
