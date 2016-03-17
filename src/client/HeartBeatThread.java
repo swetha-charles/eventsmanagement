@@ -15,9 +15,7 @@ public class HeartBeatThread implements Runnable {
 				// send heartbeat every 1 second
 				Thread.currentThread();
 				Thread.sleep(1000);
-				if(!client.isBusy()){
-					this.client.sendHeartBeat();
-				}
+				this.client.sendHeartBeat();
 			} catch (InterruptedException e) {
 				System.out.println("Heartbeat was interrupted and is going to sleep");
 				this.running = false;
@@ -26,7 +24,7 @@ public class HeartBeatThread implements Runnable {
 		System.out.println("HBThread stopped");
 	}
 
-	public void setRunningToFalse(){
+	public void setRunningToFalse() {
 		System.out.println("HBThread asked to stop");
 		this.running = false;
 		System.out.println("HBThread running set to false");
