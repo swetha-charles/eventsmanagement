@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.JLabel;
@@ -24,6 +25,7 @@ public class DeleteEvent extends JPanel{
 		this.model = model;
 		this.event = event;
 		
+		setPreferredSize(new Dimension(500,260));
 		headingLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 18));
 		headingLabel.setForeground(Color.DARK_GRAY);
 		
