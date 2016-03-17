@@ -14,13 +14,28 @@ import java.util.concurrent.TimeoutException;
  * @author tmd668
  *
  */
-public class OTHeartBeat extends ObjectTransferrable implements Future{
+public class OTHeartBeat extends ObjectTransferrable implements Future<Boolean>{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8354488291813438349L;
 
 	/**
 	 * @param opCode
 	 */
 	public OTHeartBeat() {
 		super("0014");
+	}
+	
+	@Override
+	public Boolean get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		String opcode = this.getOpCode();
+		if(opcode.equals("0014")){
+			return true;
+		} else {
+			throw new IllegalArgumentException();			
+		}
 	}
 
 	@Override
@@ -42,19 +57,10 @@ public class OTHeartBeat extends ObjectTransferrable implements Future{
 	}
 
 	@Override
-	public Object get() throws InterruptedException, ExecutionException {
+	public Boolean get() throws InterruptedException, ExecutionException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		String opcode = this.getOpCode();
-		if(opcode.equals("0014")){
-			return true;
-		} else {
-			throw new IllegalArgumentException();			
-		}
-	}
-
+	
 }
