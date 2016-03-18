@@ -249,6 +249,8 @@ public class QueryManager {
 	private ObjectTransferrable deleteEvent(Statement stmnt, Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTDeleteEvent classifiedOperation = (OTDeleteEvent) operation;
 		Event eventToDelete = classifiedOperation.getEvent();
+		getServer().getServerModel().addToText("Event Title: " + eventToDelete.getEventTitle() + "\n");
+		getServer().getServerModel().addToText("Global event marker: " + eventToDelete.getGlobalEvent() + "\n");
 		try {
 			if(getAMeeting(con, eventToDelete, client)){
 				String creator;
@@ -263,13 +265,13 @@ public class QueryManager {
 
 				String update = "DELETE FROM meetings " 
 						+"WHERE creatorID= '" + client.getUserName() 
-						+ "', meetingDate= '"+eventToDelete.getDate().toString()
-						+"', meetingTitle= '"+eventToDelete.getEventTitle()
-						+"', meetingDescription= '"+eventToDelete.getEventDescription()
-						+"', meetingLocation= '"+eventToDelete.getLocation()
-						+"', meetingStartTime= '"+eventToDelete.getStartTime().toString()
-						+"', meetingEndTime=, '"+eventToDelete.getEndTime().toString()
-						+"', lockVersion=, "+eventToDelete.getLockVersion()
+						+"' AND meetingDate= '"+eventToDelete.getDate().toString()
+						+"' AND meetingTitle= '"+eventToDelete.getEventTitle()
+						+"' AND meetingDescription= '"+eventToDelete.getEventDescription()
+						+"' AND meetingLocation= '"+eventToDelete.getLocation()
+						+"' AND meetingStartTime= '"+eventToDelete.getStartTime().toString()
+						+"' AND meetingEndTime= '"+eventToDelete.getEndTime().toString()
+						+"' AND lockVersion= "+eventToDelete.getLockVersion()
 						+"";
 
 				getServer().getServerModel()
@@ -381,6 +383,7 @@ public class QueryManager {
 		meetingQuery = con.prepareStatement(query);
 
 		String creator;
+		
 		if(event.getGlobalEvent()){
 			creator = "global";
 		} else {
