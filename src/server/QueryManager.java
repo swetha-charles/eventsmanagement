@@ -335,7 +335,7 @@ public class QueryManager {
 
 
 				PreparedStatement updateEvent = con.prepareStatement(update);
-				
+
 				updateEvent.setDate(1, newDate);
 				updateEvent.setString(2, newEventTitle);
 				updateEvent.setString(3, newEventDescription);
@@ -343,7 +343,7 @@ public class QueryManager {
 				updateEvent.setTime(5, newStartTime);
 				updateEvent.setTime(6, newEndTime);
 				updateEvent.setInt(7, newLockVersion);
-				
+
 				updateEvent.setString(8, creator);
 				updateEvent.setDate(9, oldDate);
 				updateEvent.setString(10, oldEventTitle);
@@ -352,7 +352,7 @@ public class QueryManager {
 				updateEvent.setTime(13, oldStartTime);
 				updateEvent.setTime(14, oldEndTime);
 				updateEvent.setInt(15, oldLockVersion);
-				
+
 				getServer().getServerModel().addToText("QUERY: " +updateEvent.toString()+"\n");
 				updateEvent.executeUpdate();
 				getServer().getServerModel().addToText("Successfully updated event\n");
@@ -378,12 +378,12 @@ public class QueryManager {
 
 		PreparedStatement meetingQuery;
 
-		
-		
+
+
 		meetingQuery = con.prepareStatement(query);
 
 		String creator;
-		
+
 		if(event.getGlobalEvent()){
 			creator = "global";
 		} else {
@@ -398,18 +398,18 @@ public class QueryManager {
 		meetingQuery.setTime(6, event.getStartTime());
 		meetingQuery.setTime(7, event.getEndTime());
 		meetingQuery.setInt(8, event.getLockVersion());
-		
+
 		getServer().getServerModel().addToText("Lock Version of received event: " + event.getLockVersion() + "\n");
 		getServer().getServerModel().addToText("Creator of received event: " + creator + "\n");
 		getServer().getServerModel().addToText("QUERY: " + meetingQuery.toString() + "\n");
-		
+
 		ResultSet rs = meetingQuery.executeQuery();
 
 		if (rs.next()) {
 			getServer().getServerModel().addToText("Found matching meeting, returning true.\n");
 			return true;
 		} else {
-			
+
 			getServer().getServerModel().addToText("Found no such meeting, returning false.\n");
 			return false;
 		}
@@ -457,67 +457,91 @@ public class QueryManager {
 
 	private ObjectTransferrable checkUsername(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
 		OTUsernameCheck classifiedOperation = (OTUsernameCheck) operation;
-		getServer().getServerModel()
-		.addToText("Checking to see if " + classifiedOperation.getUsername() + " is in the database...\n");
-		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = '"
-				+ classifiedOperation.getUsername() + "'";
 		try {
-			ResultSet rs = stmnt.executeQuery(query);
-
-			if (rs.next()) {
-				getServer().getServerModel().addToText("Found matching username, returning true.\n");
+			if(checkForUserExistance(stmnt, classifiedOperation.getUsername(), client)){
 				classifiedOperation.setAlreadyExists(true);
 			} else {
-				getServer().getServerModel().addToText("Found no such user, returning false.\n");
 				classifiedOperation.setAlreadyExists(false);
 			}
 			return classifiedOperation;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return new OTErrorResponse("SQL Server failed with username query", false);
+			return new OTErrorResponse("SQL failed with username query", false);
+		}
+	}
+
+	private synchronized boolean checkForUserExistance(Statement stmnt, String username, ClientInfo client) throws SQLException{
+		getServer().getServerModel()
+		.addToText("Checking to see if " + username + " is in the database...\n");
+
+		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = '"
+				+ username + "'";
+
+		ResultSet rs = stmnt.executeQuery(query);
+
+		if (rs.next()) {
+			getServer().getServerModel().addToText("Found matching username, returning true.\n");
+			return true;
+		} else {
+			getServer().getServerModel().addToText("Found no such user, returning false.\n");
+			return false;
 		}
 	}
 
 	private ObjectTransferrable checkEmailvalid(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
 		OTEmailCheck classifiedOperation = (OTEmailCheck) operation;
-		getServer().getServerModel().addToText("Email received: " + classifiedOperation.getEmail() + "\n");
-		// not sure what field name of email is? inserted guess
-		String query = "SELECT count(u.userEmail) " + "FROM users u " + "GROUP BY u.userEmail "
-				+ "HAVING u.userEmail = '" + classifiedOperation.getEmail() + "'";
-
-		getServer().getServerModel().addToText(query);
 		try {
-			ResultSet rs = stmnt.executeQuery(query);
-
-			if (rs.next()) {
-				getServer().getServerModel().addToText("Email exists, returning true.\n");
+			if(checkForEmailExistance(stmnt, classifiedOperation.getEmail(), client)){
 				classifiedOperation.setAlreadyExists(true);
 			} else {
-				getServer().getServerModel().addToText("Email not in use, returning false.\n");
 				classifiedOperation.setAlreadyExists(false);
 			}
 			return classifiedOperation;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return new OTErrorResponse("SQL Server failed with email query", false);	
+			return new OTErrorResponse("SQL failed with email query", false);
 		}
 	}
 
-	private ObjectTransferrable checkRegistration(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private synchronized boolean checkForEmailExistance(Statement stmnt, String email, ClientInfo client) throws SQLException {
+		getServer().getServerModel().addToText("Checking to see if: " + email + " is in the database\n");
+
+		String query = "SELECT count(u.userEmail) " + "FROM users u " + "GROUP BY u.userEmail "
+				+ "HAVING u.userEmail = '" + email + "'";
+
+		ResultSet rs = stmnt.executeQuery(query);
+
+		if (rs.next()) {
+			getServer().getServerModel().addToText("Email exists, returning true.\n");
+			return true;
+		} else {
+			getServer().getServerModel().addToText("Email not in use, returning false.\n");
+			return false;
+		}
+	}
+	private synchronized ObjectTransferrable checkRegistration(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation) operation;
 		getServer().getServerModel()
 		.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
-		String update = "INSERT INTO users VALUES ('" + classifiedOperation.getUsername() + "', '"
-				+ classifiedOperation.getPwHash() + "', '" + classifiedOperation.getFirstname() + "', '"
-				+ classifiedOperation.getLastname() + "', '" + classifiedOperation.getEmail() + "')";
 		try {
-			stmnt.executeUpdate(update);
-			getServer().getServerModel().addToText("Succesfully created user");
-			return new OTRegistrationInformationConfirmation(true, null, null);
+			if(!checkForUserExistance(stmnt, classifiedOperation.getUsername(), client)){
+				if(!checkForEmailExistance(stmnt, classifiedOperation.getEmail(), client)){
+					String update = "INSERT INTO users VALUES ('" + classifiedOperation.getUsername() + "', '"
+							+ classifiedOperation.getPwHash() + "', '" + classifiedOperation.getFirstname() + "', '"
+							+ classifiedOperation.getLastname() + "', '" + classifiedOperation.getEmail() + "')";
+					stmnt.executeUpdate(update);
+					getServer().getServerModel().addToText("Succesfully created user");
+					return new OTRegistrationInformationConfirmation(true, null, null);
+				} else {
+					return new OTRegistrationInformationConfirmation(false, null, "Email already exists");
+				}
+			} else {
+				return new OTRegistrationInformationConfirmation(false, null, "Username already exists");
+			}
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't create user");
 			e.printStackTrace();
-			return new OTRegistrationInformationConfirmation(false, "ERROR", "ERROR");
+			return new OTErrorResponse("Error with SQL query", false);
 		}
 
 	}
