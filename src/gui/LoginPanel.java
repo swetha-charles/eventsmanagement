@@ -5,21 +5,20 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.Document;
 
 import client.Client;
 import listener.interfaces.MouseClickedListener;
@@ -53,6 +52,18 @@ public class LoginPanel extends JPanel{
 	public LoginPanel(Client client, Model model){
 		this.client= client;
 		this.model = model;
+		//sets a character limit on username textfield
+		AbstractDocument usernameDoc = (AbstractDocument) username.getDocument();
+		if (usernameDoc instanceof AbstractDocument) {
+			usernameDoc = (AbstractDocument)usernameDoc;
+			usernameDoc.setDocumentFilter(new DocumentSizeFilter(20));
+		} 
+		//sets a character limit on the password textfield
+		AbstractDocument passwordDoc = (AbstractDocument) password.getDocument();
+		if (passwordDoc instanceof AbstractDocument) {
+			passwordDoc = (AbstractDocument)passwordDoc;
+			passwordDoc.setDocumentFilter(new DocumentSizeFilter(60));
+		} 
 		//sets the dimension of the login panel
 		setPreferredSize(new Dimension(420,410));
 		setMinimumSize(new Dimension(420,410));
