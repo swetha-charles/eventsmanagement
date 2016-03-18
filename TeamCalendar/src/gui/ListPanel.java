@@ -84,6 +84,7 @@ public class ListPanel extends JPanel {
 
 		this.controller = controller;
 		this.model = model;
+		this.model.setCalendar(this.c);
 
 		// sets dimension and layout of the panel
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
@@ -443,8 +444,7 @@ public class ListPanel extends JPanel {
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
-		Time time = new Time(((h-1) * 3600000) + (m * 60000));
-		return time;
+		return new Time((h * 3600000) + (m * 60000));
 	}
 
 	public Date stringToDate(String day, String month, String year) {
@@ -460,6 +460,7 @@ public class ListPanel extends JPanel {
 
 	public void setC(Calendar c) {
 		this.c = c;
+		this.model.setCalendar(this.c);
 	}
 
 	public void closeDialog() {
@@ -474,8 +475,8 @@ public class ListPanel extends JPanel {
 		saveUserEdits.setSize(500, 300);
 		saveUserEdits.setVisible(true);
 		saveUserEdits.setAlwaysOnTop(true);
-		
 	}
+	
 	public void changeModality(boolean bool){
 		dialog.setModal(bool);
 	}

@@ -185,7 +185,7 @@ public class NewEvent extends JPanel {
 									model.updateMeetings(new Date(this.listPanel.getC().getTimeInMillis()));
 									this.listPanel.addMeetings(model.getMeetings());
 
-									JOptionPane.showConfirmDialog(this, "Meeting successfully created!");
+									JOptionPane.showMessageDialog(this, "Meeting successfully created!");
 									this.setVisible(false);
 									this.setEnabled(false);
 									this.listPanel.closeDialog();
