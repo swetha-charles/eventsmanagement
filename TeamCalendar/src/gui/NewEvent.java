@@ -2,12 +2,14 @@ package gui;
 
 import java.awt.Checkbox;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,7 +18,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -71,7 +75,7 @@ public class NewEvent extends JPanel {
 	JTextField ehoursA;
 	JTextField eminutesA;
 	JTextField locationA;
-	JTextField notesA;
+	JTextArea notesA;
 	Checkbox global;
 	JPanel userResponse;
 	JButton submit;
@@ -99,9 +103,9 @@ public class NewEvent extends JPanel {
 		eminutesA = new JTextField();
 		eminutesA.setDocument(new JTextFieldLimit(2));
 		locationA = new JTextField();
-		notesA = new JTextField();
+		notesA = new JTextArea();
 
-		setPreferredSize(new Dimension(600, 320));
+		setPreferredSize(new Dimension(600, 400));
 
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
@@ -227,7 +231,7 @@ public class NewEvent extends JPanel {
 		userResponse.add(submit);
 		userResponse.add(cancel);
 
-		detailsPanel.setLayout(new GridLayout(7, 2));
+		detailsPanel.setLayout(new GridLayout(6, 2));
 		detailsPanel.setPreferredSize(new Dimension(500, 220));
 		detailsPanel.setMaximumSize(new Dimension(500, 220));
 		detailsPanel.setMinimumSize(new Dimension(500, 220));
@@ -241,9 +245,19 @@ public class NewEvent extends JPanel {
 		detailsPanel.add(fullEndTime);
 		detailsPanel.add(password);
 		detailsPanel.add(locationA);
-		detailsPanel.add(notes);
-		detailsPanel.add(notesA);
 		detailsPanel.add(global);
+		
+		Border line = BorderFactory.createLineBorder(Color.GRAY);
+		JPanel notesPanel = new JPanel();
+		notesA.setBorder(line);
+		notesA.setLineWrap(true);
+		notesPanel.setLayout(new GridLayout(1, 2));
+		notesPanel.setPreferredSize(new Dimension(480, 70));
+		notesPanel.setMaximumSize(new Dimension(480, 70));
+		notesPanel.setMinimumSize(new Dimension(480, 70));
+		notesPanel.add(notes);
+		notes.setAlignmentY(Component.TOP_ALIGNMENT);
+		notesPanel.add(notesA);
 
 		comment.setMaximumSize(new Dimension(600, 40));
 		comment.setMinimumSize(new Dimension(600, 40));
@@ -254,6 +268,7 @@ public class NewEvent extends JPanel {
 
 		add(comment);
 		add(detailsPanel);
+		add(notesPanel);
 		add(userResponse);
 
 	}
@@ -294,7 +309,7 @@ public class NewEvent extends JPanel {
 		return locationA;
 	}
 
-	public JTextField getNotesA() {
+	public JTextArea getNotesA() {
 		return notesA;
 	}
 
