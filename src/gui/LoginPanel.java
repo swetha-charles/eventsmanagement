@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
@@ -38,7 +39,7 @@ public class LoginPanel extends JPanel{
 	JPasswordField password = new JPasswordField();
 	JLabel userLabel = new JLabel("Username");
 	JLabel passwordLabel = new JLabel("Password");
-	JPanel userPanel = new JPanel();
+	JPanel userAndPasswordPanel = new JPanel();
 	JPanel passwordPanel = new JPanel();
 	JPanel logoPanel = new JPanel();
 	JLabel error = new JLabel("");
@@ -67,8 +68,8 @@ public class LoginPanel extends JPanel{
 				
 		//sets the dimension of the user and password panels
 		Dimension size2 = new Dimension(400, 40);
-		userPanel.setMaximumSize(size2);
-		userPanel.setMinimumSize(size2);
+		userAndPasswordPanel.setMaximumSize(size2);
+		userAndPasswordPanel.setMinimumSize(size2);
 		passwordPanel.setMaximumSize(size2);
 		passwordPanel.setMinimumSize(size2);
 		Dimension size3 = new Dimension(120, 40);
@@ -84,7 +85,7 @@ public class LoginPanel extends JPanel{
 		
 		//sets background colours of panels
 		setBackground(Color.DARK_GRAY);
-		userPanel.setBackground(Color.DARK_GRAY);
+		userAndPasswordPanel.setBackground(Color.DARK_GRAY);
 		passwordPanel.setBackground(Color.DARK_GRAY);
 		logoPanel.setBackground(Color.DARK_GRAY);
 		
@@ -107,33 +108,73 @@ public class LoginPanel extends JPanel{
 		login.setPreferredSize(new Dimension(100,40));
 		
 		//adds Labels and text fields to user and password panels
-		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
-		passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.LINE_AXIS));
-		userPanel.add(userLabel);
-		passwordPanel.add(passwordLabel);
-		userPanel.add(username);
-		passwordPanel.add(password);
+		userAndPasswordPanel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		gbc.anchor = GridBagConstraints.LINE_START;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.ipadx = 10;
+		//gbc.ipady = 10;
+		//gbc.insets = new Insets(0,0,5,0);
+		userAndPasswordPanel.add(userLabel, gbc);
+		
+		gbc.anchor = GridBagConstraints.PAGE_START;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.ipadx = 0;
+		//gbc.ipady = 10;
+		//gbc.insets = new Insets(0,0,5,0);
+		userAndPasswordPanel.add(username, gbc);
+		
+		gbc.anchor = GridBagConstraints.LINE_START;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.ipadx = 10;
+		//gbc.ipady = 10;
+		//gbc.insets = new Insets(0,0,5,0);	
+		userAndPasswordPanel.add(passwordLabel, gbc);
+		
+		gbc.anchor = GridBagConstraints.PAGE_START;
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.ipadx = 0;
+		//gbc.ipady = 10;
+		//gbc.insets = new Insets(0,0,5,0);
+		userAndPasswordPanel.add(password, gbc);
+		
 		
 		//sets layout of loginPanel 
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
-		GridBagConstraints gbc = new GridBagConstraints();
+		gbc = new GridBagConstraints();
 		
 		//adds all panels and button to loginPanel
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		add(logoPanel, gbc);
+		
 		gbc.gridx = 1;
 		gbc.gridy = 2;
-		add(userPanel, gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 3;
-		add(passwordPanel, gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 4;
-		add(login, gbc);
+		gbc.gridwidth = 3;
+		gbc.ipadx = 30;
+		gbc.ipady = 30;
+		gbc.anchor = GridBagConstraints.LINE_START;
+		add(userAndPasswordPanel, gbc);
+		
 		gbc.gridx = 1;
 		gbc.gridy = 5;
+		gbc.gridwidth = 1;
+		gbc.ipadx = 0;
+		gbc.ipady = 0;
+		gbc.insets = new Insets(0,0,0,0);
+		gbc.anchor = GridBagConstraints.CENTER;
+		add(login, gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = 7;
+		//gbc.insets = new Insets(5,5,5,5);
+		gbc.anchor = GridBagConstraints.CENTER;
 		add(signup, gbc);
 		
 		//---------------------------------Lambda Listeners------------------------------------------------------//
