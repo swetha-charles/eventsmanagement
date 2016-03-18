@@ -14,6 +14,7 @@ public class DataValidation {
 		}
 
 		return true;
+		
 	}
 
 	private static String escape(String str) {
