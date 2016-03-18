@@ -88,6 +88,7 @@ public class NewEvent extends JPanel {
 		this.listPanel = listPanel;
 
 		nameA = new JTextField();
+		nameA.setDocument(new JTextFieldLimit(50));
 		dateA = new JTextField();
 		dateA.setDocument(new JTextFieldLimit(2));
 		monthA = new JTextField();
@@ -103,7 +104,9 @@ public class NewEvent extends JPanel {
 		eminutesA = new JTextField();
 		eminutesA.setDocument(new JTextFieldLimit(2));
 		locationA = new JTextField();
+		locationA.setDocument(new JTextFieldLimit(200));
 		notesA = new JTextArea();
+		notesA.setDocument(new JTextFieldLimit(200));
 
 		setPreferredSize(new Dimension(600, 400));
 

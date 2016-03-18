@@ -74,7 +74,9 @@ public class EditEventPanel extends JPanel {
 		this.event = event;
 		this.listPanel = listPanel;
 
-		nameA = new JTextField(event.getEventTitle());
+		nameA = new JTextField();
+		nameA.setDocument(new JTextFieldLimit(50));
+		nameA.setText(event.getEventTitle());
 		String a = event.getDate().toString().substring(8, 10);
 		dateA = new JTextField();
 		dateA.setDocument(new JTextFieldLimit(2));
@@ -103,8 +105,12 @@ public class EditEventPanel extends JPanel {
 		eminutesA = new JTextField();
 		eminutesA.setDocument(new JTextFieldLimit(2));
 		eminutesA.setText(g);
-		locationA = new JTextField(event.getLocation());
-		notesA = new JTextArea(event.getEventDescription(), 4, 50);
+		locationA = new JTextField();
+		locationA.setDocument(new JTextFieldLimit(200));
+		locationA.setText(event.getLocation());
+		notesA = new JTextArea( 4, 50);
+		notesA.setDocument(new JTextFieldLimit(200));
+		notesA.setText(event.getEventDescription());
 
 		setPreferredSize(new Dimension(600, 350));
 
