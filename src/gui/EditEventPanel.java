@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -10,14 +11,17 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.border.Border;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -58,7 +62,7 @@ public class EditEventPanel extends JPanel {
 	JTextField ehoursA;
 	JTextField eminutesA;
 	JTextField locationA;
-	JTextField notesA;
+	JTextArea notesA;
 	JPanel userResponse;
 
 	JButton submit = new JButton("Confirm Changes");
@@ -100,9 +104,9 @@ public class EditEventPanel extends JPanel {
 		eminutesA.setDocument(new JTextFieldLimit(2));
 		eminutesA.setText(g);
 		locationA = new JTextField(event.getLocation());
-		notesA = new JTextField(event.getEventDescription());
+		notesA = new JTextArea(event.getEventDescription(), 4, 50);
 
-		setPreferredSize(new Dimension(600, 300));
+		setPreferredSize(new Dimension(600, 350));
 
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
@@ -228,10 +232,10 @@ public class EditEventPanel extends JPanel {
 		userResponse.add(submit);
 		userResponse.add(cancel);
 
-		detailsPanel.setLayout(new GridLayout(6, 2));
-		detailsPanel.setPreferredSize(new Dimension(500, 200));
-		detailsPanel.setMaximumSize(new Dimension(500, 200));
-		detailsPanel.setMinimumSize(new Dimension(500, 200));
+		detailsPanel.setLayout(new GridLayout(5, 2));
+		detailsPanel.setPreferredSize(new Dimension(500, 170));
+		detailsPanel.setMaximumSize(new Dimension(500, 170));
+		detailsPanel.setMinimumSize(new Dimension(500, 1700));
 		detailsPanel.add(firstName);
 		detailsPanel.add(nameA);
 		detailsPanel.add(date);
@@ -242,8 +246,18 @@ public class EditEventPanel extends JPanel {
 		detailsPanel.add(fullEndTime);
 		detailsPanel.add(password);
 		detailsPanel.add(locationA);
-		detailsPanel.add(notes);
-		detailsPanel.add(notesA);
+		
+		Border line = BorderFactory.createLineBorder(Color.GRAY);
+		JPanel notesPanel = new JPanel();
+		notesA.setBorder(line);
+		notesA.setLineWrap(true);
+		notesPanel.setLayout(new GridLayout(1, 2));
+		notesPanel.setPreferredSize(new Dimension(480, 70));
+		notesPanel.setMaximumSize(new Dimension(480, 70));
+		notesPanel.setMinimumSize(new Dimension(480, 70));
+		notesPanel.add(notes);
+		notes.setAlignmentY(Component.TOP_ALIGNMENT);
+		notesPanel.add(notesA);
 
 		comment.setMaximumSize(new Dimension(600, 40));
 		comment.setMinimumSize(new Dimension(600, 40));
@@ -254,6 +268,7 @@ public class EditEventPanel extends JPanel {
 
 		add(comment);
 		add(detailsPanel);
+		add(notesPanel);
 		add(userResponse);
 
 	}
@@ -298,7 +313,7 @@ public class EditEventPanel extends JPanel {
 		return locationA;
 	}
 
-	public JTextField getNotesA() {
+	public JTextArea getNotesA() {
 		return notesA;
 	}
 

@@ -25,7 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -170,12 +172,12 @@ public class ListPanel extends JPanel {
 			JDialog.setDefaultLookAndFeelDecorated(true);
 			NewEvent eventPopup = new NewEvent(controller, model, this);
 			event.setLayout(new GridLayout(7, 2));
-			event.setPreferredSize(new Dimension(500, 260));
-			event.setMinimumSize(new Dimension(500, 260));
-			event.setMaximumSize(new Dimension(500, 260));
+			event.setPreferredSize(new Dimension(500, 320));
+			event.setMinimumSize(new Dimension(500, 320));
+			event.setMaximumSize(new Dimension(500, 320));
 			dialog = new JDialog();
 			dialog.add(eventPopup);
-			dialog.setSize(600, 320);
+			dialog.setSize(600, 400);
 			dialog.setResizable(false);
 			// getting the bloody thing to turn up in the center
 			final Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -240,7 +242,11 @@ public class ListPanel extends JPanel {
 				// creates new JLabel of event name for each event
 
 				String a = "Notes :  " + arraylist.get(i).getEventDescription();
-				JLabel description = new JLabel(a);
+				JTextArea description = new JTextArea(a);
+				description.setLineWrap(true);
+				description.setEditable(false);
+//				description.setMaximumSize(new Dimension(100,100));
+//				description.setMinimumSize(new Dimension(100,100));
 				String b = "Location :  " + arraylist.get(i).getLocation();
 				JLabel location = new JLabel(b);
 				JButton edit = new JButton("Edit event");
@@ -262,20 +268,26 @@ public class ListPanel extends JPanel {
 
 				// creates new JPanel with title border
 				JPanel p = new JPanel();
-				p.setMaximumSize(new Dimension(890, 200));
-				p.setMinimumSize(new Dimension(890, 200));
+//				p.setMaximumSize(new Dimension(890, 200));
+//				p.setMinimumSize(new Dimension(890, 200));
 				p.setBorder(border);
 				p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+				p.setBackground(Color.WHITE);
 
 				// adds Jlabel to JPanel and adds to events arraylist
 				p.add(title);
+				title.setAlignmentX(Component.LEFT_ALIGNMENT);
 				p.add(Box.createRigidArea(new Dimension(0, 10)));
 				p.add(location);
+				location.setAlignmentX(Component.LEFT_ALIGNMENT);
 				p.add(Box.createRigidArea(new Dimension(0, 5)));
 				p.add(description);
+				description.setAlignmentX(Component.LEFT_ALIGNMENT);
 				p.add(Box.createRigidArea(new Dimension(0, 10)));
 				p.add(edit);
+				edit.setAlignmentX(Component.LEFT_ALIGNMENT);
 				p.add(delete);
+				delete.setAlignmentX(Component.LEFT_ALIGNMENT);
 				events.add(p);
 				Event clickedevent = arraylist.get(i);
 
@@ -290,7 +302,7 @@ public class ListPanel extends JPanel {
 					dialog = new JDialog();
 					dialog.setModal(true);
 					dialog.add(editEventPopup);
-					dialog.setSize(600, 300);
+					dialog.setSize(600, 350);
 					dialog.setResizable(false);
 					// getting the bloody thing to turn up in the center
 					final Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -324,6 +336,7 @@ public class ListPanel extends JPanel {
 			}
 
 			list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
+			list.setBackground(Color.WHITE);
 
 			for (int i = 0; i < events.size(); i++) {
 				list.add(events.get(i));
