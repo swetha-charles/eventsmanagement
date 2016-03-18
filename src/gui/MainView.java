@@ -83,7 +83,7 @@ public class MainView extends JFrame implements Observer {
 			this.dispose();
 
 		} else {
-			this.setContentPane(model.getCurrentPanel());
+			this.setContentPane(model.getCurrentScrollPanel());
 			this.validate();
 		}
 

@@ -189,6 +189,8 @@ public class EditEventPanel extends JPanel {
 									this.listPanel.closeDialog();
 									model.updateMeetings(new Date(listPanel.getC().getTimeInMillis()));
 									this.listPanel.addMeetings(model.getMeetings());
+									this.repaint();
+									this.revalidate();
 								}
 							}
 						} else {
