@@ -150,7 +150,7 @@ public class EditEventPanel extends JPanel {
 			if (this.model.validateChangedStartTime(startTimeHours, startTimeMinutes)) {
 				Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
 				String endTimeHours = getEhoursA().getText();
-				String endTimeMinutes = getSminutesA().getText();
+				String endTimeMinutes = getEminutesA().getText();
 
 				// Validate End Time
 				if (this.model.validateChangedEndTime(endTimeHours, endTimeMinutes)) {
@@ -296,7 +296,8 @@ public class EditEventPanel extends JPanel {
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
-		return new Time((h * 3600000) + (m * 60000));
+		Time time = new Time(((h-1) * 3600000) + (m * 60000));
+		return time;
 	}
 
 	public Date stringToDate(String day, String month, String year) {
