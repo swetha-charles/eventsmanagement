@@ -181,6 +181,8 @@ public class Client {
 				this.model.changeCurrentState(ModelState.LOGIN);
 			} else {
 				this.model.setSuccessfulRegistration(false);
+				JOptionPane.showMessageDialog(model.getCurrentScrollPanel(), "Sorry, another user with the same username was just created! \n "
+						+ "Change the username and try again!");
 			}
 			break;
 		case "0009":
