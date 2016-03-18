@@ -89,27 +89,36 @@ public class RegistrationPanel extends JPanel {
 			passwordDoc = (AbstractDocument) passwordDoc;
 			passwordDoc.setDocumentFilter(new DocumentSizeFilter(60));
 		}
+		
+		// sets a character limit on password textfield (limit 30)
+		AbstractDocument confirmDoc = (AbstractDocument) confirm.getDocument();
+		if (confirmDoc instanceof AbstractDocument) {
+			confirmDoc = (AbstractDocument) confirmDoc;
+			confirmDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
 
 		// sets a character limit on first name textfield (limit 30)
-		AbstractDocument firstnameDoc = (AbstractDocument) username.getDocument();
+		AbstractDocument firstnameDoc = (AbstractDocument) firstName.getDocument();
 		if (firstnameDoc instanceof AbstractDocument) {
 			firstnameDoc = (AbstractDocument) firstnameDoc;
 			firstnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
 		}
 
 		// sets a character limit on last name textfield (limit 30)
-		AbstractDocument lastnameDoc = (AbstractDocument) username.getDocument();
+		AbstractDocument lastnameDoc = (AbstractDocument) lastName.getDocument();
 		if (lastnameDoc instanceof AbstractDocument) {
 			lastnameDoc = (AbstractDocument) lastnameDoc;
 			lastnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
 		}
 
 		// sets a character limit on email textfield (limit 30)
-		AbstractDocument emailDoc = (AbstractDocument) username.getDocument();
+		AbstractDocument emailDoc = (AbstractDocument) email.getDocument();
 		if (emailDoc instanceof AbstractDocument) {
 			emailDoc = (AbstractDocument) emailDoc;
 			emailDoc.setDocumentFilter(new DocumentSizeFilter(30));
 		}
+		
+		
 
 		// sets the dimension of the user and password panels
 		Dimension size2 = new Dimension(350, 50);
