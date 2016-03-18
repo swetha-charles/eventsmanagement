@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -74,6 +75,41 @@ public class RegistrationPanel extends JPanel {
 		// sets the dimension of the login panel
 		setPreferredSize(new Dimension(800, 500));
 		setMinimumSize(new Dimension(800, 500));
+
+		// sets a character limit on username textfield (limit 20)
+		AbstractDocument usernameDoc = (AbstractDocument) username.getDocument();
+		if (usernameDoc instanceof AbstractDocument) {
+			usernameDoc = (AbstractDocument) usernameDoc;
+			usernameDoc.setDocumentFilter(new DocumentSizeFilter(20));
+		}
+
+		// sets a character limit on password textfield (limit 60)
+		AbstractDocument passwordDoc = (AbstractDocument) password.getDocument();
+		if (passwordDoc instanceof AbstractDocument) {
+			passwordDoc = (AbstractDocument) passwordDoc;
+			passwordDoc.setDocumentFilter(new DocumentSizeFilter(60));
+		}
+
+		// sets a character limit on first name textfield (limit 30)
+		AbstractDocument firstnameDoc = (AbstractDocument) username.getDocument();
+		if (firstnameDoc instanceof AbstractDocument) {
+			firstnameDoc = (AbstractDocument) firstnameDoc;
+			firstnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+
+		// sets a character limit on last name textfield (limit 30)
+		AbstractDocument lastnameDoc = (AbstractDocument) username.getDocument();
+		if (lastnameDoc instanceof AbstractDocument) {
+			lastnameDoc = (AbstractDocument) lastnameDoc;
+			lastnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+
+		// sets a character limit on email textfield (limit 30)
+		AbstractDocument emailDoc = (AbstractDocument) username.getDocument();
+		if (emailDoc instanceof AbstractDocument) {
+			emailDoc = (AbstractDocument) emailDoc;
+			emailDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
 
 		// sets the dimension of the user and password panels
 		Dimension size2 = new Dimension(350, 50);
@@ -220,7 +256,7 @@ public class RegistrationPanel extends JPanel {
 					this.dobLabel.setText("DOB: input numbers only for date");
 					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 					return;
-				}				
+				}
 				if (date.getText().length() == 1) {
 					this.dobLabel.setText("Date Of Birth* dd/mm/yyyy");
 					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
@@ -231,7 +267,6 @@ public class RegistrationPanel extends JPanel {
 					this.dayInput = date.getText();
 				}
 			}
-			
 
 		});
 
@@ -275,7 +310,7 @@ public class RegistrationPanel extends JPanel {
 					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 					return;
 				}
-				 if (year.getText().length() == 1 || year.getText().length() == 2 || year.getText().length() == 3) {
+				if (year.getText().length() == 1 || year.getText().length() == 2 || year.getText().length() == 3) {
 					// if user only puts one a digit
 					this.dobLabel.setText("DOB: fill in valid year, format yyyy");
 					this.model.changeCurrentState(ModelState.REGISTRATIONUPDATE);
@@ -287,7 +322,7 @@ public class RegistrationPanel extends JPanel {
 				}
 
 			}
-			
+
 		});
 
 		// dob.addFocusListener((FocusLostListener) (e) ->
