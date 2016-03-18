@@ -4,14 +4,41 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.swing.JOptionPane;
+
+import gui.ListPanel;
+import gui.List;
 import gui.MainView;
 import model.Model;
 import model.ModelState;
-import objectTransferrable.*;
+import objectTransferrable.OTCreateEvent;
+import objectTransferrable.OTCreateEventSucessful;
+import objectTransferrable.OTDeleteEvent;
+import objectTransferrable.OTDeleteEventSuccessful;
+import objectTransferrable.OTEmailCheck;
+import objectTransferrable.OTErrorResponse;
+import objectTransferrable.OTExitGracefully;
+import objectTransferrable.OTHashToClient;
+import objectTransferrable.OTHeartBeat;
+import objectTransferrable.OTLogin;
+import objectTransferrable.OTLoginProceed;
+import objectTransferrable.OTLoginSuccessful;
+import objectTransferrable.OTRegistrationInformation;
+import objectTransferrable.OTRegistrationInformationConfirmation;
+import objectTransferrable.OTRequestMeetingsOnDay;
+import objectTransferrable.OTReturnDayEvents;
+import objectTransferrable.OTUpdateEvent;
+import objectTransferrable.OTUpdateEventSuccessful;
+import objectTransferrable.OTUpdatePassword;
+import objectTransferrable.OTUpdateUserProfile;
+import objectTransferrable.OTUpdateUserProfileSuccessful;
+import objectTransferrable.OTUsernameCheck;
+import objectTransferrable.ObjectTransferrable;
 
 public class Client {
 	private int portnumber;
@@ -157,6 +184,19 @@ public class Client {
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
 			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
+			break;
+		case "0011":
+			OTCreateEventSucessful successfullyAddedEvent = (OTCreateEventSucessful) receivedOperation;
+			this.model.setMeetingCreationSuccessful(true);
+			model.updateMeetings(new Date(model.getCalendar().getTimeInMillis()));
+			try{
+				((gui.List)(this.model.getCurrentInnerPanel())).getListPanel().addMeetings(model.getMeetings());
+				
+				this.model.changeCurrentState(ModelState.EVENTSUPDATE);
+			} catch (ClassCastException e){
+				JOptionPane.showMessageDialog((this.model.getCurrentInnerPanel()), "System encountered an error. \n"
+						+ "Press refresh and try again");
+			}
 			break;
 		case "0014":
 			System.err.println("WARNING: Received heartbeat in main runOT()");
