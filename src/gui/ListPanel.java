@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -188,6 +189,7 @@ public class ListPanel extends JPanel {
 		refresh.addActionListener((e) -> {
 			model.updateMeetings(new Date(getC().getTimeInMillis()));
 			addMeetings(model.getMeetings());
+			JOptionPane.showMessageDialog(this,"Refreshed!");
 		});
 
 		// submit.addActionListener((e) -> ;
