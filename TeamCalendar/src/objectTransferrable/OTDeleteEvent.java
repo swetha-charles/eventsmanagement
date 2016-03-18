@@ -5,6 +5,7 @@ public class OTDeleteEvent extends ObjectTransferrable{
 	
 	public OTDeleteEvent(Event event) {
 		super("0019");
+		this.event = event;
 	}
 
 	public Event getEvent() {
