@@ -2,13 +2,27 @@ package jUnitTests;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class clientModelTests {
+import client.Client;
+import model.Model;
+import model.ModelState;
 
+public class clientModelTests {
+	Client client;
+	Model model;
+	@Before
+	public void setup(){
+		client = new Client();
+		model = new Model(client);
+	}
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testStates() {
+		model.setUpdatePasswordSuccess(true);
+		assertTrue(model.getCurrentState().equals(ModelState.PROFILE));
+		//is the panel supposed to have changed too?
+		
 	}
 
 }
