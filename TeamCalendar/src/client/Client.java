@@ -50,15 +50,13 @@ public class Client {
 	private Socket s;
 	private boolean error = false;
 
-	public Client(int portnumber) {
+	public Client(int portnumber, String url) {
 		model = new Model(this);
 		view = new MainView(this, model);
 		model.addObserver(view);
 		this.portnumber = portnumber;
 		try {
-			s = new Socket("localhost", portnumber);
-			
-			
+			s = new Socket(url, portnumber);			
 			
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
@@ -495,7 +493,7 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-		Client C = new Client(4444);
+		Client C = new Client(4444, "localhost");
 	}
 
 }
