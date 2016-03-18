@@ -32,7 +32,8 @@ public class Model extends Observable {
 	private ModelState currentstate;
 	private Client client;
 
-	private JScrollPane currentPanel = null;
+	private JScrollPane currentScrollPanel = null;
+	private JPanel currentInnerPanel = null;
 	private Login loginView;
 	private Registration registrationView;
 	private JPanel meeting;
@@ -41,6 +42,7 @@ public class Model extends Observable {
 	private Profile profileView;
 	private Edit editView;
 	private Password passwordView;
+	private Calendar currentCalendarBorrowedFromListPanel;
 
 	// ----------- Regex's and other formatting information-------//
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
@@ -103,7 +105,7 @@ public class Model extends Observable {
 		this.currentstate = ModelState.LOGIN;
 
 		loginView = new Login(this.client, this);
-		currentPanel = new JScrollPane(loginView);
+		currentScrollPanel = new JScrollPane(loginView);
 
 	}
 
@@ -207,7 +209,7 @@ public class Model extends Observable {
 				this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Invalid date");
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "Invalid date");
 		}
 
 	}
@@ -249,7 +251,7 @@ public class Model extends Observable {
 			this.client.checkRegistration(otri);
 
 		} else {
-			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Data is incorrect, check warnings");
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "Data is incorrect, check warnings");
 		}
 
 	}
@@ -555,7 +557,7 @@ public class Model extends Observable {
 
 	public void setUpdatePasswordSuccess(boolean updatePasswordSuccess) {
 		this.updatePasswordSuccess = updatePasswordSuccess;
-		JOptionPane.showMessageDialog(this.currentPanel, "Password successfully changed!");
+		JOptionPane.showMessageDialog(this.currentScrollPanel, "Password successfully changed!");
 		this.changeCurrentState(ModelState.PROFILE);
 	}
 
@@ -580,11 +582,11 @@ public class Model extends Observable {
 			break;
 
 		case LOGINUNSUCCESSFULWRONGUSERNAME:
-			JOptionPane.showMessageDialog(this.getCurrentPanel(), "No such user");
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "No such user");
 			break;
 
 		case LOGINUNSUCCESSFULWRONGPASSWORD:
-			JOptionPane.showMessageDialog(this.getCurrentPanel(), "Password incorrect");
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "Password incorrect");
 			break;
 
 		case REGISTRATIONUPDATE:
@@ -636,13 +638,31 @@ public class Model extends Observable {
 		}
 
 	}
-
-	public JScrollPane getCurrentPanel() {
-		return this.currentPanel;
+	public void setCalendar(Calendar calendar){
+		this.currentCalendarBorrowedFromListPanel = calendar;
+		
 	}
-
+	
+	public Calendar getCalendar(){
+		return this.currentCalendarBorrowedFromListPanel;
+	}
+	public void setCurrentScrollPanel(JScrollPane jsp){
+		this.currentScrollPanel = jsp;
+	}
+	public JScrollPane getCurrentScrollPanel() {
+		return this.currentScrollPanel;
+	}
+	
+	public void setCurrentInnerPanel(JPanel panel){
+		this.currentInnerPanel = panel;
+	}
+	public JPanel getCurrentInnerPanel(){
+		return this.currentInnerPanel;
+	}
+	
 	public void setPanel(JPanel panel) {
-		currentPanel = new JScrollPane(panel);
+		setCurrentInnerPanel(panel);
+		setCurrentScrollPanel(new JScrollPane(panel));
 		setChanged();
 		notifyObservers();
 
