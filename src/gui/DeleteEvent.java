@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.sql.Date;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +23,8 @@ public class DeleteEvent extends JPanel{
 	private ListPanel listPanel;
 	
 	JLabel headingLabel = new JLabel("Are you sure you want to delete?");
+	JPanel comment = new JPanel();
+	JPanel buttons = new JPanel();
 	JButton yes = new JButton("Yes");
 	JButton cancel = new JButton("Cancel");
 	
@@ -32,11 +35,16 @@ public class DeleteEvent extends JPanel{
 		this.event = event;
 		this.listPanel = listPanel;
 		
-		setPreferredSize(new Dimension(200,160));
+		setPreferredSize(new Dimension(400,100));
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		
 		headingLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 18));
 		headingLabel.setForeground(Color.DARK_GRAY);
 		
-		add(headingLabel);
+		comment.setMaximumSize(new Dimension(400,50));
+		comment.setMinimumSize(new Dimension(400,50));
+		comment.add(headingLabel);
+		
 		yes.addActionListener((e)-> {
 			this.model.deleteEvent(getEvent());
 			if (model.getMeetingDeleteSuccessful() == true) {
@@ -57,8 +65,12 @@ public class DeleteEvent extends JPanel{
 			this.setVisible(false);
 			this.listPanel.closeDialog();
 		});
-		add(yes);
-		add(cancel);
+		
+		buttons.add(yes);
+		buttons.add(cancel);
+		
+		add(comment);
+		add(buttons);
 	}
 
 	public Event getEvent() {

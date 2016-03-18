@@ -39,7 +39,7 @@ public class NewEvent extends JPanel {
 		JDialog dialog = new JDialog();
 		dialog.add(newEvent);
 		dialog.setVisible(true);
-		dialog.setSize(700, 300);
+		dialog.setSize(600, 320);
 		dialog.setDefaultLookAndFeelDecorated(true);
 
 	}
@@ -101,7 +101,7 @@ public class NewEvent extends JPanel {
 		locationA = new JTextField();
 		notesA = new JTextField();
 
-		setPreferredSize(new Dimension(500, 260));
+		setPreferredSize(new Dimension(600, 320));
 
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
@@ -228,7 +228,9 @@ public class NewEvent extends JPanel {
 		userResponse.add(cancel);
 
 		detailsPanel.setLayout(new GridLayout(7, 2));
-		detailsPanel.setPreferredSize(new Dimension(500, 200));
+		detailsPanel.setPreferredSize(new Dimension(500, 220));
+		detailsPanel.setMaximumSize(new Dimension(500, 220));
+		detailsPanel.setMinimumSize(new Dimension(500, 220));
 		detailsPanel.add(firstName);
 		detailsPanel.add(nameA);
 		detailsPanel.add(date);
@@ -242,8 +244,9 @@ public class NewEvent extends JPanel {
 		detailsPanel.add(notes);
 		detailsPanel.add(notesA);
 		detailsPanel.add(global);
-		detailsPanel.add(userResponse);
 
+		comment.setMaximumSize(new Dimension(600, 40));
+		comment.setMinimumSize(new Dimension(600, 40));
 		comment.add(hello);
 
 		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
@@ -251,6 +254,7 @@ public class NewEvent extends JPanel {
 
 		add(comment);
 		add(detailsPanel);
+		add(userResponse);
 
 	}
 
