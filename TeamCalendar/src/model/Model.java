@@ -82,11 +82,11 @@ public class Model extends Observable {
 	//--------------------Event editing-------------------//
 		//--Data here has passed Validation-----//
 
-	private String newStartTimeHours;
-	private String newStartTimeMinutes;
-	private String newEndTimeHours;
-	private String newEndTimeMinutes;
-	private java.util.Date newDate;
+	private String changedEventStartTimeHours;
+	private String changedEventStartTimeMinutes;
+	private String changedEventEndTimeHours;
+	private String changedEventTimeMinutes;
+	private java.util.Date changedDate;
 	
 	// ------------------Event create/update/delete--------------------//
 	private boolean meetingCreationSuccessful = false;
@@ -287,30 +287,55 @@ public class Model extends Observable {
 		this.client.restart();
 	}
 
+	public boolean validateChangedStartTime(String hours, String minutes){
+		if(DataValidation.isThisTimeValid(hours, minutes)){
+			this.changedEventStartTimeHours = hours;
+			this.changedEventStartTimeMinutes = minutes;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	//left in this format, incase we want to store the event's details. 
 	public boolean validateNewStartTime(String hours, String minutes){
 		if(DataValidation.isThisTimeValid(hours, minutes)){
-			this.newStartTimeHours = hours;
-			this.newStartTimeMinutes = minutes;
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
+	public boolean validateChangedEndTime(String hours, String minutes){
+		if(DataValidation.isThisTimeValid(hours, minutes)){
+			this.changedEventEndTimeHours = hours;
+			this.changedEventTimeMinutes = minutes;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	//left in this format, incase we want to store the event's details.
 	public boolean validateNewEndTime(String hours, String minutes){
 		if(DataValidation.isThisTimeValid(hours, minutes)){
-			this.newEndTimeHours = hours;
-			this.newEndTimeMinutes = minutes;
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
+	public boolean validateChangedDate(String day, String month, String year){
+		if(DataValidation.isThisDateValid(day, month, year)){
+			java.util.Date sanitizedDate = (java.util.Date) DataValidation.sanitizeDate(day, month, year);
+			this.changedDate = sanitizedDate;
+			return true;
+		}
+		return false;
+	}
+	
+	//left in this format, incase we want to store the event's details.
 	public boolean validateNewDate(String day, String month, String year){
 		if(DataValidation.isThisDateValid(day, month, year)){
-			java.util.Date sanitizedDate = (Date) DataValidation.sanitizeDate(day, month, year);
-			this.newDate = sanitizedDate;
 			return true;
 		}
 		return false;
@@ -323,7 +348,9 @@ public class Model extends Observable {
 	 * @return
 	 */
 	public Date sanitizeDateAndMakeSQLDate(String day, String month, String year){
-		return (Date) DataValidation.sanitizeDate(day, month, year);
+		java.util.Date utilDate = DataValidation.sanitizeDate(day, month, year);
+		 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+		return sqlDate ;
 	}
 	
 	// -----------------Events ends-----------------//
