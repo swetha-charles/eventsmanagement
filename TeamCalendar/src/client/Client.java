@@ -57,6 +57,9 @@ public class Client {
 		this.portnumber = portnumber;
 		try {
 			s = new Socket("localhost", portnumber);
+			
+			
+			
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
