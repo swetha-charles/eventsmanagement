@@ -95,7 +95,7 @@ public class EditEventPanel extends JPanel {
 		locationA = new JTextField(event.getLocation());
 		notesA = new JTextField(event.getEventDescription());
 
-		setPreferredSize(new Dimension(500, 260));
+		setPreferredSize(new Dimension(600, 300));
 
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
@@ -219,8 +219,10 @@ public class EditEventPanel extends JPanel {
 		userResponse.add(submit);
 		userResponse.add(cancel);
 
-		detailsPanel.setLayout(new GridLayout(7, 2));
-		detailsPanel.setPreferredSize(new Dimension(500, 350));
+		detailsPanel.setLayout(new GridLayout(6, 2));
+		detailsPanel.setPreferredSize(new Dimension(500, 200));
+		detailsPanel.setMaximumSize(new Dimension(500, 200));
+		detailsPanel.setMinimumSize(new Dimension(500, 200));
 		detailsPanel.add(firstName);
 		detailsPanel.add(nameA);
 		detailsPanel.add(date);
@@ -233,8 +235,9 @@ public class EditEventPanel extends JPanel {
 		detailsPanel.add(locationA);
 		detailsPanel.add(notes);
 		detailsPanel.add(notesA);
-		detailsPanel.add(userResponse);
 
+		comment.setMaximumSize(new Dimension(600, 40));
+		comment.setMinimumSize(new Dimension(600, 40));
 		comment.add(hello);
 
 		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
@@ -242,6 +245,7 @@ public class EditEventPanel extends JPanel {
 
 		add(comment);
 		add(detailsPanel);
+		add(userResponse);
 
 	}
 

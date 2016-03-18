@@ -173,7 +173,8 @@ public class ListPanel extends JPanel {
 			event.setMaximumSize(new Dimension(500, 260));
 			dialog = new JDialog();
 			dialog.add(eventPopup);
-			dialog.setSize(700, 300);
+			dialog.setSize(600, 320);
+			dialog.setResizable(false);
 			// getting the bloody thing to turn up in the center
 			final Toolkit toolkit = Toolkit.getDefaultToolkit();
 			final Dimension screenSize = toolkit.getScreenSize();
@@ -286,7 +287,8 @@ public class ListPanel extends JPanel {
 					dialog = new JDialog();
 					dialog.setModal(true);
 					dialog.add(editEventPopup);
-					dialog.setSize(700, 300);
+					dialog.setSize(600, 300);
+					dialog.setResizable(false);
 					// getting the bloody thing to turn up in the center
 					final Toolkit toolkit = Toolkit.getDefaultToolkit();
 					final Dimension screenSize = toolkit.getScreenSize();
@@ -306,7 +308,8 @@ public class ListPanel extends JPanel {
 					JDialog.setDefaultLookAndFeelDecorated(true);
 					dialog = new JDialog();
 					dialog.add(deleteEventPopup);
-					dialog.setSize(700, 300);
+					dialog.setSize(400, 100);
+					dialog.setResizable(false);
 					// getting the bloody thing to turn up in the center
 					final Toolkit toolkit = Toolkit.getDefaultToolkit();
 					final Dimension screenSize = toolkit.getScreenSize();
@@ -448,8 +451,7 @@ public class ListPanel extends JPanel {
 
 	}
 
-	// --------------------------getters and
-	// setters-------------------------------------//
+	// --------------------------getters and setters-------------------------------------//
 
 	public Calendar getC() {
 		return c;
