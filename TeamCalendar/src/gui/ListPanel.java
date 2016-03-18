@@ -443,7 +443,8 @@ public class ListPanel extends JPanel {
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
-		return new Time((h * 3600000) + (m * 60000));
+		Time time = new Time(((h-1) * 3600000) + (m * 60000));
+		return time;
 	}
 
 	public Date stringToDate(String day, String month, String year) {
