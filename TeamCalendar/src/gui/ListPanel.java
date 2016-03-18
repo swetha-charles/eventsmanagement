@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -9,8 +11,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.sql.Date;
 import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -19,8 +19,9 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -46,6 +47,9 @@ public class ListPanel extends JPanel {
 
 	JPanel list = new JPanel();
 	JScrollPane listscroll;
+
+	JDialog dialog;
+	JFrame saveUserEdits;
 
 	JPanel event = new JPanel();
 	JLabel name = new JLabel("Event title");
@@ -161,12 +165,22 @@ public class ListPanel extends JPanel {
 		});
 
 		addEvent.addActionListener((e) -> {
-			JPanel eventPopup = new NewEvent(controller, model);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+			NewEvent eventPopup = new NewEvent(controller, model, this);
 			event.setLayout(new GridLayout(7, 2));
 			event.setPreferredSize(new Dimension(500, 260));
 			event.setMinimumSize(new Dimension(500, 260));
 			event.setMaximumSize(new Dimension(500, 260));
-			setEvent(eventPopup, 1);
+			dialog = new JDialog();
+			dialog.add(eventPopup);
+			dialog.setSize(700, 300);
+			// getting the bloody thing to turn up in the center
+			final Toolkit toolkit = Toolkit.getDefaultToolkit();
+			final Dimension screenSize = toolkit.getScreenSize();
+			final int x = (screenSize.width - dialog.getWidth()) / 2;
+			final int y = (screenSize.height - dialog.getHeight()) / 2;
+			dialog.setLocation(x, y);
+			dialog.setVisible(true);
 		});
 
 		refresh.addActionListener((e) -> {
@@ -177,8 +191,7 @@ public class ListPanel extends JPanel {
 		// submit.addActionListener((e) -> ;
 	}
 
-	// ----------------------Change Date at the top of
-	// page------------------------------//
+	// ---------Change Date at the top of page---------//
 
 	public void setDate() {
 		this.date.setText(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH),
@@ -187,129 +200,7 @@ public class ListPanel extends JPanel {
 		this.repaint();
 	}
 
-	// -----------------------Sets event
-	// popup---------------------------------------//
-
-	public void setEvent(JPanel event, int a) {
-		if (a == 1) {
-
-			int result = JOptionPane.showConfirmDialog(this, event, "Add event", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-
-				Time st = stringToTime(((NewEvent) event).getShoursA().getText(),
-						((NewEvent) event).getSminutesA().getText());
-				Time et = stringToTime(((NewEvent) event).getEhoursA().getText(),
-						((NewEvent) event).getEminutesA().getText());
-				Date d = new Date(0);
-				d = stringToDate(((NewEvent) event).getDateA().getText(), ((NewEvent) event).getMonthA().getText(),
-						((NewEvent) event).getYearA().getText());
-				System.out.println("new date d = " + d.toString());
-
-				if (((NewEvent) event).getGlobal() == true) {
-					model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(),
-							((NewEvent) event).getNameA().getText(), ((NewEvent) event).getLocationA().getText(), d,
-							true, 1));
-				} else {
-					model.addEvents(new Event(st, et, ((NewEvent) event).getNotesA().getText(),
-							((NewEvent) event).getNameA().getText(), ((NewEvent) event).getLocationA().getText(), d,
-							false, 1));
-				}
-
-				if (model.getMeetingCreationSuccessful() == true) {
-					model.setMeetingCreationSuccessful(false);
-					model.updateMeetings(new Date(c.getTimeInMillis()));
-					addMeetings(model.getMeetings());
-
-					JOptionPane.showMessageDialog(this, "Meeting successfully created!");
-				} else {
-					JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be created.");
-				}
-
-			}
-
-		} else if (a == 2) {
-			// editing events!
-			int result = JOptionPane.showConfirmDialog(this, event, "", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-				String startTimeHours = ((EditEventPanel) this.event).getShoursA().getText();
-				String startTimeMinutes = ((EditEventPanel) this.event).getSminutesA().getText();
-
-				// Validate Start Time
-				if (this.model.validateNewStartTime(startTimeHours, startTimeMinutes)) {
-					Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
-					String endTimeHours = ((EditEventPanel) this.event).getEhoursA().getText();
-					String endTimeMinutes = ((EditEventPanel) this.event).getSminutesA().getText();
-
-					// Validate End Time
-					if (this.model.validateNewEndTime(endTimeHours, endTimeMinutes)) {
-						Time endTime = this.stringToTime(endTimeHours, endTimeMinutes);
-						String day = ((EditEventPanel) event).getDateA().getText();
-						String month = ((EditEventPanel) event).getMonthA().getText();
-						String year = ((EditEventPanel) event).getYearA().getText();
-
-						// Validate Date
-						if (this.model.validateNewDate(day, month, year)) {
-							java.sql.Date newDateSQL = stringToDate(day, month, year);
-							Event changedEvent = new Event(startTime, endTime,
-									((EditEventPanel) event).getNotesA().getText(),
-									((EditEventPanel) event).getNameA().getText(),
-									((EditEventPanel) event).getLocationA().getText(), newDateSQL,
-									((EditEventPanel) event).getEvent().getGlobalEvent(),
-									((EditEventPanel) event).getEvent().getLockVersion() + 1);
-							// Success! Write this changed event server.
-							model.updateEvent(((EditEventPanel) event).getEvent(), changedEvent);
-							if (model.getMeetingUpdateSuccessful() == true) {
-								model.setMeetingUpdateSuccessful(false);
-								model.updateMeetings(new Date(c.getTimeInMillis()));
-								addMeetings(model.getMeetings());
-								JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
-							} else {
-								// Meeting could not be updated. Likely, another
-								// user was editing simultaneously
-								JOptionPane.showMessageDialog(this,
-										"Meeing could not be changed. \n " + "Click refresh, and try again");
-							}
-						} else {
-							// Date could not be validated
-							JOptionPane.showMessageDialog(this, "Check date, current input is invalid");
-						}
-					} else {
-						// End time could not be validated
-						JOptionPane.showMessageDialog(this, "Check end-time, current input is invalid");
-					}
-				} else {
-					// Start time could not been validated
-					JOptionPane.showMessageDialog(this, "Check start-time, current input is invalid");
-				}
-			}
-
-		} else {
-			int result = JOptionPane.showConfirmDialog(this, event, "", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-				model.deleteEvent(((DeleteEvent) event).getEvent());
-				if (model.getMeetingDeleteSuccessful() == true) {
-					model.setMeetingDeleteSuccessful(false);
-					model.updateMeetings(new Date(c.getTimeInMillis()));
-					addMeetings(model.getMeetings());
-
-					JOptionPane.showMessageDialog(this, "Meeting successfully deleted!");
-				} else {
-					JOptionPane.showMessageDialog(this, "I'm sorry your meeting was not able to be deleted.");
-				}
-			}
-
-		}
-
-		this.event = event;
-		this.revalidate();
-		this.repaint();
-	}
-
-	// ---------------------Add meeting panels to
-	// listscroll-------------------------//
+	// ------------Add meeting panels to listscroll-----------------//
 
 	public void addMeetings(ArrayList<Event> arraylist) {
 
@@ -385,19 +276,44 @@ public class ListPanel extends JPanel {
 				Event clickedevent = arraylist.get(i);
 
 				edit.addActionListener((e) -> {
-					JPanel eventPopup = new EditEventPanel(controller, model, clickedevent);
+					
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					JPanel editEventPopup = new EditEventPanel(controller, model, clickedevent, this);
 					event.setPreferredSize(new Dimension(500, 260));
 					event.setMinimumSize(new Dimension(500, 260));
 					event.setMaximumSize(new Dimension(500, 260));
-					setEvent(eventPopup, 2);
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					dialog = new JDialog();
+					dialog.setModal(true);
+					dialog.add(editEventPopup);
+					dialog.setSize(700, 300);
+					// getting the bloody thing to turn up in the center
+					final Toolkit toolkit = Toolkit.getDefaultToolkit();
+					final Dimension screenSize = toolkit.getScreenSize();
+					final int x = (screenSize.width - dialog.getWidth()) / 2;
+					final int y = (screenSize.height - dialog.getHeight()) / 2;
+					dialog.setLocation(x, y);
+					dialog.setVisible(true);
+
 				});
 
 				delete.addActionListener((e) -> {
-					JPanel deleteEvent = new DeleteEvent(controller, model, clickedevent);
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					JPanel deleteEventPopup = new DeleteEvent(controller, model, clickedevent, this);
 					event.setPreferredSize(new Dimension(500, 260));
 					event.setMinimumSize(new Dimension(500, 260));
 					event.setMaximumSize(new Dimension(500, 260));
-					setEvent(deleteEvent, 3);
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					dialog = new JDialog();
+					dialog.add(deleteEventPopup);
+					dialog.setSize(700, 300);
+					// getting the bloody thing to turn up in the center
+					final Toolkit toolkit = Toolkit.getDefaultToolkit();
+					final Dimension screenSize = toolkit.getScreenSize();
+					final int x = (screenSize.width - dialog.getWidth()) / 2;
+					final int y = (screenSize.height - dialog.getHeight()) / 2;
+					dialog.setLocation(x, y);
+					dialog.setVisible(true);
 				});
 			}
 
@@ -408,7 +324,8 @@ public class ListPanel extends JPanel {
 				list.add(Box.createRigidArea(new Dimension(0, 20)));
 			}
 		}
-
+		this.repaint();
+		this.revalidate();
 	}
 
 	// -------------------Creates JLabel for date-----------------------//
@@ -542,4 +459,24 @@ public class ListPanel extends JPanel {
 		this.c = c;
 	}
 
+	public void closeDialog() {
+		this.dialog.dispose();
+	}
+	
+	public void transferToJFrame(){
+		Container panel = this.dialog.getContentPane();
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		this.saveUserEdits = new JFrame();
+		saveUserEdits.add(panel);
+		saveUserEdits.setSize(500, 300);
+		saveUserEdits.setVisible(true);
+		saveUserEdits.setAlwaysOnTop(true);
+		
+	}
+	public void changeModality(boolean bool){
+		dialog.setModal(bool);
+	}
+	public void setModalityModeless(){
+		dialog.setModalityType(ModalityType.MODELESS);
+	}
 }

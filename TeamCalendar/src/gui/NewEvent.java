@@ -2,16 +2,19 @@ package gui;
 
 import java.awt.Checkbox;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.sql.Date;
+import java.sql.Time;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
@@ -22,8 +25,25 @@ import client.Client;
 import model.Model;
 import objectTransferrable.Event;
 
-public class NewEvent extends JPanel{
-	
+public class NewEvent extends JPanel {
+	public static void main(String[] args) {
+
+		Client client = new Client();
+		Model model = new Model(client);
+		ListPanel lp = new ListPanel(client, model);
+		NewEvent newEvent = new NewEvent(client, model, lp);
+		JFrame frame = new JFrame();
+		/*
+		 * frame.setVisible(true); frame.setSize(400,400); frame.add(newEvent);
+		 */
+		JDialog dialog = new JDialog();
+		dialog.add(newEvent);
+		dialog.setVisible(true);
+		dialog.setSize(700, 300);
+		dialog.setDefaultLookAndFeelDecorated(true);
+
+	}
+
 	private static final long serialVersionUID = 1L;
 	private Client controller = null;
 	private Model model;
@@ -53,19 +73,22 @@ public class NewEvent extends JPanel{
 	JTextField locationA;
 	JTextField notesA;
 	Checkbox global;
-	
-	
-	public NewEvent(Client controller, Model model){
-		
+	JPanel userResponse;
+	JButton submit;
+	JButton cancel;
+	private ListPanel listPanel;
+
+	public NewEvent(Client controller, Model model, ListPanel listPanel) {
 		this.controller = controller;
 		this.model = model;
-		
+		this.listPanel = listPanel;
+
 		nameA = new JTextField();
 		dateA = new JTextField();
 		dateA.setDocument(new JTextFieldLimit(2));
 		monthA = new JTextField();
 		monthA.setDocument(new JTextFieldLimit(2));
-		yearA= new JTextField();
+		yearA = new JTextField();
 		yearA.setDocument(new JTextFieldLimit(4));
 		shoursA = new JTextField();
 		shoursA.setDocument(new JTextFieldLimit(2));
@@ -77,10 +100,9 @@ public class NewEvent extends JPanel{
 		eminutesA.setDocument(new JTextFieldLimit(2));
 		locationA = new JTextField();
 		notesA = new JTextField();
-		
-	
-		setPreferredSize(new Dimension(500,260));
-	
+
+		setPreferredSize(new Dimension(500, 260));
+
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
@@ -89,7 +111,7 @@ public class NewEvent extends JPanel{
 		email.setForeground(Color.DARK_GRAY);
 		password.setForeground(Color.DARK_GRAY);
 		notes.setForeground(Color.GRAY);
-		
+
 		hello.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		firstName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		nameA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
@@ -107,7 +129,7 @@ public class NewEvent extends JPanel{
 		locationA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		notes.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		notesA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
-		
+
 		fullDate.setLayout(new BoxLayout(fullDate, BoxLayout.LINE_AXIS));
 		fullDate.add(dateA);
 		fullDate.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -122,12 +144,91 @@ public class NewEvent extends JPanel{
 		fullEndTime.add(ehoursA);
 		fullEndTime.add(Box.createRigidArea(new Dimension(30, 0)));
 		fullEndTime.add(eminutesA);
-		
+
 		global = new Checkbox("Make meeting global");
 		global.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
-		
-		detailsPanel.setLayout(new GridLayout(7,2));
-		detailsPanel.setPreferredSize(new Dimension(500,200));
+		userResponse = new JPanel();
+		submit = new JButton("Submit");
+		submit.addActionListener((e) -> {
+			// editing events!
+			if (nameA.getText().length() != 0) {
+				Event newEvent = null;
+				String startTimeHours = getShoursA().getText();
+				String startTimeMinutes = getSminutesA().getText();
+
+				// Validate Start Time
+				if (this.model.validateNewStartTime(startTimeHours, startTimeMinutes)) {
+					Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
+					String endTimeHours = getEhoursA().getText();
+					String endTimeMinutes = getSminutesA().getText();
+
+					// Validate End Time
+					if (this.model.validateNewEndTime(endTimeHours, endTimeMinutes)) {
+						Time endTime = this.stringToTime(endTimeHours, endTimeMinutes);
+						String day = getDateA().getText();
+						String month = getMonthA().getText();
+						String year = getYearA().getText();
+						if(startTime.before(endTime)){
+							// Validate Date
+							if (this.model.validateNewDate(day, month, year)) {
+								java.sql.Date newDateSQL = stringToDate(day, month, year);
+								if (getGlobal() == true) {
+									newEvent = new Event(startTime, endTime, getNotesA().getText(), getNameA().getText(),
+											getLocationA().getText(), newDateSQL, true, 1);
+								} else {
+									newEvent = new Event(startTime, endTime, getNotesA().getText(), getNameA().getText(),
+											getLocationA().getText(), newDateSQL, false, 1);
+								}
+								model.addEvents(newEvent);
+								if (model.getMeetingCreationSuccessful() == true) {
+									model.setMeetingCreationSuccessful(false);
+									model.updateMeetings(new Date(this.listPanel.getC().getTimeInMillis()));
+									this.listPanel.addMeetings(model.getMeetings());
+
+									JOptionPane.showConfirmDialog(this, "Meeting successfully created!");
+									this.setVisible(false);
+									this.setEnabled(false);
+									this.listPanel.closeDialog();
+								} else {
+									JOptionPane.showConfirmDialog(this,
+											"Meeting could not be created");
+									//what do we do here??
+								}
+							} else {
+								// Date could not be validated
+								JOptionPane.showMessageDialog(this, "Check date, current input is invalid");
+							}
+						} else {
+							// Start time is not before end time
+							JOptionPane.showMessageDialog(this, "Start-time should be before end-time");
+						}
+						
+					} else {
+						// End time could not be validated
+						JOptionPane.showMessageDialog(this, "Check end-time, current input is invalid");
+					}
+				} else {
+					// Start time could not been validated
+					JOptionPane.showMessageDialog(this, "Check start-time, current input is invalid");
+
+				}
+			} else {
+				// Event name is blank. 
+				JOptionPane.showMessageDialog(this, "Event name must be filled in");
+			}
+
+		});
+		cancel = new JButton("Cancel");
+		cancel.addActionListener((e) -> {
+			this.setVisible(false);
+			this.setEnabled(false);
+			this.listPanel.closeDialog();
+		});
+		userResponse.add(submit);
+		userResponse.add(cancel);
+
+		detailsPanel.setLayout(new GridLayout(7, 2));
+		detailsPanel.setPreferredSize(new Dimension(500, 200));
 		detailsPanel.add(firstName);
 		detailsPanel.add(nameA);
 		detailsPanel.add(date);
@@ -141,12 +242,13 @@ public class NewEvent extends JPanel{
 		detailsPanel.add(notes);
 		detailsPanel.add(notesA);
 		detailsPanel.add(global);
-		
+		detailsPanel.add(userResponse);
+
 		comment.add(hello);
-		
+
 		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		setLayout(layout);
-		
+
 		add(comment);
 		add(detailsPanel);
 
@@ -156,57 +258,59 @@ public class NewEvent extends JPanel{
 		return nameA;
 	}
 
-
 	public JTextField getDateA() {
 		return dateA;
 	}
-
 
 	public JTextField getMonthA() {
 		return monthA;
 	}
 
-
 	public JTextField getYearA() {
 		return yearA;
 	}
-
 
 	public JTextField getShoursA() {
 		return shoursA;
 	}
 
-
 	public JTextField getSminutesA() {
 		return sminutesA;
 	}
-
 
 	public JTextField getEhoursA() {
 		return ehoursA;
 	}
 
-
 	public JTextField getEminutesA() {
 		return eminutesA;
 	}
-
 
 	public JTextField getLocationA() {
 		return locationA;
 	}
 
-
 	public JTextField getNotesA() {
 		return notesA;
 	}
-	
+
 	public boolean getGlobal() {
 		return global.getState();
 	}
 
+	public Time stringToTime(String hours, String minutes) {
+		int h = Integer.parseInt(hours);
+		int m = Integer.parseInt(minutes);
+		return new Time((h * 3600000) + (m * 60000));
+	}
+
+	public Date stringToDate(String day, String month, String year) {
+		return this.model.sanitizeDateAndMakeSQLDate(day, month, year);
+
+	}
+
 	public class JTextFieldLimit extends PlainDocument {
-		
+
 		private static final long serialVersionUID = 3693304660903406545L;
 		private int limit;
 
