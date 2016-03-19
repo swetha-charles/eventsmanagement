@@ -264,7 +264,7 @@ public class QueryManager {
 				.addToText("Attempting to delete a meeting for: " + creator + "\n");
 
 				String update = "DELETE FROM meetings " 
-						+"WHERE creatorID= '" + client.getUserName() 
+						+"WHERE creatorID= '" + creator
 						+"' AND meetingDate= '"+eventToDelete.getDate().toString()
 						+"' AND meetingTitle= '"+eventToDelete.getEventTitle()
 						+"' AND meetingDescription= '"+eventToDelete.getEventDescription()
