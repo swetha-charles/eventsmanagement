@@ -48,6 +48,8 @@ public class MainView extends JFrame implements Observer {
 			if(client.getError()){
 				this.dispose();
 			} else {
+				//Once model's state is changed, client.exitGracefully is 
+				//called. 
 				model.changeCurrentState(ModelState.EXIT);
 			}
 		
