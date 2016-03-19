@@ -609,6 +609,7 @@ public class Model extends Observable {
 			break;
 
 		case EXIT:
+			//by this time, the windows is closed. 
 			this.client.exitGracefully();
 			break;
 
