@@ -159,75 +159,81 @@ public class EditEventPanel extends JPanel {
 		userResponse = new JPanel();
 		submit = new JButton("Submit");
 		submit.addActionListener((e1) -> {
-			Event changedEvent = null;
-			String startTimeHours = getShoursA().getText();
-			String startTimeMinutes = getSminutesA().getText();
+			if(nameA.getText().length() != 0){
+				Event changedEvent = null;
+				String startTimeHours = getShoursA().getText();
+				String startTimeMinutes = getSminutesA().getText();
 
-			// Validate Start Time
-			if (this.model.validateChangedStartTime(startTimeHours, startTimeMinutes)) {
-				Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
-				String endTimeHours = getEhoursA().getText();
-				String endTimeMinutes = getEminutesA().getText();
+				// Validate Start Time
+				if (this.model.validateChangedStartTime(startTimeHours, startTimeMinutes)) {
+					Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
+					String endTimeHours = getEhoursA().getText();
+					String endTimeMinutes = getEminutesA().getText();
 
-				// Validate End Time
-				if (this.model.validateChangedEndTime(endTimeHours, endTimeMinutes)) {
-					Time endTime = this.stringToTime(endTimeHours, endTimeMinutes);
-					String day = getDateA().getText();
-					String month = getMonthA().getText();
-					String year = getYearA().getText();
-					if (startTime.before(endTime)) {
-						// Validate Date
-						if (this.model.validateChangedDate(day, month, year)) {
-							java.sql.Date newDateSQL = stringToDate(day, month, year);
-							changedEvent = new Event(startTime, endTime, getNotesA().getText(), getNameA().getText(),
-									getLocationA().getText(), newDateSQL, getEvent().getGlobalEvent(),
-									getEvent().getLockVersion() + 1);
-							// write to model!
-							model.updateEvent(getEvent(), changedEvent);
+					// Validate End Time
+					if (this.model.validateChangedEndTime(endTimeHours, endTimeMinutes)) {
+						Time endTime = this.stringToTime(endTimeHours, endTimeMinutes);
+						String day = getDateA().getText();
+						String month = getMonthA().getText();
+						String year = getYearA().getText();
+						if (startTime.before(endTime)) {
+							// Validate Date
+							if (this.model.validateChangedDate(day, month, year)) {
+								java.sql.Date newDateSQL = stringToDate(day, month, year);
+								changedEvent = new Event(startTime, endTime, getNotesA().getText(), getNameA().getText(),
+										getLocationA().getText(), newDateSQL, getEvent().getGlobalEvent(),
+										getEvent().getLockVersion() + 1);
+								// write to model!
+								model.updateEvent(getEvent(), changedEvent);
 
-							if (model.getMeetingUpdateSuccessful() == true) {
-								model.setMeetingUpdateSuccessful(false);
-								model.updateMeetings(new Date(this.listPanel.getC().getTimeInMillis()));
-								this.listPanel.addMeetings(model.getMeetings());
-								JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
-								this.listPanel.closeDialog();
-							} else {
-								int userChose = JOptionPane.showConfirmDialog(this, "Meeting could not be changed since it was recently updated by another user. \n"
-										+ "Would you like to refresh page and view the most up to date "
-										+ "information on the meetings? \n"
-										+ "NB: If you click Yes, the edits you made will stay open\n"
-										+ "", "Unsuccesful Edit", JOptionPane.YES_NO_OPTION);
-								if(userChose ==  JOptionPane.NO_OPTION){
-									this.listPanel.closeDialog();
-								} else if (userChose == JOptionPane.YES_OPTION){
-									hello.setText("Your old editing information");
-									this.remove(submit);
-									this.listPanel.transferToJFrame();
-									this.listPanel.closeDialog();
-									model.updateMeetings(new Date(listPanel.getC().getTimeInMillis()));
+								if (model.getMeetingUpdateSuccessful() == true) {
+									model.setMeetingUpdateSuccessful(false);
+									model.updateMeetings(new Date(this.listPanel.getC().getTimeInMillis()));
 									this.listPanel.addMeetings(model.getMeetings());
-									this.repaint();
-									this.revalidate();
+									JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
+									this.listPanel.closeDialog();
+								} else {
+									int userChose = JOptionPane.showConfirmDialog(this, "Meeting could not be changed since it was recently updated by another user. \n"
+											+ "Would you like to refresh page and view the most up to date "
+											+ "information on the meetings? \n"
+											+ "NB: If you click Yes, the edits you made will stay open\n"
+											+ "", "Unsuccesful Edit", JOptionPane.YES_NO_OPTION);
+									if(userChose ==  JOptionPane.NO_OPTION){
+										this.listPanel.closeDialog();
+									} else if (userChose == JOptionPane.YES_OPTION){
+										hello.setText("Your old editing information");
+										this.remove(submit);
+										this.listPanel.transferToJFrame();
+										this.listPanel.closeDialog();
+										model.updateMeetings(new Date(listPanel.getC().getTimeInMillis()));
+										this.listPanel.addMeetings(model.getMeetings());
+										this.repaint();
+										this.revalidate();
+									}
 								}
+							} else {
+								// Date could not be validated
+								JOptionPane.showConfirmDialog(this, "Check date, current input is invalid");
 							}
 						} else {
-							// Date could not be validated
-							JOptionPane.showConfirmDialog(this, "Check date, current input is invalid");
+							// Start time is not before end time
+							JOptionPane.showMessageDialog(this, "Start-time should be before end-time");
 						}
 					} else {
-						// Start time is not before end time
-						JOptionPane.showMessageDialog(this, "Start-time should be before end-time");
+						// End time could not be validated
+						JOptionPane.showMessageDialog(this, "Check end-time, current input is invalid");
+
 					}
 				} else {
-					// End time could not be validated
-					JOptionPane.showMessageDialog(this, "Check end-time, current input is invalid");
+					// Start time could not been validated
+					JOptionPane.showMessageDialog(this, "Check start-time, current input is invalid");
 
 				}
 			} else {
 				// Start time could not been validated
-				JOptionPane.showMessageDialog(this, "Check start-time, current input is invalid");
-
+				JOptionPane.showMessageDialog(this, "Meeting name cannot be empty");
 			}
+	
 		});
 		cancel = new JButton("Cancel");
 		cancel.addActionListener((e2) -> {
