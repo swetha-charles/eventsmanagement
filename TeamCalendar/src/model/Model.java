@@ -540,6 +540,7 @@ public class Model extends Observable {
 
 	public void setMeetingDeleteSuccessful(boolean meetingDeleteSuccessful) {
 		this.meetingDeleteSuccessful = meetingDeleteSuccessful;
+		this.changeCurrentState(ModelState.EVENTSUPDATE);
 	}
 
 	public boolean getUpdateProfileSuccess() {
