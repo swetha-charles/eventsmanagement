@@ -56,8 +56,8 @@ public class Client {
 		model.addObserver(view);
 		this.portnumber = portnumber;
 		try {
-			s = new Socket(url, portnumber);			
-			
+			s = new Socket(url, portnumber);
+
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
@@ -82,13 +82,11 @@ public class Client {
 	 * 
 	 * @param OT
 	 */
-	private synchronized void writeToServer(ObjectTransferrable OT, boolean exit, String complementOpCode) {
+	private synchronized void writeToServer(ObjectTransferrable OT, String complementOpCode) {
 		if (!error) {
 			try {
 				this.toServer.writeObject(OT);
-				if (!exit) {
-					this.readFromServer(complementOpCode);
-				}
+				this.readFromServer(complementOpCode);
 			} catch (IOException e) {
 				System.out.println("Connection malfunctioned");
 				this.error = true;
@@ -110,6 +108,9 @@ public class Client {
 			// method
 			if (waitingForOpcode.equals("0014")) {
 				this.waitForHeartBeat();
+				//if we're waiting for exit confirmation, use a different method. 
+			} else if (waitingForOpcode.equals("0005")){
+				this.waitForExitConfirmation();
 			} else {
 				try {
 					receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
@@ -123,12 +124,12 @@ public class Client {
 						throw new UnexpectedOTReceivedException();
 					} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
 						// what was expected, then run.
-						this.runOT(receivedOperation);
+						this.runObjectTransferrableReceivedFromServer(receivedOperation);
 					}
 				} catch (ClassNotFoundException e) {
 					// When the object recieved is not an Object Transferrable.
-					// Likely to be that an exception has come in from server.
-					System.out.println("OT from server could not be read");
+					// Likely to be that an exception thrown from server side.
+					System.out.println("Input from server could not be read, it was not an OT");
 					this.attemptRecovery();
 					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
@@ -148,7 +149,7 @@ public class Client {
 		return this.error;
 	}
 
-	private void runOT(ObjectTransferrable receivedOperation) {
+	private synchronized void runObjectTransferrableReceivedFromServer(ObjectTransferrable receivedOperation) {
 		switch (receivedOperation.getOpCode()) {
 
 		case "0001":
@@ -179,8 +180,9 @@ public class Client {
 				this.model.changeCurrentState(ModelState.LOGIN);
 			} else {
 				this.model.setSuccessfulRegistration(false);
-				JOptionPane.showMessageDialog(model.getCurrentScrollPanel(), "Sorry, another user with the same username was just created! \n "
-						+ "Change the username and try again!");
+				JOptionPane.showMessageDialog(model.getCurrentScrollPanel(),
+						"Sorry, another user with the same username was just created! \n "
+								+ "Change the username and try again.");
 			}
 			break;
 		case "0009":
@@ -192,17 +194,16 @@ public class Client {
 			OTCreateEventSucessful successfullyAddedEvent = (OTCreateEventSucessful) receivedOperation;
 			this.model.setMeetingCreationSuccessful(true);
 			model.updateMeetings(new Date(model.getCalendar().getTimeInMillis()));
-			try{
-				((gui.List)(this.model.getCurrentInnerPanel())).getListPanel().addMeetings(model.getMeetings());
-				
+			try {
+				((gui.List) (this.model.getCurrentInnerPanel())).getListPanel().addMeetings(model.getMeetings());
 				this.model.changeCurrentState(ModelState.EVENTSUPDATE);
-			} catch (ClassCastException e){
-				JOptionPane.showMessageDialog((this.model.getCurrentInnerPanel()), "System encountered an error. \n"
-						+ "Press refresh and try again");
+			} catch (ClassCastException e) {
+				JOptionPane.showMessageDialog((this.model.getCurrentInnerPanel()),
+						"System encountered an error. \n" + "Press refresh and try again");
 			}
 			break;
 		case "0014":
-			System.err.println("WARNING: Received heartbeat in main runOT()");
+			System.err.println("WARNING: Received heartbeat in main runOT(). \n" + "This should never happen");
 			break;
 		case "0015":
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
@@ -239,7 +240,7 @@ public class Client {
 
 		case "0018":
 			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
-			if(updateSuccess.getSuccessful()){
+			if (updateSuccess.getSuccessful()) {
 				this.model.setMeetingUpdateSuccessful(true);
 			} else {
 				this.model.setMeetingUpdateSuccessful(false);
@@ -247,7 +248,7 @@ public class Client {
 			break;
 		case "0020":
 			OTDeleteEventSuccessful deleteSuccess = (OTDeleteEventSuccessful) receivedOperation;
-			if(deleteSuccess.getSuccessful()){
+			if (deleteSuccess.getSuccessful()) {
 				this.model.setMeetingDeleteSuccessful(true);
 			} else {
 				this.model.setMeetingDeleteSuccessful(false);
@@ -274,7 +275,7 @@ public class Client {
 		OTUsernameCheck otuc = new OTUsernameCheck(username);
 		System.out.println("Sent OT with opcode" + otuc.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + otuc.getOpCode());
-		this.writeToServer(otuc, false, otuc.getOpCode());
+		this.writeToServer(otuc, otuc.getOpCode());
 
 	}
 
@@ -282,7 +283,7 @@ public class Client {
 		OTEmailCheck otec = new OTEmailCheck(email);
 		System.out.println("Client: Sent OT with opcode" + otec.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + otec.getOpCode());
-		this.writeToServer(otec, false, otec.getOpCode());
+		this.writeToServer(otec, otec.getOpCode());
 
 	}
 
@@ -290,7 +291,7 @@ public class Client {
 		String complementOpCode = "0006";
 		System.out.println("Client: Sent OT with opcode " + otri.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(otri, false, complementOpCode);
+		this.writeToServer(otri, complementOpCode);
 
 	}
 
@@ -298,7 +299,7 @@ public class Client {
 		String complementOpCode = "0015";
 		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(loginObject, false, complementOpCode);
+		this.writeToServer(loginObject, complementOpCode);
 
 	}
 
@@ -306,7 +307,7 @@ public class Client {
 		String complementOpCode = "0016";
 		System.out.println("Client: Sent OT with opcode " + loginObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(loginObject, false, complementOpCode);
+		this.writeToServer(loginObject, complementOpCode);
 
 	}
 
@@ -314,14 +315,14 @@ public class Client {
 		String complementOpCode = "0009";
 		System.out.println("Client: Sent OT with opcode " + requestObject.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(requestObject, false, complementOpCode);
+		this.writeToServer(requestObject, complementOpCode);
 	}
 
 	public void createEvent(OTCreateEvent newEvent) {
 		String complementOpCode = "0011";
 		System.out.println("Client: Sent OT with opcode " + newEvent.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(newEvent, false, complementOpCode);
+		this.writeToServer(newEvent, complementOpCode);
 
 	}
 
@@ -329,7 +330,7 @@ public class Client {
 		String complementOpCode = "0018";
 		System.out.println("Client: Sent OT with opcode " + changeEvent.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(changeEvent, false, complementOpCode);
+		this.writeToServer(changeEvent, complementOpCode);
 
 	}
 
@@ -337,7 +338,7 @@ public class Client {
 		String complementOpCode = "0020";
 		System.out.println("Client: Sent OT with opcode " + deleteEvent.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(deleteEvent, false, complementOpCode);
+		this.writeToServer(deleteEvent, complementOpCode);
 
 	}
 
@@ -345,7 +346,7 @@ public class Client {
 		String complementOpCode = "0022";
 		System.out.println("Client: Sent OT with opcode " + updatedUserInfo.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(updatedUserInfo, false, complementOpCode);
+		this.writeToServer(updatedUserInfo, complementOpCode);
 
 	}
 
@@ -353,13 +354,13 @@ public class Client {
 		String complementOpCode = "0024";
 		System.out.println("Client: Sent OT with opcode " + updatedPassword.getOpCode());
 		System.out.println("Client: Expecting OT with opcode " + complementOpCode);
-		this.writeToServer(updatedPassword, false, complementOpCode);
+		this.writeToServer(updatedPassword, complementOpCode);
 	}
 
 	public synchronized void sendHeartBeat() {
 		String complementOpCode = "0014";
 		OTHeartBeat othb = new OTHeartBeat();
-		this.writeToServer(othb, false, complementOpCode);
+		this.writeToServer(othb, complementOpCode);
 	}
 
 	// ----------writeToServer calls Ends---------------------------//
@@ -367,45 +368,43 @@ public class Client {
 		OTHeartBeat OT = null;
 		try {
 			OT = (OTHeartBeat) this.fromServer.readObject();
-			OT.get(500, TimeUnit.MILLISECONDS);
+			OT.get(200, TimeUnit.MILLISECONDS);
 
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
 				| TimeoutException e) {
-			System.out.println("Hearbeat dead");
+			System.out.println("Hearbeat may be dead, client encountered an error of type " + e.getClass());
 			this.attemptRecovery();
+		}
+	}
+	
+	public synchronized void waitForExitConfirmation(){
+		OTExitGracefully OTExitGracefullyConfirmation;
+		try {
+			OTExitGracefullyConfirmation = (OTExitGracefully) this.fromServer.readObject();
+			OTExitGracefullyConfirmation.get(200, TimeUnit.MILLISECONDS);
+			System.out.println("Client received confirmation of exit from server");
+		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
+				| TimeoutException e) {
+			System.out.println("Did not get confirmation of exit from server, will close down communication. \n"
+					+ "Received an error " + e.getClass());
+			e.printStackTrace();
+			
 		}
 	}
 
 	// --------------------- Exit -------------------------------------//
-	public void exitGracefully() {
+	public synchronized void exitGracefully() {
 		if (s != null) {
+			//stop the heartbeat
+			this.hb.setRunningToFalse();
 			OTExitGracefully oeg = new OTExitGracefully();
-			this.writeToServer(oeg, true, null);
-			System.out.println("Send OT to server to exit");
-
-			try {
-				toServer.close();
-				System.out.println("Output stream to server has been shutdown");
-
-			} catch (IOException e1) {
-				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
-				toServer = null;
-			}
-			try {
-				fromServer.close();
-				System.out.println("Input stream to server has been shutdown");
-
-			} catch (IOException e1) {
-				System.out.println("Output stream to server is malfunctioning. \n Setting output stream to null");
-				fromServer = null;
-			}
-
-			try {
-				s.close();
-			} catch (IOException e) {
-				System.out.println("Could not close socket. \n Setting socket to null");
-				s = null;
-			}
+			String complementOpCode = "0005";
+			System.out.println("Sending OT to server to exit");
+			this.writeToServer(oeg, complementOpCode);
+			//this chains together
+			//waitForExitConfirmation(). 
+			//Finally, we close connections
+			this.attemptToCloseConnections();
 		}
 	}
 
@@ -486,9 +485,7 @@ public class Client {
 			} catch (InterruptedException e1) {
 				System.out.println("Client was interrupted");
 			}
-
 			System.out.println("Hey, the server or internet connection is not working!");
-
 		}
 	}
 
