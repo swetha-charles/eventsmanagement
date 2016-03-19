@@ -87,7 +87,7 @@ public class NewEvent extends JPanel {
 		this.model = model;
 		this.listPanel = listPanel;
 
-		nameA = new JTextField();
+		nameA = new JTextField(); //meeting title. DB limit is 50. 
 		nameA.setDocument(new JTextFieldLimit(50));
 		dateA = new JTextField();
 		dateA.setDocument(new JTextFieldLimit(2));

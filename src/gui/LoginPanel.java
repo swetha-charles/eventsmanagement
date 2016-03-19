@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,12 +12,14 @@ import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 
@@ -39,7 +42,7 @@ public class LoginPanel extends JPanel{
 	JLabel userLabel = new JLabel("Username");
 	JLabel passwordLabel = new JLabel("Password");
 	JPanel userAndPasswordPanel = new JPanel();
-	JPanel passwordPanel = new JPanel();
+
 	JPanel logoPanel = new JPanel();
 	JLabel error = new JLabel("");
 	JButton login = new JButton("Login");
@@ -52,6 +55,7 @@ public class LoginPanel extends JPanel{
 	public LoginPanel(Client client, Model model){
 		this.client= client;
 		this.model = model;
+		setBorder(new OvalBorder(10, 10));
 		//sets a character limit on username textfield
 		AbstractDocument usernameDoc = (AbstractDocument) username.getDocument();
 		if (usernameDoc instanceof AbstractDocument) {
@@ -65,8 +69,8 @@ public class LoginPanel extends JPanel{
 			passwordDoc.setDocumentFilter(new DocumentSizeFilter(60));
 		} 
 		//sets the dimension of the login panel
-		setPreferredSize(new Dimension(420,410));
-		setMinimumSize(new Dimension(420,410));
+		setPreferredSize(new Dimension(470,430));
+		setMinimumSize(new Dimension(470,430));
 				
 		//Sets dimension of textFields
 		Dimension size1 = new Dimension(300,30);
@@ -81,8 +85,7 @@ public class LoginPanel extends JPanel{
 		Dimension size2 = new Dimension(400, 40);
 		userAndPasswordPanel.setMaximumSize(size2);
 		userAndPasswordPanel.setMinimumSize(size2);
-		passwordPanel.setMaximumSize(size2);
-		passwordPanel.setMinimumSize(size2);
+
 		Dimension size3 = new Dimension(120, 40);
 		userLabel.setMaximumSize(size3);
 		userLabel.setMinimumSize(size3);
@@ -94,11 +97,24 @@ public class LoginPanel extends JPanel{
 		logoPanel.setMaximumSize(new Dimension(350, 200));
 		logoPanel.setPreferredSize(new Dimension(400, 200));
 		
-		//sets background colours of panels
+//		//sets background colours of panels
 		setBackground(Color.DARK_GRAY);
 		userAndPasswordPanel.setBackground(Color.DARK_GRAY);
-		passwordPanel.setBackground(Color.DARK_GRAY);
-		logoPanel.setBackground(Color.DARK_GRAY);
+//		passwordPanel.setBackground(Color.DARK_GRAY);
+//		logoPanel.setBackground(Color.DARK_GRAY);
+		
+		//sets background colours of panels
+//		setBackground(Color.lightGray);
+//		userAndPasswordPanel.setBackground(Color.lightGray);
+//		passwordPanel.setBackground(Color.lightGray);
+//		logoPanel.setBackground(Color.lightGray);
+		
+		//set borders
+		Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		Border compound = BorderFactory.createCompoundBorder(
+                loweredbevel, raisedbevel);
+		setBorder(compound);
 		
 		//sets colour of text in JLabels
 		userLabel.setForeground(Color.WHITE);
@@ -106,10 +122,10 @@ public class LoginPanel extends JPanel{
 		signup.setForeground(Color.WHITE);
 		
 		//sets fonts of JLabels and JButton
-		userLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
-		passwordLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
+		userLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
+		passwordLabel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		login.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
-		signup.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
+		signup.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		Font font = signup.getFont();
 		Map attributes = font.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -122,36 +138,39 @@ public class LoginPanel extends JPanel{
 		userAndPasswordPanel.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		
+		
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.ipadx = 10;
+		//gbc.ipadx = 10;
 		//gbc.ipady = 10;
-		//gbc.insets = new Insets(0,0,5,0);
+		gbc.insets = new Insets(0,15,15,15);
 		userAndPasswordPanel.add(userLabel, gbc);
 		
 		gbc.anchor = GridBagConstraints.PAGE_START;
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.ipadx = 0;
+		//gbc.ipadx = 0;
 		//gbc.ipady = 10;
-		//gbc.insets = new Insets(0,0,5,0);
+		gbc.insets = new Insets(0,0,15,15);
 		userAndPasswordPanel.add(username, gbc);
 		
 		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.ipadx = 10;
+		//gbc.ipadx = 10;
 		//gbc.ipady = 10;
 		//gbc.insets = new Insets(0,0,5,0);	
+		gbc.insets = new Insets(0,15,15,15);
 		userAndPasswordPanel.add(passwordLabel, gbc);
 		
 		gbc.anchor = GridBagConstraints.PAGE_START;
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		gbc.ipadx = 0;
+		//gbc.ipadx = 0;
 		//gbc.ipady = 10;
 		//gbc.insets = new Insets(0,0,5,0);
+		gbc.insets = new Insets(0,0,15,15);
 		userAndPasswordPanel.add(password, gbc);
 		
 		
@@ -161,29 +180,33 @@ public class LoginPanel extends JPanel{
 		gbc = new GridBagConstraints();
 		
 		//adds all panels and button to loginPanel
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		add(logoPanel, gbc);
+//		gbc.gridx = 1;
+//		gbc.gridy = 0;
+//		gbc.gridwidth = 3;
+//		add(logoPanel, gbc);
 		
-		gbc.gridx = 1;
-		gbc.gridy = 2;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
 		gbc.gridwidth = 3;
-		gbc.ipadx = 30;
-		gbc.ipady = 30;
-		gbc.anchor = GridBagConstraints.LINE_START;
+		//gbc.ipadx = 30;
+		//gbc.ipady = 30;
+		gbc.insets = new Insets(70,0,0,0);
+		gbc.anchor = GridBagConstraints.PAGE_END;
 		add(userAndPasswordPanel, gbc);
 		
 		gbc.gridx = 1;
-		gbc.gridy = 5;
+		gbc.gridy = 2;
 		gbc.gridwidth = 1;
 		gbc.ipadx = 0;
 		gbc.ipady = 0;
 		gbc.insets = new Insets(0,0,0,0);
+		gbc.gridwidth = 3;
 		gbc.anchor = GridBagConstraints.CENTER;
 		add(login, gbc);
 		
 		gbc.gridx = 1;
-		gbc.gridy = 7;
+		gbc.gridy = 3;
+		gbc.gridwidth = 3;
 		//gbc.insets = new Insets(5,5,5,5);
 		gbc.anchor = GridBagConstraints.CENTER;
 		add(signup, gbc);
@@ -200,6 +223,12 @@ public class LoginPanel extends JPanel{
 		//--------------------------------passwordEnd Lambda Listeners--------------------------------------------------//
 	
 	}
+	//tried to make the panel circular. Did not like it. 
+//	@Override
+//    protected void paintComponent(Graphics g) {
+//        g.fillOval(0, 0, g.getClipBounds().width, g.getClipBounds().height);
+//      
+//    }
 	
 	public JLabel getError() {
 		return error;
