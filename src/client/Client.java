@@ -91,7 +91,7 @@ public class Client {
 				System.out.println("Connection malfunctioned");
 				this.error = true;
 				this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-				this.attemptRecovery();
+				this.cleanUpAndPromptUserToRestart();
 
 			}
 		} else {
@@ -115,29 +115,38 @@ public class Client {
 				try {
 					receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 					System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
-					if (receivedOperation.getOpCode().equals("0007")) {
-						// received an error response from server
-						OTErrorResponse oter = (OTErrorResponse) receivedOperation;
-						System.out.println("Client received error message from server: " + oter.getErrorDescription());
-					} else if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-						// not an error and not what was expected
-						throw new UnexpectedOTReceivedException();
-					} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
-						// what was expected, then run.
-						this.runObjectTransferrableReceivedFromServer(receivedOperation);
-					}
+					receivedOperation.get(5000, TimeUnit.MILLISECONDS);
 				} catch (ClassNotFoundException e) {
 					// When the object recieved is not an Object Transferrable.
 					// Likely to be that an exception thrown from server side.
+					this.error = true;
 					System.out.println("Input from server could not be read, it was not an OT");
-					this.attemptRecovery();
+					this.cleanUpAndPromptUserToRestart();
 					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
 				} catch (IOException e2) {
+					this.error = true;
 					System.out.println("Server connection is down");
-					this.attemptRecovery();
+					this.cleanUpAndPromptUserToRestart();
 					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
+				} catch (InterruptedException | ExecutionException | TimeoutException e) {
+					this.error = true;
+					System.out.println("Server has now responded in time!");
+					this.cleanUpAndPromptUserToRestart();
+					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+				} 
+				
+				if (receivedOperation.getOpCode().equals("0007")) {
+					// received an error response from server
+					OTErrorResponse oter = (OTErrorResponse) receivedOperation;
+					System.out.println("Client received error message from server: " + oter.getErrorDescription());
+				} else if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
+					// not an error and not what was expected
+					throw new UnexpectedOTReceivedException();
+				} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
+					// what was expected, then run.
+					this.runObjectTransferrableReceivedFromServer(receivedOperation);
 				}
 			}
 
@@ -373,7 +382,7 @@ public class Client {
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
 				| TimeoutException e) {
 			System.out.println("Hearbeat may be dead, client encountered an error of type " + e.getClass());
-			this.attemptRecovery();
+			this.cleanUpAndPromptUserToRestart();
 		}
 	}
 	
@@ -408,7 +417,7 @@ public class Client {
 		}
 	}
 
-	private void attemptRecovery() {
+	private void cleanUpAndPromptUserToRestart() {
 		System.out.println("Client is attempting recovery");
 		this.hb.setRunningToFalse();
 		this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
