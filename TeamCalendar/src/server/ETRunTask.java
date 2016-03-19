@@ -35,29 +35,57 @@ public class ETRunTask implements ExecutableTask{
 	public void run() {
 		//create a new QueryManager object to handle the execution of the received object
 		QueryManager runQuery = getMasterServer().getQueryManager();
+		ObjectTransferrable returnObject = null;
 
 		//execute the query, updating the object
 		try {
-			ObjectTransferrable returnObject = runQuery.runOperation(getQuery(), getClientInfo());
+			returnObject = runQuery.runOperation(getQuery(), getClientInfo());
 			//get the updated object and pass it back to the client
 			try {
 				if(!returnObject.getOpCode().equals("0014")){
 					getMasterServer().getServerModel().addToText("Sending back Object with opCode " + returnObject.getOpCode() + "\n");
 				}
+				//write back to client
 				getClientInfo().getClientOutput().writeObject(returnObject);
 				if(!returnObject.getOpCode().equals("0014")){
 					getMasterServer().getServerModel().addToText("SENT" + "\n");
 				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		//in case of exit, close down all inputs and outputs 
+		// and do not make a new ETSearchForObject. 
+		if(returnObject.getOpCode().equals("0005")){
+			try {
+				this.clientInfo.getClientSocket().shutdownInput();
+			} catch (IOException e) {
+				getMasterServer().getServerModel()
+				.addToText("Could not close input stream \n");
+			}
+			try {
+				this.clientInfo.getClientSocket().shutdownOutput();
+			} catch (IOException e) {
+				getMasterServer().getServerModel()
+				.addToText("Could not close output stream \n");
+			}
+			try {
+				this.clientInfo.getClientSocket().close();
+				getMasterServer().getServerModel()
+				.addToText("Client's socket has been closed \n");
+			} catch (IOException e) {
+				getMasterServer().getServerModel()
+				.addToText("Could not close socket\n");
+			}
+		} else {
+			//create a new instance of ETSearchForObject so to pick up more queries from this client and pass it to the threadpool
+			ETSearchForObject newSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
+			getMasterServer().getThreadPool().execute(newSearch);
+		}
 		
-		//create a new instance of ETSearchForObject so to pick up more queries from this client and pass it to the threadpool
-		ETSearchForObject newSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
-		getMasterServer().getThreadPool().execute(newSearch);
 	}
 
 }

@@ -50,37 +50,24 @@ public class ETSearchForObject implements ExecutableTask {
 				getMasterServer().getThreadPool().execute(refreshedSearch);
 			} else {
 				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
-				if(receivedOperation.getOpCode().equals("0005")){
+				if (receivedOperation.getOpCode().equals("0005")) {
 					getMasterServer().getServerModel()
-					.addToText("Specially reserved opcode for exiting program has arrived at server!"
-							+ "\n");
-					getMasterServer().getServerModel()
-					.addToText("Will now attempt to close connections \n");
-					try {
-						this.clientInfo.getClientSocket().shutdownInput();
-						this.clientInfo.getClientSocket().shutdownOutput();
-						this.clientInfo.getClientSocket().close();
-					} catch (IOException e) {
-						getMasterServer().getServerModel()
-						.addToText("Could not close connections \n");
-					}
-					return;
-				} else if (receivedOperation != null) {
-					if (!receivedOperation.getOpCode().equals("0014")) {
-						getMasterServer().getServerModel()
-								.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
-										+ " from client with port " + getClientInfo().getClientSocket().getPort()
-										+ "\n");
-					}
-					// Create and ETRunTask object, and place it in the
-					// ExecutorService
-					ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
-					getMasterServer().getThreadPool().execute(newQueryToRun);
+							.addToText("Specially reserved opcode for exiting program has arrived at server!" + "\n");
+					getMasterServer().getServerModel().addToText("Server will acknowledge exit confirmation \n");
+					
 				}
-
+				if (!receivedOperation.getOpCode().equals("0014") && !receivedOperation.getOpCode().equals("0005")) {
+					getMasterServer().getServerModel()
+							.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
+									+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+				}
+				// Create and ETRunTask object, and place it in the
+				// ExecutorService
+				ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
+				getMasterServer().getThreadPool().execute(newQueryToRun);
 			}
 
 		}
-	}
 
+	}
 }

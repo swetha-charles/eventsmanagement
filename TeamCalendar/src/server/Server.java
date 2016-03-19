@@ -105,7 +105,7 @@ public class Server extends Thread{
         	}
             this.serverSocket.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error closing server", e);
+            System.err.println("Could not close a socket");
         }
         //closing the database connection
     	try {

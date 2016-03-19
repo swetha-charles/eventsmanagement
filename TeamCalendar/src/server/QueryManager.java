@@ -52,9 +52,9 @@ public class QueryManager {
 		else if (currentOperation.getOpCode().equals("0005")) {
 			getServer().getServerModel()
 			.addToText("Specially reserved opcode for exiting program has arrived at query manager!\n");
-			// No reason to tell the client, they gone, possible shutdown
-			// communication?
-			return null;
+			// Acknowledge the client is exiting. 
+			return new OTExitGracefully();
+			//ETRunTask will close connections.  
 		}
 		// OP CODE 0006 RETURN FROM SERVER, SHOULD NEVER APPEAR HERE
 		else if (currentOperation.getOpCode().equals("0006")) {
