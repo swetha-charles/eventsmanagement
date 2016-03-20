@@ -11,7 +11,7 @@ public class ServerGUI {
         frame.setSize(800, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-        ServerController panel = new ServerController(4444);
+        ServerController panel = new ServerController(50280);
         JScrollPane scrollPanel = new JScrollPane(panel);
         frame.add(scrollPanel);
         frame.setVisible(true);
