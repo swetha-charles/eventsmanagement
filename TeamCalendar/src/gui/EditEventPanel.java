@@ -283,8 +283,6 @@ public class EditEventPanel extends JPanel {
 		add(detailsPanel);
 		add(notesPanel);
 		add(userResponse);
-							
-
 	}
 
 	public Event getEvent() {
