@@ -202,7 +202,7 @@ public class QueryManager {
 			getServer().getServerModel()
 			.addToText("Running this update: " + updatePassword + "\n");
 
-			updatePassword.executeUpdate(update);
+			updatePassword.executeUpdate();
 			getServer().getServerModel().addToText("Successfully updated user password\n");
 			return new OTUpdatePasswordSuccessful();
 		} catch (SQLException e) {
@@ -224,18 +224,19 @@ public class QueryManager {
 					+"SET firstName= ?, lastName= ?, userEmail= ? "
 					+"WHERE userName= ?";
 
-			getServer().getServerModel()
-			.addToText("Running this update: " + update + "\n");
+
 
 			PreparedStatement updatePassword = con.prepareStatement(update);
 
 			updatePassword.setString(1, classifiedOperation.getFirstName());
-			updatePassword.setString(1, classifiedOperation.getLastName());
-			updatePassword.setString(1, classifiedOperation.getEmail());
-			updatePassword.setString(2, client.getUserName());
+			updatePassword.setString(2, classifiedOperation.getLastName());
+			updatePassword.setString(3, classifiedOperation.getEmail());
+			updatePassword.setString(4, client.getUserName());
 
+			getServer().getServerModel()
+			.addToText("Running this update: " + updatePassword + "\n");
 
-			updatePassword.executeUpdate(update);
+			updatePassword.executeUpdate();
 			getServer().getServerModel().addToText("Successfully updated user profile\n");
 			return new OTUpdateUserProfileSuccessful(classifiedOperation.getFirstName(), classifiedOperation.getLastName(), classifiedOperation.getEmail());
 		} catch (SQLException e) {

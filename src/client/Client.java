@@ -640,7 +640,7 @@ public class Client {
 	public static void main(String[] args) {
 
 		int port = 50280;
-		String iNetAddress = "localHost" ; 
+		String iNetAddress = "localhost" ; 
 		if (args.length == 1){
 				System.out.println("No port specified, using default");
 				iNetAddress = args[0];
