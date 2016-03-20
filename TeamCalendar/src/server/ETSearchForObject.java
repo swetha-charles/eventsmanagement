@@ -29,45 +29,54 @@ public class ETSearchForObject implements ExecutableTask {
 		if (getMasterServer().isServerActive() == true) {
 			try {
 				receivedObject = getClientInfo().getClientInput().readObject();
+				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (EOFException e) {
-				// EOFexception
 			} catch (SocketTimeoutException e) {
-				// TimeoutException
 			} catch (IOException e2) {
 				getMasterServer().getServerModel().addToText("\nServer (ETSFO) - IOException");
-			}
-			if (receivedObject == null) {
-				// create a new ETSearchForObject task with the same info and
-				// place it in the ExecutorService after a brief pause
 				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
+					getClientInfo().getClientInput().close();
+					getClientInfo().getClientOutput().close();
+					getClientInfo().getClientSocket().close();
+					return;
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
-				getMasterServer().getThreadPool().execute(refreshedSearch);
-			} else {
-				ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
-				if (receivedOperation.getOpCode().equals("0005")) {
-					getMasterServer().getServerModel()
-							.addToText("Specially reserved opcode for exiting program has arrived at server!" + "\n");
-					getMasterServer().getServerModel().addToText("Server will acknowledge exit confirmation \n");
-					
-				}
-				if (!receivedOperation.getOpCode().equals("0014") && !receivedOperation.getOpCode().equals("0005")) {
-					getMasterServer().getServerModel()
-							.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
-									+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
-				}
-				// Create and ETRunTask object, and place it in the
-				// ExecutorService
-				ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
-				getMasterServer().getThreadPool().execute(newQueryToRun);
+				
+			} catch (Exception e){
+				e.printStackTrace();
 			}
-
 		}
-
+		
+		if (receivedObject == null) {
+			// create a new ETSearchForObject task with the same info and
+			// place it in the ExecutorService after a brief pause
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			ETSearchForObject refreshedSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
+			getMasterServer().getThreadPool().execute(refreshedSearch);
+		} else {
+			ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
+			if (receivedOperation.getOpCode().equals("0005")) {
+				getMasterServer().getServerModel()
+						.addToText("Specially reserved opcode for exiting program has arrived at server!" + "\n");
+				getMasterServer().getServerModel().addToText("Server will acknowledge exit confirmation \n");
+				
+			}
+			if (!receivedOperation.getOpCode().equals("0014") && !receivedOperation.getOpCode().equals("0005")) {
+				getMasterServer().getServerModel()
+						.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
+								+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+			}
+			// Create and ETRunTask object, and place it in the
+			// ExecutorService
+			ETRunTask newQueryToRun = new ETRunTask(getMasterServer(), getClientInfo(), receivedOperation);
+			getMasterServer().getThreadPool().execute(newQueryToRun);
+		}
 	}
 }

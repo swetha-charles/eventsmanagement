@@ -22,8 +22,9 @@ public class Server extends Thread{
 		//Create connection to database
 		this.database = new DatabaseConnection(this);
 		//Create server socket to listen for new clients
-		this.serverSocket = new ServerSocket(portNumber);
-		getServerModel().addToText("Server: Listening on port " + portNumber + "\n");
+		InetAddress addr = InetAddress.getByName("147.188.195.114");
+		this.serverSocket = new ServerSocket(portNumber, 50, addr);
+		getServerModel().addToText("Server: Listening on port " + portNumber + " and IP: " +serverSocket.getInetAddress().toString() + "\n");
 		//Set the flag that shows the server is active
 		this.serverActive = true;
 		//initialise the socketArray to hold client information
