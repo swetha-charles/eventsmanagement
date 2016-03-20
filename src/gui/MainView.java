@@ -22,16 +22,13 @@ public class MainView extends JFrame implements Observer {
 
 	Model model = null;
 	Client client = null;
-
-	JPanel login = null;
-	Registration registration = null;
-	JScrollPane scroll;
-	JPanel loggedIn = null;
+;
 
 	public MainView(Client client, Model model) {
 		this.client = client;
 		this.model = model;
-		this.login = new Login(this.client, this.model);
+		JScrollPane scroll;
+		JPanel login = new Login(this.client, this.model);
 
 		scroll = new JScrollPane(login);
 
@@ -57,25 +54,6 @@ public class MainView extends JFrame implements Observer {
 
 	}
 
-	public JPanel getLogin() {
-		return login;
-	}
-
-	public JScrollPane getScroll() {
-		return scroll;
-	}
-
-	public void setLogin(JPanel login) {
-		this.login = login;
-	}
-
-	public void setScroll(JScrollPane scroll) {
-		this.scroll = scroll;
-	}
-
-	public void addController(Client controller) {
-		this.client = controller;
-	}
 
 	@Override
 	public synchronized void update(Observable o, Object arg) {
