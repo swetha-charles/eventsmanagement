@@ -300,6 +300,8 @@ public class Client {
 				this.model.setEmail(proceedOrNot.getEmail());
 				this.model.updateMeetings();
 				this.model.changeCurrentState(ModelState.EVENTS);
+				JOptionPane.showMessageDialog(model.getCurrentInnerPanel(),"Login successful!");
+				
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
