@@ -21,27 +21,18 @@ public class QueryManager {
 	public ObjectTransferrable runOperation(ObjectTransferrable currentOperation, ClientInfo client) throws SQLException {
 
 		Connection dbconnection = getServer().getDatabase().getConnection();
-		// Prepared st?
-		Statement stmnt = dbconnection.createStatement();
 
-		/**
-		 * List of present opcodes OTUsernameCheck "0001" OTEmailCheck = "0002"
-		 * OTRegistrationCheck = "0003" OTRegistrationInformation = "0004"
-		 * OTExitGracefully = "0005" - Should not appear at query manager
-		 * OTRegistrationInformationConfirmation = "0006" - Should not appear at
-		 * query manager
-		 */
 		// OTUsernameCheck "0001"
 		if (currentOperation.getOpCode().equals("0001")) {
-			return checkUsername(stmnt, currentOperation, client);
+			return checkUsername(dbconnection, currentOperation, client);
 		}
 		// OTEmailCheck = "0002"
 		else if (currentOperation.getOpCode().equals("0002")) {
-			return checkEmailvalid(stmnt, currentOperation, client);
+			return checkEmailvalid(dbconnection, currentOperation, client);
 		}
 		// OTRegistrationCheck = "0003"
 		else if (currentOperation.getOpCode().equals("0003")) {
-			return checkRegistration(stmnt, currentOperation, client);
+			return checkRegistration(dbconnection, currentOperation, client);
 		}
 		// OTRegistrationInformation = "0004"
 		else if (currentOperation.getOpCode().equals("0004")) {
@@ -59,18 +50,18 @@ public class QueryManager {
 		// OP CODE 0006 RETURN FROM SERVER, SHOULD NEVER APPEAR HERE
 		else if (currentOperation.getOpCode().equals("0006")) {
 			getServer().getServerModel().addToText(
-					"The object assocatied with this opcode should not be recieved from client! Responding with Error Object\n");
-			return new OTErrorResponse("Server specified confirmation message recieved from client!", false, 0006);
+					"The object assocatied with this opcode should not be received from client! Responding with Error Object\n");
+			return new OTErrorResponse("Server specified confirmation message received from client!", false, 0006);
 
 		}
-		// The client has returned an error, considering client passive previous
-		// server response was bad
+		// This should only be sent to the client when an error is received
 		else if (currentOperation.getOpCode().equals("0007")) {
-			return dealWithError(stmnt, currentOperation, client);
-		}
+			getServer().getServerModel().addToText(
+					"The object assocatied with this opcode should not be received from client! Responding with Error Object\n");
+			return new OTErrorResponse("Server specified confirmation message received from client!", false, 0006);		}
 		// Request for meetings on specific Day
 		else if (currentOperation.getOpCode().equals("0008")) {
-			return getMeetings(stmnt, currentOperation, client);
+			return getMeetings(dbconnection, currentOperation, client);
 		}
 		// Server Response to get meetings, should never get here
 		else if (currentOperation.getOpCode().equals("0009")) {
@@ -83,7 +74,7 @@ public class QueryManager {
 		}
 		// Request to create an event from the client
 		else if (currentOperation.getOpCode().equals("0010")) {
-			return createEvent(stmnt, currentOperation, client);
+			return createEvent(dbconnection, currentOperation, client);
 		}
 		// This is a return message for event creation successful and should not
 		// be seen by server
@@ -97,11 +88,11 @@ public class QueryManager {
 		}
 		// Get users hashed password for the client
 		else if (currentOperation.getOpCode().equals("0012")) {
-			return hashToClient(stmnt, currentOperation, client);
+			return hashToClient(dbconnection, currentOperation, client);
 		}
 		// Gets the users login details for the client
 		else if (currentOperation.getOpCode().equals("0013")) {
-			return getUserDetails(stmnt, currentOperation, client);
+			return getUserDetails(dbconnection, currentOperation, client);
 		} else if (currentOperation.getOpCode().equals("0014")) {
 			return new OTHeartBeat();
 			//getServer().getServerModel().addToText(
@@ -143,7 +134,7 @@ public class QueryManager {
 		}
 		//Deletes an event
 		else if (currentOperation.getOpCode().equals("0019")) {
-			return deleteEvent(stmnt, dbconnection, currentOperation, client);
+			return deleteEvent(dbconnection, currentOperation, client);
 		}
 		// This is a return message for sending meeting delete success to the client and
 		// should not be seen by server
@@ -157,7 +148,7 @@ public class QueryManager {
 		}
 		//Updates a users profile
 		else if (currentOperation.getOpCode().equals("0021")) {
-			return updateUserProfile(stmnt, currentOperation, client);
+			return updateUserProfile(dbconnection, currentOperation, client);
 		}
 		// This is a return message for sending update user profile success to the client and
 		// should not be seen by server
@@ -171,7 +162,7 @@ public class QueryManager {
 		}
 		//Updates a users password
 		else if (currentOperation.getOpCode().equals("0023")) {
-			return updateUserPassword(stmnt, currentOperation, client);
+			return updateUserPassword(dbconnection, currentOperation, client);
 		}
 		// This is a return message for sending update user password success to the client and
 		// should not be seen by server
@@ -187,27 +178,31 @@ public class QueryManager {
 		else {
 			getServer().getServerModel()
 			.addToText("opcode of object not known by query manager! Responding with Error Object\n");
-			return new OTErrorResponse("An unknown opCode has been recieved by the query manager!", false);
+			return new OTErrorResponse("An unknown opCode has been received by the query manager!", false);
 
 		}
 
 	}
 
-	private ObjectTransferrable updateUserPassword(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable updateUserPassword(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdatePassword classifiedOperation = (OTUpdatePassword) operation;
 
 		getServer().getServerModel()
 		.addToText("Attempting to update the following users password: " + client.getUserName() + "\n");
 
 		String update = "UPDATE users " 
-				+"SET password= '" + classifiedOperation.getPwhash() 
-				+"' "
-				+"WHERE userName= '" + client.getUserName()
-				+"'";
-		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
+				+"SET password= ? "
+				+"WHERE userName= ?";
 		try {
-			stmnt.executeUpdate(update);
+			PreparedStatement updatePassword = con.prepareStatement(update);
+
+			updatePassword.setString(1, classifiedOperation.getPwhash());
+			updatePassword.setString(2, client.getUserName());
+
+			getServer().getServerModel()
+			.addToText("Running this update: " + updatePassword + "\n");
+
+			updatePassword.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated user password\n");
 			return new OTUpdatePasswordSuccessful();
 		} catch (SQLException e) {
@@ -219,24 +214,28 @@ public class QueryManager {
 
 	}
 
-	private ObjectTransferrable updateUserProfile(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable updateUserProfile(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdateUserProfile classifiedOperation = (OTUpdateUserProfile) operation;
 
 		getServer().getServerModel()
 		.addToText("Attempting to update the following users profile: " + client.getUserName() + "\n");
-
-		String update = "UPDATE users " 
-				+"SET firstName= '" + classifiedOperation.getFirstName() 
-				+ "', lastName= '"+ classifiedOperation.getLastName()
-				+"', userEmail= '"+ classifiedOperation.getEmail()
-				+"' "
-				+"WHERE userName= '" + client.getUserName()
-				+"'";
-
-		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
 		try {
-			stmnt.executeUpdate(update);
+			String update = "UPDATE users " 
+					+"SET firstName= ?, lastName= ?, userEmail= ? "
+					+"WHERE userName= ?";
+
+			getServer().getServerModel()
+			.addToText("Running this update: " + update + "\n");
+
+			PreparedStatement updatePassword = con.prepareStatement(update);
+
+			updatePassword.setString(1, classifiedOperation.getFirstName());
+			updatePassword.setString(1, classifiedOperation.getLastName());
+			updatePassword.setString(1, classifiedOperation.getEmail());
+			updatePassword.setString(2, client.getUserName());
+
+
+			updatePassword.executeUpdate(update);
 			getServer().getServerModel().addToText("Successfully updated user profile\n");
 			return new OTUpdateUserProfileSuccessful(classifiedOperation.getFirstName(), classifiedOperation.getLastName(), classifiedOperation.getEmail());
 		} catch (SQLException e) {
@@ -246,7 +245,7 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable deleteEvent(Statement stmnt, Connection con, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable deleteEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTDeleteEvent classifiedOperation = (OTDeleteEvent) operation;
 		Event eventToDelete = classifiedOperation.getEvent();
 		getServer().getServerModel().addToText("Event Title: " + eventToDelete.getEventTitle() + "\n");
@@ -264,20 +263,27 @@ public class QueryManager {
 				.addToText("Attempting to delete a meeting for: " + creator + "\n");
 
 				String update = "DELETE FROM meetings " 
-						+"WHERE creatorID= '" + creator
-						+"' AND meetingDate= '"+eventToDelete.getDate().toString()
-						+"' AND meetingTitle= '"+eventToDelete.getEventTitle()
-						+"' AND meetingDescription= '"+eventToDelete.getEventDescription()
-						+"' AND meetingLocation= '"+eventToDelete.getLocation()
-						+"' AND meetingStartTime= '"+eventToDelete.getStartTime().toString()
-						+"' AND meetingEndTime= '"+eventToDelete.getEndTime().toString()
-						+"' AND lockVersion= "+eventToDelete.getLockVersion()
+						+"WHERE creatorID= ? AND meetingDate= ? AND meetingTitle= ?"
+						+" AND meetingDescription= ? AND meetingLocation= ?"
+						+" AND meetingStartTime= ? AND meetingEndTime= ?"
+						+" AND lockVersion= ?"
 						+"";
 
 				getServer().getServerModel()
 				.addToText("Running this update: " + update + "\n");
 
-				stmnt.executeUpdate(update);
+				PreparedStatement deleteEvent = con.prepareStatement(update);
+
+				deleteEvent.setString(1, client.getUserName());
+				deleteEvent.setDate(2, eventToDelete.getDate());
+				deleteEvent.setString(3, eventToDelete.getEventTitle());
+				deleteEvent.setString(4, eventToDelete.getEventDescription());
+				deleteEvent.setString(5 ,eventToDelete.getLocation());
+				deleteEvent.setTime(6, eventToDelete.getStartTime());
+				deleteEvent.setTime(7, eventToDelete.getEndTime());
+				deleteEvent.setInt(8, eventToDelete.getLockVersion());
+
+				deleteEvent.executeUpdate();
 
 				getServer().getServerModel().addToText("Successfully deleted event\n");
 				return new OTDeleteEventSuccessful(true);
@@ -416,36 +422,37 @@ public class QueryManager {
 
 	}
 
-	private ObjectTransferrable createEvent(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable createEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTCreateEvent classifiedOperation = (OTCreateEvent) operation;
 
 		String update;
+		String creator;
+
 		if(classifiedOperation.getEvent().getGlobalEvent()){
-			getServer().getServerModel()
-			.addToText("Attempting to create a meeting for: global\n");
-			getServer().getServerModel()
-			.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
-			update = "INSERT INTO meetings VALUES (DEFAULT, 'global', '"
-					+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
-					+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
-					+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
-					+ classifiedOperation.getEvent().getEndTime().toString() +"', 1)";
+			creator = "global";
 		} else {
-			getServer().getServerModel()
-			.addToText("Attempting to create a meeting for: " + client.getUserName() + "\n");
-			getServer().getServerModel()
-			.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
-			update = "INSERT INTO meetings VALUES (DEFAULT, '" + client.getUserName() + "', '"
-					+ classifiedOperation.getEvent().getDate().toString() + "', '" + classifiedOperation.getEvent().getEventTitle() + "', '"
-					+ classifiedOperation.getEvent().getEventDescription() + "', '" + classifiedOperation.getEvent().getLocation()
-					+ "', '" + classifiedOperation.getEvent().getStartTime().toString() + "', '" 
-					+ classifiedOperation.getEvent().getEndTime().toString() +"', 1)";
+			creator = client.getUserName();
 		}
 		getServer().getServerModel()
-		.addToText("Running this update: " + update + "\n");
-
+		.addToText("Attempting to create a meeting for:"+creator+"\n");
+		getServer().getServerModel()
+		.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
+		update = "INSERT INTO meetings VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, 1)";
 		try {
-			stmnt.executeUpdate(update);
+			PreparedStatement newEvent = con.prepareStatement(update);
+
+			newEvent.setString(1, creator);
+			newEvent.setDate(2, classifiedOperation.getEvent().getDate());
+			newEvent.setString(3, classifiedOperation.getEvent().getEventTitle());
+			newEvent.setString(4, classifiedOperation.getEvent().getEventDescription());
+			newEvent.setString(5, classifiedOperation.getEvent().getLocation());
+			newEvent.setTime(6, classifiedOperation.getEvent().getStartTime());
+			newEvent.setTime(7, classifiedOperation.getEvent().getEndTime());
+
+			getServer().getServerModel()
+			.addToText("Attempting to create a meeting for: " + creator + "\n");
+
+			newEvent.executeUpdate();
 			getServer().getServerModel().addToText("Successfully created meeting\n");
 			return new OTCreateEventSucessful(classifiedOperation.getEvent());
 		} catch (SQLException e) {
@@ -455,10 +462,10 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable checkUsername(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable checkUsername(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUsernameCheck classifiedOperation = (OTUsernameCheck) operation;
 		try {
-			if(checkForUserExistance(stmnt, classifiedOperation.getUsername(), client)){
+			if(checkForUserExistance(con, classifiedOperation.getUsername(), client)){
 				classifiedOperation.setAlreadyExists(true);
 			} else {
 				classifiedOperation.setAlreadyExists(false);
@@ -470,14 +477,17 @@ public class QueryManager {
 		}
 	}
 
-	private synchronized boolean checkForUserExistance(Statement stmnt, String username, ClientInfo client) throws SQLException{
+	private synchronized boolean checkForUserExistance(Connection con, String username, ClientInfo client) throws SQLException{
 		getServer().getServerModel()
 		.addToText("Checking to see if " + username + " is in the database...\n");
 
-		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = '"
-				+ username + "'";
+		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = ?";
 
-		ResultSet rs = stmnt.executeQuery(query);
+		PreparedStatement checkUser = con.prepareStatement(query);
+		
+		checkUser.setString(1, username);
+		
+		ResultSet rs = checkUser.executeQuery();
 
 		if (rs.next()) {
 			getServer().getServerModel().addToText("Found matching username, returning true.\n");
@@ -488,10 +498,10 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable checkEmailvalid(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable checkEmailvalid(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTEmailCheck classifiedOperation = (OTEmailCheck) operation;
 		try {
-			if(checkForEmailExistance(stmnt, classifiedOperation.getEmail(), client)){
+			if(checkForEmailExistance(con, classifiedOperation.getEmail(), client)){
 				classifiedOperation.setAlreadyExists(true);
 			} else {
 				classifiedOperation.setAlreadyExists(false);
@@ -503,13 +513,17 @@ public class QueryManager {
 		}
 	}
 
-	private synchronized boolean checkForEmailExistance(Statement stmnt, String email, ClientInfo client) throws SQLException {
+	private synchronized boolean checkForEmailExistance(Connection con, String email, ClientInfo client) throws SQLException {
 		getServer().getServerModel().addToText("Checking to see if: " + email + " is in the database\n");
 
 		String query = "SELECT count(u.userEmail) " + "FROM users u " + "GROUP BY u.userEmail "
-				+ "HAVING u.userEmail = '" + email + "'";
+				+ "HAVING u.userEmail = ?";
 
-		ResultSet rs = stmnt.executeQuery(query);
+		PreparedStatement checkEmail = con.prepareStatement(query);
+		
+		checkEmail.setString(1, email);
+		
+		ResultSet rs = checkEmail.executeQuery();
 
 		if (rs.next()) {
 			getServer().getServerModel().addToText("Email exists, returning true.\n");
@@ -519,17 +533,26 @@ public class QueryManager {
 			return false;
 		}
 	}
-	private synchronized ObjectTransferrable checkRegistration(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private synchronized ObjectTransferrable checkRegistration(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation) operation;
 		getServer().getServerModel()
 		.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
 		try {
-			if(!checkForUserExistance(stmnt, classifiedOperation.getUsername(), client)){
-				if(!checkForEmailExistance(stmnt, classifiedOperation.getEmail(), client)){
-					String update = "INSERT INTO users VALUES ('" + classifiedOperation.getUsername() + "', '"
-							+ classifiedOperation.getPwHash() + "', '" + classifiedOperation.getFirstname() + "', '"
-							+ classifiedOperation.getLastname() + "', '" + classifiedOperation.getEmail() + "')";
-					stmnt.executeUpdate(update);
+			if(!checkForUserExistance(con, classifiedOperation.getUsername(), client)){
+				if(!checkForEmailExistance(con, classifiedOperation.getEmail(), client)){
+					
+					String update = "INSERT INTO users VALUES (?, ?, ?, ?, ?)";
+					
+					PreparedStatement checkUser = con.prepareStatement(update);
+					
+					checkUser.setString(1, classifiedOperation.getUsername());
+					checkUser.setString(1, classifiedOperation.getPwHash());
+					checkUser.setString(1, classifiedOperation.getFirstname());
+					checkUser.setString(1, classifiedOperation.getLastname());
+					checkUser.setString(1, classifiedOperation.getEmail());
+					
+					ResultSet rs = checkUser.executeQuery();
+					
 					getServer().getServerModel().addToText("Succesfully created user");
 					return new OTRegistrationInformationConfirmation(true, null, null);
 				} else {
@@ -546,35 +569,11 @@ public class QueryManager {
 
 	}
 
-	private ObjectTransferrable dealWithError(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
-
-		OTErrorResponse error = (OTErrorResponse) operation;
-		// Is known error response can go here
-		if (error.getErrCode() == 0) {
-			System.err.println("Undefined error from client, Description: " + error.getErrorDescription()
-			+ " Communications being shut down? " + error.isShouldShutdownCommunication());
-		} else {
-			/**
-			 * TODO any specific error handling can go here
-			 */
-		}
-
-		if (error.isShouldShutdownCommunication()) {
-
-			/**
-			 * TODO need to work out a call to shutdown, this is where being
-			 * able to call exit gracefully could come in
-			 */
-
-		}
-		return null;
-	}
-
-	private ObjectTransferrable getMeetings(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable getMeetings(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTRequestMeetingsOnDay classifiedOperation = (OTRequestMeetingsOnDay) operation;
 
 		try {
-			ArrayList<Event> meetings = retrieveMeetingsFromDB(classifiedOperation.getDate(), client, stmnt);
+			ArrayList<Event> meetings = retrieveMeetingsFromDB(classifiedOperation.getDate(), client, con);
 			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
 			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
 			return returnEvents;
@@ -585,14 +584,17 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable getUserDetails(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable getUserDetails(Connection con, ObjectTransferrable operation, ClientInfo client) {
 
 		OTLoginSuccessful classifiedOperation = (OTLoginSuccessful) operation;
 
-		String query = "SELECT u.firstName, u.lastName, u.userEmail " + "FROM users u " + "WHERE u.userName = '"
-				+ classifiedOperation.getUsername() + "'";
+		String query = "SELECT u.firstName, u.lastName, u.userEmail " + "FROM users u " + "WHERE u.userName = ?";
 		try {
-			ResultSet rs = stmnt.executeQuery(query);
+			PreparedStatement userDetails = con.prepareStatement(query);
+			
+			userDetails.setString(1, classifiedOperation.getUsername());
+			
+			ResultSet rs = userDetails.executeQuery();
 
 			if (rs.next()) {
 				getServer().getServerModel()
@@ -617,14 +619,16 @@ public class QueryManager {
 		}
 	}
 
-	private ObjectTransferrable hashToClient(Statement stmnt, ObjectTransferrable operation, ClientInfo client) {
+	private ObjectTransferrable hashToClient(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTLogin classifiedOperation = (OTLogin) operation;
 
-		String query = "SELECT u.password " + "FROM users u " + "WHERE u.userName = '"
-				+ classifiedOperation.getUsername() + "'";
+		String query = "SELECT u.password " + "FROM users u " + "WHERE u.userName = ?";
 
 		try {
-			ResultSet rs = stmnt.executeQuery(query);
+			PreparedStatement hashQuery = con.prepareStatement(query);
+			hashQuery.setString(1, classifiedOperation.getUsername());
+			
+			ResultSet rs = hashQuery.executeQuery();
 
 			if (rs.next()) {
 				String pwFromDB = rs.getString(1);
@@ -644,16 +648,20 @@ public class QueryManager {
 		}
 	}
 
-	private ArrayList<Event> retrieveMeetingsFromDB(Date date, ClientInfo client, Statement stmnt) throws SQLException {
+	private ArrayList<Event> retrieveMeetingsFromDB(Date date, ClientInfo client, Connection con) throws SQLException {
 
 		String query = "SELECT m.creatorID, m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime, m.lockVersion "
-				+ "FROM meetings m " + "WHERE (m.creatorid = '" + client.getUserName()
-				+ "' OR m.creatorid = 'global') AND m.meetingdate = '" + date.toString() + "' "
+				+ "FROM meetings m " + "WHERE (m.creatorid = ? OR m.creatorid = 'global')"
+				+" AND m.meetingdate = ? "
 				+ "ORDER BY m.meetingstarttime ASC";
 
-		ResultSet rs;
-
-		rs = stmnt.executeQuery(query);
+		PreparedStatement meetingsQuery = con.prepareStatement(query);
+		
+		meetingsQuery.setString(1, client.getUserName());
+		meetingsQuery.setDate(2, date);
+		
+		ResultSet rs = meetingsQuery.executeQuery();
+		
 		ArrayList<Event> meetings = new ArrayList<Event>();
 		getServer().getServerModel()
 		.addToText("Requesting meeting information for " + client.getUserName() + "\n");
