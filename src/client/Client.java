@@ -74,10 +74,14 @@ public class Client {
 
 	}
 
+	/**
+	 * Left for testing
+	 */
 	public Client() {
 
 	}
 
+	
 	/**
 	 * This is the only way to send object transferables from the client. It is
 	 * a private method.
@@ -102,16 +106,20 @@ public class Client {
 
 	}
 
-	// read from server
-	public synchronized void readFromServer(String waitingForOpcode) {
+	/**
+	 * This is the only way to read objects from server. It is a private method. 
+	 * @param waitingForOpcode
+	 */
+	private synchronized void readFromServer(String waitingForOpcode) {
 		if (!error) {
 			ObjectTransferrable receivedOperation = null;
 			// if what was last sent was a heartbeat, use the waitForHeartBeat()
 			// method
 			if (waitingForOpcode.equals("0014")) {
 				this.waitForHeartBeat();
-				//if we're waiting for exit confirmation, use a different method. 
-			} else if (waitingForOpcode.equals("0005")){
+				// if we're waiting for exit confirmation, use a different
+				// method.
+			} else if (waitingForOpcode.equals("0005")) {
 				this.waitForExitConfirmation();
 			} else {
 				try {
@@ -137,14 +145,15 @@ public class Client {
 					System.out.println("Server has now responded in time!");
 					this.cleanUpAndPromptUserToRestart();
 					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-				} 
-				
+				}
+
 				if (receivedOperation.getOpCode().equals("0007")) {
 					// received an error response from server
 					OTErrorResponse oter = (OTErrorResponse) receivedOperation;
 					System.out.println("Client received error message from server: " + oter.getErrorDescription());
 				} else if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
-					// not an error and not what was expected
+					// not an error message and not what was expected either
+					//Throw an exception?
 					throw new UnexpectedOTReceivedException();
 				} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
 					// what was expected, then run.
@@ -156,14 +165,18 @@ public class Client {
 
 	}
 
-	public boolean getError() {
-		return this.error;
-	}
 
+
+	/**
+	 * This method runs the object received from server
+	 * 
+	 * @param receivedOperation
+	 */
 	private synchronized void runObjectTransferrableReceivedFromServer(ObjectTransferrable receivedOperation) {
 		switch (receivedOperation.getOpCode()) {
 
 		case "0001":
+			// asking server to check whether this username is duplicated
 			OTUsernameCheck otuc = (OTUsernameCheck) receivedOperation;
 			if (otuc.getAlreadyExists()) {
 				this.model.setUsername(otuc.getUsername());
@@ -174,6 +187,7 @@ public class Client {
 			}
 			break;
 		case "0002":
+			// asking server to check whether this email is duplicated
 			OTEmailCheck otec = (OTEmailCheck) receivedOperation;
 			if (otec.getAlreadyExists()) {
 				this.model.setEmail(otec.getEmail());
@@ -183,8 +197,21 @@ public class Client {
 				this.model.setEmailExists(false);
 			}
 			break;
+		case "0003":
+			System.out.println("Client should not have recieved this opcode");
+			break;
+		case "0004":
+			System.out.println("This is an open opcode.\n" + "Should never be received by client. ");
+			break;
+		case "0005":
+			System.out.println("Client should never be dealing with this opcode here\n"
+					+ "waitForExitConfirmation() should run this method");
 		case "0006":
+			// received a response from server on whether user's registration
+			// was
+			// sucessful
 			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
+
 			if (regConf.getRegistrationSuccess()) {
 				this.model.setSuccessfulRegistration(true);
 				this.model.changeCurrentState(ModelState.LOGIN);
@@ -195,12 +222,29 @@ public class Client {
 								+ "Change the username and try again.");
 			}
 			break;
+		case "0007":
+			// reserved for use by server
+			System.out.println("The server has encountered an error \n ");
+			OTErrorResponse errorResponse = (OTErrorResponse) receivedOperation;
+			System.out.println("Error received was: " + errorResponse.getErrorDescription());
+			break;
+		case "0008":
+			System.out.println("Should never be received by client. \n" + "Reserved for client-sending use only");
+			break;
 		case "0009":
+			// received information from client with information on meetings
+			// on specified day
 			OTReturnDayEvents eventsObject = (OTReturnDayEvents) receivedOperation;
 			System.out.println("Received an arraylist of size " + eventsObject.getEventList().size());
 			this.model.setMeetings(eventsObject.getEventList());
 			break;
+		case "0010":
+			// used by client to tell server to make a new event
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0011":
+			// used by server to inform client whether adding the meetings
+			// was successful or not
 			OTCreateEventSucessful successfullyAddedEvent = (OTCreateEventSucessful) receivedOperation;
 			this.model.setMeetingCreationSuccessful(true);
 			model.updateMeetings(new Date(model.getCalendar().getTimeInMillis()));
@@ -212,10 +256,23 @@ public class Client {
 						"System encountered an error. \n" + "Press refresh and try again");
 			}
 			break;
+		case "0012":
+			// sent by client to try to login a user
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
+		case "0013":
+			// sent by client to inform the server that login
+			// has been successful
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0014":
+			// this is the heartbeat
+			// there is a separate method to deal with hearbeats
 			System.err.println("WARNING: Received heartbeat in main runOT(). \n" + "This should never happen");
 			break;
 		case "0015":
+			// sent by server. Includes the hashed password ofthe user
+			// trying to login.
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			boolean userExists = userHash.getUserExists();
 			if (userExists) {
@@ -230,6 +287,9 @@ public class Client {
 			}
 			break;
 		case "0016":
+			// received from server confirming successful login.
+			// this object also populates the user's current day meetings
+			// view
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
 			boolean proceed = proceedOrNot.getLoginProceed();
 			System.out.println("Proceed was: " + proceed);
@@ -248,7 +308,14 @@ public class Client {
 			}
 			break;
 
+		case "0017":
+			// Sent by client when user wants
+			// to edit an event
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0018":
+			// Sent by server to indicate whether the edit
+			// to an event has been successful
 			OTUpdateEventSuccessful updateSuccess = (OTUpdateEventSuccessful) receivedOperation;
 			if (updateSuccess.getSuccessful()) {
 				this.model.setMeetingUpdateSuccessful(true);
@@ -256,7 +323,14 @@ public class Client {
 				this.model.setMeetingUpdateSuccessful(false);
 			}
 			break;
+		case "0019":
+			// Sent by client when user wants
+			// to delete an event
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0020":
+			// Sent by server to indicate whether deleting
+			// an event has been successful
 			OTDeleteEventSuccessful deleteSuccess = (OTDeleteEventSuccessful) receivedOperation;
 			if (deleteSuccess.getSuccessful()) {
 				this.model.setMeetingDeleteSuccessful(true);
@@ -264,20 +338,73 @@ public class Client {
 				this.model.setMeetingDeleteSuccessful(false);
 			}
 			break;
+		case "0021":
+			// Sent by client when user wants to edit their
+			// user information.
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0022":
+			// Sent by server to indcate that the profile changes have
+			// been successful.
 			OTUpdateUserProfileSuccessful updateProfileSuccess = (OTUpdateUserProfileSuccessful) receivedOperation;
 			this.model.setUpdateProfileSuccess(true);
 			this.model.setFirstName(updateProfileSuccess.getFirstName());
 			this.model.setLastname(updateProfileSuccess.getLastName());
 			this.model.setEmail(updateProfileSuccess.getEmail());
 			break;
-
+		case "0023":
+			// Sent by client when user wants to edit their
+			// password.
+			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
+			break;
 		case "0024":
+			// send by server to indicat that changing the password
+			// has been successful. In case the password changed is not
+			// succesful,
+			// an OTErrorResponse is received instead.
 			this.model.setUpdatePasswordSuccess(true);
 			System.out.println("Client: Password has been updated");
 			break;
 		}
 
+	}
+	
+	/**
+	 * This read from server call is used in special cases of heartbeats.
+	 * A heartbeat is a simple object for the server to construct and send back. 
+	 * With this in mind, the wait on this operation is 200ms. When the client
+	 * sends more database heavy operations, it waits on the server for longer. 
+	 */
+	private synchronized void waitForHeartBeat() {
+		OTHeartBeat OT = null;
+		try {
+			OT = (OTHeartBeat) this.fromServer.readObject();
+			OT.get(200, TimeUnit.MILLISECONDS);
+
+		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
+				| TimeoutException e) {
+			System.out.println("Hearbeat may be dead, client encountered an error of type " + e.getClass());
+			this.cleanUpAndPromptUserToRestart();
+		}
+	}
+	
+	/**
+	 * This read from server call is used in special cases of waiting for exit confirmation.
+	 * Again the wait is quite short - 200s. 
+	 */
+	private synchronized void waitForExitConfirmation() {
+		OTExitGracefully OTExitGracefullyConfirmation;
+		try {
+			OTExitGracefullyConfirmation = (OTExitGracefully) this.fromServer.readObject();
+			OTExitGracefullyConfirmation.get(200, TimeUnit.MILLISECONDS);
+			System.out.println("Client received confirmation of exit from server");
+		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
+				| TimeoutException e) {
+			System.out.println("Did not get confirmation of exit from server, will close down communication. \n"
+					+ "Received an error " + e.getClass());
+			e.printStackTrace();
+
+		}
 	}
 
 	// ---------------- writeToServer calls -----------------------//
@@ -373,65 +500,33 @@ public class Client {
 		this.writeToServer(othb, complementOpCode);
 	}
 
-	// ----------writeToServer calls Ends---------------------------//
-	public synchronized void waitForHeartBeat() {
-		OTHeartBeat OT = null;
-		try {
-			OT = (OTHeartBeat) this.fromServer.readObject();
-			OT.get(200, TimeUnit.MILLISECONDS);
-
-		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
-				| TimeoutException e) {
-			System.out.println("Hearbeat may be dead, client encountered an error of type " + e.getClass());
-			this.cleanUpAndPromptUserToRestart();
-		}
-	}
+	// -------------writeToServer calls end---------------------------//
 	
-	public synchronized void waitForExitConfirmation(){
-		OTExitGracefully OTExitGracefullyConfirmation;
-		try {
-			OTExitGracefullyConfirmation = (OTExitGracefully) this.fromServer.readObject();
-			OTExitGracefullyConfirmation.get(200, TimeUnit.MILLISECONDS);
-			System.out.println("Client received confirmation of exit from server");
-		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
-				| TimeoutException e) {
-			System.out.println("Did not get confirmation of exit from server, will close down communication. \n"
-					+ "Received an error " + e.getClass());
-			e.printStackTrace();
-			
-		}
-	}
-
-	// --------------------- Exit -------------------------------------//
+	
+	
+	// --------------------- Clean Exit -------------------//
+	
+	/**
+	 * When the user closes the window, the client runs this method
+	 */
 	public synchronized void exitGracefully() {
 		if (s != null) {
-			//stop the heartbeat
+			// stop the heartbeat
 			this.hb.setRunningToFalse();
 			OTExitGracefully oeg = new OTExitGracefully();
 			String complementOpCode = "0005";
 			System.out.println("Sending OT to server to exit");
 			this.writeToServer(oeg, complementOpCode);
-			//this chains together
-			//waitForExitConfirmation(). 
-			//Finally, we close connections
+			// this chains together
+			// waitForExitConfirmation().
+			// Finally, we close connections
 			this.attemptToCloseConnections();
 		}
 	}
-
-	private void cleanUpAndPromptUserToRestart() {
-		System.out.println("Client is attempting recovery");
-		this.hb.setRunningToFalse();
-		this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-		int count = 0;
-		while (!s.isClosed() && count < 2) {
-			count++;
-			System.out.println("Client closing connections, attempt " + count + ". Is socket closed? " + s.isClosed());
-			this.attemptToCloseConnections();
-		}
-		System.out.println("prompting user to restart");
-		model.promptUserToRestart();
-	}
-
+	
+	/**
+	 * This method closes the connections	
+	 */
 	private void attemptToCloseConnections() {
 
 		if (s != null) {
@@ -464,11 +559,44 @@ public class Client {
 
 	}
 
+	
+	//---------------Not so clean exit-------------------//
+	
+
+	/**
+	 * After an error or lack of hearbeat, client runs this private method. 
+	 * Changing the mode's state to ErrorConnection down displays a suitable message. 
+	 * 
+	 * After connections are closed, the model.promptUserToRestart() is run. 
+	 * This displays a restart button to the user. 
+	 * 
+	 * If that restart button is pressed, the client's restart() method is run. 
+	 */
+	private void cleanUpAndPromptUserToRestart() {
+		System.out.println("Client is attempting recovery");
+		this.hb.setRunningToFalse();
+		this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
+		int count = 0;
+		while (!s.isClosed() && count < 2) {
+			count++;
+			System.out.println("Client closing connections, attempt " + count + ". Is socket closed? " + s.isClosed());
+			this.attemptToCloseConnections();
+		}
+		System.out.println("prompting user to restart");
+		model.promptUserToRestart();
+	}
+
+	/**
+	 * When the user presses the restart button on the error page, this method is run.
+	 */
 	public void restart() {
 		System.out.println("Client will attempt to reopen connections");
 		attemptToOpenConnections();
 	}
-
+	
+	/**
+	 * This is a private method used to reopen connnections .
+	 */
 	private void attemptToOpenConnections() {
 		try {
 			s = new Socket("localhost", portnumber);
@@ -486,6 +614,8 @@ public class Client {
 			this.hb = new HeartBeatThread(this);
 			(new Thread(this.hb)).start();
 			System.out.println("New heartbeat started");
+			//New connections have been started, 
+			//set error to false!
 			this.error = false;
 		} catch (IOException e) {
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
@@ -498,9 +628,17 @@ public class Client {
 			System.out.println("Hey, the server or internet connection is not working!");
 		}
 	}
-
+	
+	/**
+	 * A getter that returns the boolean value of whether 
+	 * the client is in error state. 
+	 * @return
+	 */
+	public boolean getError() {
+		return this.error;
+	}
 	public static void main(String[] args) {
-		Client C = new Client(50280, "147.188.195.114");
+		Client C = new Client(4444, "localhost");
 	}
 
 }
