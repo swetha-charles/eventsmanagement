@@ -551,7 +551,7 @@ public class QueryManager {
 					checkUser.setString(4, classifiedOperation.getLastname());
 					checkUser.setString(5, classifiedOperation.getEmail());
 					
-					ResultSet rs = checkUser.executeQuery();
+					checkUser.executeUpdate();
 					
 					getServer().getServerModel().addToText("Succesfully created user");
 					return new OTRegistrationInformationConfirmation(true, null, null);
