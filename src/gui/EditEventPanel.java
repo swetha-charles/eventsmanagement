@@ -158,18 +158,15 @@ public class EditEventPanel extends JPanel {
 
 		userResponse = new JPanel();
 		submit = new JButton("Submit");
-		submit.addActionListener((e1) -> {
-			if(nameA.getText().length() != 0){
+					if(nameA.getText().length() != 0){
 				Event changedEvent = null;
 				String startTimeHours = getShoursA().getText();
 				String startTimeMinutes = getSminutesA().getText();
-
 				// Validate Start Time
 				if (this.model.validateChangedStartTime(startTimeHours, startTimeMinutes)) {
 					Time startTime = this.stringToTime(startTimeHours, startTimeMinutes);
 					String endTimeHours = getEhoursA().getText();
 					String endTimeMinutes = getEminutesA().getText();
-
 					// Validate End Time
 					if (this.model.validateChangedEndTime(endTimeHours, endTimeMinutes)) {
 						Time endTime = this.stringToTime(endTimeHours, endTimeMinutes);
@@ -185,13 +182,11 @@ public class EditEventPanel extends JPanel {
 										getEvent().getLockVersion() + 1);
 								// write to model!
 								model.updateEvent(getEvent(), changedEvent);
-
 								if (model.getMeetingUpdateSuccessful() == true) {
 									model.setMeetingUpdateSuccessful(false);
 									model.updateMeetings(new Date(this.listPanel.getC().getTimeInMillis()));
 									this.listPanel.addMeetings(model.getMeetings());
 									JOptionPane.showMessageDialog(this, "Meeting successfully changed!");
-									this.listPanel.closeDialog();
 								} else {
 									int userChose = JOptionPane.showConfirmDialog(this, "Meeting could not be changed since it was recently updated by another user. \n"
 											+ "Would you like to refresh page and view the most up to date "
@@ -209,32 +204,20 @@ public class EditEventPanel extends JPanel {
 										this.listPanel.addMeetings(model.getMeetings());
 										this.repaint();
 										this.revalidate();
-									}
-								}
+									
 							} else {
 								// Date could not be validated
 								JOptionPane.showConfirmDialog(this, "Check date, current input is invalid");
-							}
-						} else {
 							// Start time is not before end time
 							JOptionPane.showMessageDialog(this, "Start-time should be before end-time");
-						}
-					} else {
 						// End time could not be validated
 						JOptionPane.showMessageDialog(this, "Check end-time, current input is invalid");
 
-					}
-				} else {
 					// Start time could not been validated
 					JOptionPane.showMessageDialog(this, "Check start-time, current input is invalid");
-
-				}
-			} else {
-				// Start time could not been validated
 				JOptionPane.showMessageDialog(this, "Meeting name cannot be empty");
-			}
 	
-		});
+
 		cancel = new JButton("Cancel");
 		cancel.addActionListener((e2) -> {
 			this.setVisible(false);
@@ -332,7 +315,7 @@ public class EditEventPanel extends JPanel {
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
-		Time time = new Time(((h-1) * 3600000) + (m * 60000));
+		Time time = new Time(((h - 1) * 3600000) + (m * 60000));
 		return time;
 	}
 
