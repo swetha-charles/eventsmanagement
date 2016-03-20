@@ -116,8 +116,8 @@ public class DataValidation {
 			int hoursInt = Integer.parseInt(hours);
 			int minutesInt = Integer.parseInt(minutes);
 			// check hours:
-			if (hoursInt >= 0 && hoursInt <= 24) {
-				if (minutesInt >= 0 && minutesInt <= 60) {
+			if (hoursInt >= 0 && hoursInt < 24) {
+				if (minutesInt >= 0 && minutesInt < 60) {
 					return true;
 				}
 			}

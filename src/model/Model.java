@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.regex.Pattern;
 
@@ -42,7 +42,7 @@ public class Model extends Observable {
 	private Profile profileView;
 	private Edit editView;
 	private Password passwordView;
-	private Calendar currentCalendarBorrowedFromListPanel;
+	private Calendar currentCalendarBorrowedFromListPanel =  new GregorianCalendar();
 
 	// ----------- Regex's and other formatting information-------//
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
@@ -163,6 +163,7 @@ public class Model extends Observable {
 			break;
 
 		case EVENTS:
+			System.out.println("New list view created!");
 			this.listView = new List(client, this);
 			this.setPanel(listView);
 			break;
@@ -185,8 +186,61 @@ public class Model extends Observable {
 			this.passwordView = new Password(client, this);
 			this.setPanel(passwordView);
 			break;
+			
+		case LOGOUT:
+			clearAllFields();			
+			this.loginView = new Login(client, this);
+			setPanel(this.loginView);
+			break;
 		}
 
+	}
+	public void clearAllFields(){
+		this.username = null;
+		this.email = null;
+		this.firstName = null;
+		this.lastname = null;
+		this.dob = null;
+		this.hashedPassword = null;
+
+		// --------------Boolean values for registration--------------//
+		this.usernameUnique = false;
+		this.username20orLess = false;
+		this.emailUnique = false;
+		this.emailMatchesRegex = false;
+		this.firstNameLessThan30 = false;
+		this.lastNameNameLessThan30 = false;
+		this.passwordMatchesConfirm = false;
+		this.password60orLess = false;
+		this.passwordatleast8 = false;
+		this.oldEnough = false;
+
+		// ----------------------Login success-------------------------//
+
+		this.successfulLogin = false;
+		this.successfulRegistration = false;
+
+		// ------------------Event view information--------------------//
+		this.meetings = new ArrayList<Event>();
+
+		//--------------------Event editing-------------------//
+			
+
+		this.changedEventStartTimeHours = null;
+		this.changedEventStartTimeMinutes = null;
+		this.changedEventEndTimeHours = null;
+		this.changedEventTimeMinutes = null;
+		this.changedDate = null;
+		
+		// ------------------Event create/update/delete--------------------//
+		this.meetingCreationSuccessful = false;
+		this.meetingUpdateSuccessful = false;
+		this.meetingDeleteSuccessful = false;
+
+		// -----------------------Profile update--------------------------//
+		this.updateProfileSuccess = false;
+		this.updatePasswordSuccess = false;
+		this.intermediateHashedPwStorage = null;
 	}
 	
 	public void setPanel(JPanel panel) {
@@ -377,6 +431,10 @@ public class Model extends Observable {
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
+	public void updateMeetings(){
+		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(new Date(this.getCalendar().getTimeInMillis()));
+		this.client.getMeetingsForDay(meetingsRequest);
+	}
 
 	public void promptUserToRestart() {
 		this.errorView.addRestartButton();
@@ -481,9 +539,10 @@ public class Model extends Observable {
 			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
 			return;
 		} else if (checkPassword(new String(password))) {
-			this.changeCurrentState(ModelState.EVENTS);
 			returnObject = new OTLoginSuccessful(this.username);
 			this.client.informServerLoginSuccess(returnObject);
+			//this method
+			//will populate events
 		} else if(!checkPassword(new String(password))){
 			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 		}
@@ -614,7 +673,8 @@ public class Model extends Observable {
 
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
-		/* this.listView.getListPanel().addMeetings(this.meetings); */
+		this.listView.getListPanel().addMeetings(this.meetings); 
+		this.changeCurrentState(ModelState.EVENTSUPDATE);
 	}
 
 	public boolean getMeetingCreationSuccessful() {

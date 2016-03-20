@@ -65,7 +65,7 @@ public class ListPanel extends JPanel {
 	JButton edit = new JButton("Edit Event");
 	JButton submit = new JButton("Add Event");
 
-	Calendar c = new GregorianCalendar();
+	Calendar c;
 
 	JPanel top = new JPanel();
 	JLabel date;
@@ -87,7 +87,7 @@ public class ListPanel extends JPanel {
 
 		this.controller = controller;
 		this.model = model;
-		this.model.setCalendar(this.c);
+		this.c = model.getCalendar();
 
 		// sets dimension and layout of the panel
 		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
@@ -122,7 +122,7 @@ public class ListPanel extends JPanel {
 		top.add(refresh);
 
 		// updates model with the meetings for today and adds them to panel list
-		model.updateMeetings(new Date(c.getTimeInMillis()));
+//		model.updateMeetings(new Date(c.getTimeInMillis()));
 		addMeetings(model.getMeetings());
 
 		// adds list to listscroll and sets the size
@@ -186,6 +186,7 @@ public class ListPanel extends JPanel {
 			final int y = (screenSize.height - dialog.getHeight()) / 2;
 			dialog.setLocation(x, y);
 			dialog.setVisible(true);
+
 		});
 
 		refresh.addActionListener((e) -> {
@@ -311,6 +312,7 @@ public class ListPanel extends JPanel {
 					final int y = (screenSize.height - dialog.getHeight()) / 2;
 					dialog.setLocation(x, y);
 					dialog.setVisible(true);
+//					dialog.setAlwaysOnTop(true);
 
 				});
 
@@ -331,7 +333,7 @@ public class ListPanel extends JPanel {
 					final int x = (screenSize.width - dialog.getWidth()) / 2;
 					final int y = (screenSize.height - dialog.getHeight()) / 2;
 					dialog.setLocation(x, y);
-					dialog.setVisible(true);
+//					dialog.setVisible(true);
 				});
 			}
 
