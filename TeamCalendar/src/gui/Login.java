@@ -1,9 +1,7 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -42,8 +40,7 @@ public class Login extends JPanel {
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(layout);
-		setBackground(Color.LIGHT_GRAY);
-//		setBackground( new Color(85,107,47));
+		
 		try {
 			background = new JLabel() {
 				
@@ -51,14 +48,7 @@ public class Login extends JPanel {
 				private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
 				public void paint( Graphics g ) { 
 				    super.paint(g);
-				    //this is used to center the image.
-				    //I tried to stretch the image and it looked
-				    //super weird. 
-				    Graphics2D g2d = (Graphics2D) g;
-				    g2d.translate(this.getWidth() / 2, this.getHeight() / 2);
-				    g2d.translate(-backgroundImage.getWidth(null) / 2, -backgroundImage.getHeight(null) / 2);
-				    g2d.drawImage(backgroundImage, 0, 0, null);
-				    
+				    g.drawImage(backgroundImage, 0, 0, null);
 				  }
 				};
 		} catch (IOException e) {

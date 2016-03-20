@@ -29,20 +29,11 @@ public class MainView extends JFrame implements Observer {
 	JPanel loggedIn = null;
 
 	public MainView(Client client, Model model) {
-		super("Just do itttt \u2714");
 		this.client = client;
 		this.model = model;
 		this.login = new Login(this.client, this.model);
 
 		scroll = new JScrollPane(login);
-		scroll.setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
-		//this gets rid of the scroll bars that keep showing up. 
-		//but then we never have scroll bars :(
-	
-		scroll.setHorizontalScrollBarPolicy(
-				   JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scroll.setVerticalScrollBarPolicy(
-				   JScrollPane.VERTICAL_SCROLLBAR_NEVER); 
 
 		setDefaultLookAndFeelDecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,8 +48,6 @@ public class MainView extends JFrame implements Observer {
 			if(client.getError()){
 				this.dispose();
 			} else {
-				//Once model's state is changed, client.exitGracefully is 
-				//called. 
 				model.changeCurrentState(ModelState.EXIT);
 			}
 		
