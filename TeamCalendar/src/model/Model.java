@@ -36,7 +36,7 @@ public class Model extends Observable {
 	private JPanel currentInnerPanel = null;
 	private Login loginView;
 	private Registration registrationView;
-	private JPanel meeting;
+	private JPanel eventsView;
 	private ErrorConnectionDown errorView;
 	private List listView;
 	private Profile profileView;
@@ -106,6 +106,94 @@ public class Model extends Observable {
 
 		loginView = new Login(this.client, this);
 		currentScrollPanel = new JScrollPane(loginView);
+
+	}
+	
+	/**
+	 * This method is used to change the model's state. 
+	 * This then affects the view that the user sees. 
+	 * @param state
+	 */
+	public synchronized void changeCurrentState(ModelState state) {
+		this.currentstate = state;
+
+		// !!--Dont forget breaks;--!!//
+		switch (state) {
+
+		case REGISTRATION:
+			this.registrationView = new Registration(client, this);
+			setPanel(this.registrationView);
+			break;
+
+		case LOGIN:
+			this.loginView = new Login(client, this);
+			setPanel(this.loginView);
+			break;
+
+		case LOGINUNSUCCESSFULWRONGUSERNAME:
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "No such user");
+			break;
+
+		case LOGINUNSUCCESSFULWRONGPASSWORD:
+			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "Password incorrect");
+			break;
+
+		case REGISTRATIONUPDATE:
+			setPanel(this.registrationView);
+			break;
+
+		case ERRORCONNECTIONDOWN:
+			this.errorView = new ErrorConnectionDown(this);
+			setPanel(this.errorView);
+			break;
+
+		case ERRORCONNECTIONDOWNSTILL:
+			System.out.println("Connection still down");
+			this.errorView.connectionStillDown();
+			setPanel(this.errorView);
+			break;
+
+		case PROMPTRELOAD:
+			setPanel(this.errorView);
+			break;
+
+		case EXIT:
+			//by this time, the windows is closed. 
+			this.client.exitGracefully();
+			break;
+
+		case EVENTS:
+			this.listView = new List(client, this);
+			this.setPanel(listView);
+			break;
+
+		case EVENTSUPDATE:
+			setPanel(this.listView);
+			break;
+
+		case PROFILE:
+			this.profileView = new Profile(client, this);
+			this.setPanel(profileView);
+			break;
+
+		case EDIT:
+			this.editView = new Edit(client, this);
+			this.setPanel(editView);
+			break;
+
+		case PASSWORD:
+			this.passwordView = new Password(client, this);
+			this.setPanel(passwordView);
+			break;
+		}
+
+	}
+	
+	public void setPanel(JPanel panel) {
+		setCurrentInnerPanel(panel);
+		setCurrentScrollPanel(new JScrollPane(panel));
+		setChanged();
+		notifyObservers();
 
 	}
 
@@ -213,7 +301,13 @@ public class Model extends Observable {
 		}
 
 	}
-
+	 
+	/**
+	 * This method is used to validate password. 
+	 * Note the user's password is never stored as plain text. 
+	 * A hashed version is stored. 
+	 * @param password
+	 */
 	public void validatePassword(char[] password) {
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
@@ -233,6 +327,10 @@ public class Model extends Observable {
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 	}
 
+	/**
+	 * This method used to check whether user's data has been validated
+	 * @return
+	 */
 	private boolean registrationDataValidated() {
 		try {
 			return (this.username20orLess && this.emailMatchesRegex && this.emailUnique && this.firstNameLessThan30
@@ -243,7 +341,10 @@ public class Model extends Observable {
 		}
 
 	}
-
+	
+	/**
+	 * This method sends of registration information to the server. 
+	 */
 	public void checkRegistrationInformation() {
 		if (this.usernameUnique && this.emailUnique && registrationDataValidated()) {
 			OTRegistrationInformation otri = new OTRegistrationInformation(this.username, this.email, this.firstName,
@@ -255,8 +356,6 @@ public class Model extends Observable {
 		}
 
 	}
-	// ------------------Reg ends------------//
-
 	// -----------------Events --------------//
 
 	public void addEvents(Event event) {
@@ -355,7 +454,7 @@ public class Model extends Observable {
 		return sqlDate ;
 	}
 	
-	// -----------------Events ends-----------------//
+
 	// ------------------Profile editing------------//
 	public void updateProfile(String firstName, String lastName, String email) {
 		OTUpdateUserProfile updatedUserInfo = new OTUpdateUserProfile(firstName, lastName, email);
@@ -371,8 +470,7 @@ public class Model extends Observable {
 
 	}
 
-	// --------------Profile editing ends-----------//
-
+	//------------Login----------------------------//
 	public void login(String username, char[] password) {
 		OTLogin loginObject = new OTLogin(username);
 		setUsername(username);
@@ -391,7 +489,8 @@ public class Model extends Observable {
 		}
 		
 	}
-
+	
+	//----------Password checking--------------//
 	public boolean checkPassword(String password) {
 		return BCrypt.checkpw(password, this.hashedPassword);
 	}
@@ -426,7 +525,7 @@ public class Model extends Observable {
 		this.hashedPassword = hash;
 
 	}
-	// --------End of information from server------------//
+	// --------Getters and setter------------//
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -566,80 +665,7 @@ public class Model extends Observable {
 		this.intermediateHashedPwStorage = intermediatePwStorage;
 	}
 
-	public synchronized void changeCurrentState(ModelState state) {
-		this.currentstate = state;
-
-		// !!--Dont forget breaks;--!!//
-		switch (state) {
-
-		case REGISTRATION:
-			this.registrationView = new Registration(client, this);
-			setPanel(this.registrationView);
-			break;
-
-		case LOGIN:
-			this.loginView = new Login(client, this);
-			setPanel(this.loginView);
-			break;
-
-		case LOGINUNSUCCESSFULWRONGUSERNAME:
-			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "No such user");
-			break;
-
-		case LOGINUNSUCCESSFULWRONGPASSWORD:
-			JOptionPane.showMessageDialog(this.getCurrentScrollPanel(), "Password incorrect");
-			break;
-
-		case REGISTRATIONUPDATE:
-			setPanel(this.registrationView);
-			break;
-
-		case ERRORCONNECTIONDOWN:
-			this.errorView = new ErrorConnectionDown(this);
-			setPanel(this.errorView);
-			break;
-
-		case ERRORCONNECTIONDOWNSTILL:
-			System.out.println("Connection still down");
-			this.errorView.connectionStillDown();
-			setPanel(this.errorView);
-			break;
-
-		case PROMPTRELOAD:
-			setPanel(this.errorView);
-			break;
-
-		case EXIT:
-			//by this time, the windows is closed. 
-			this.client.exitGracefully();
-			break;
-
-		case EVENTS:
-			this.listView = new List(client, this);
-			this.setPanel(listView);
-			break;
-
-		case EVENTSUPDATE:
-			setPanel(this.listView);
-			break;
-
-		case PROFILE:
-			this.profileView = new Profile(client, this);
-			this.setPanel(profileView);
-			break;
-
-		case EDIT:
-			this.editView = new Edit(client, this);
-			this.setPanel(editView);
-			break;
-
-		case PASSWORD:
-			this.passwordView = new Password(client, this);
-			this.setPanel(passwordView);
-			break;
-		}
-
-	}
+	
 	public void setCalendar(Calendar calendar){
 		this.currentCalendarBorrowedFromListPanel = calendar;
 		
@@ -662,12 +688,6 @@ public class Model extends Observable {
 		return this.currentInnerPanel;
 	}
 	
-	public void setPanel(JPanel panel) {
-		setCurrentInnerPanel(panel);
-		setCurrentScrollPanel(new JScrollPane(panel));
-		setChanged();
-		notifyObservers();
-
-	}
+	
 
 }
