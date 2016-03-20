@@ -546,10 +546,10 @@ public class QueryManager {
 					PreparedStatement checkUser = con.prepareStatement(update);
 					
 					checkUser.setString(1, classifiedOperation.getUsername());
-					checkUser.setString(1, classifiedOperation.getPwHash());
-					checkUser.setString(1, classifiedOperation.getFirstname());
-					checkUser.setString(1, classifiedOperation.getLastname());
-					checkUser.setString(1, classifiedOperation.getEmail());
+					checkUser.setString(2, classifiedOperation.getPwHash());
+					checkUser.setString(3, classifiedOperation.getFirstname());
+					checkUser.setString(4, classifiedOperation.getLastname());
+					checkUser.setString(5, classifiedOperation.getEmail());
 					
 					ResultSet rs = checkUser.executeQuery();
 					
