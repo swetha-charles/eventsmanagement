@@ -274,7 +274,7 @@ public class QueryManager {
 
 				PreparedStatement deleteEvent = con.prepareStatement(update);
 
-				deleteEvent.setString(1, client.getUserName());
+				deleteEvent.setString(1, creator);
 				deleteEvent.setDate(2, eventToDelete.getDate());
 				deleteEvent.setString(3, eventToDelete.getEventTitle());
 				deleteEvent.setString(4, eventToDelete.getEventDescription());
