@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.Date;
 import java.util.concurrent.ExecutionException;
@@ -56,8 +57,9 @@ public class Client {
 		model.addObserver(view);
 		this.portnumber = portnumber;
 		try {
-			s = new Socket(url, portnumber);
 
+			InetAddress addr = InetAddress.getByName(url);
+			s = new Socket(addr, portnumber);		
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
@@ -183,7 +185,6 @@ public class Client {
 			break;
 		case "0006":
 			OTRegistrationInformationConfirmation regConf = (OTRegistrationInformationConfirmation) receivedOperation;
-
 			if (regConf.getRegistrationSuccess()) {
 				this.model.setSuccessfulRegistration(true);
 				this.model.changeCurrentState(ModelState.LOGIN);
@@ -499,7 +500,7 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-		Client C = new Client(4444, "localhost");
+		Client C = new Client(50280, "147.188.195.134");
 	}
 
 }
