@@ -14,12 +14,12 @@ import javax.swing.JButton;
 
 public class ServerController extends JPanel {
 
-	public ServerController(int portNumber){
+	public ServerController(String addr, int portNumber){
 
 		super();
 
 		// model 
-		ServerModel model = new ServerModel(portNumber);
+		ServerModel model = new ServerModel(addr, portNumber);
 
 		// views
 		ServerView text = new ServerView(model);

@@ -17,12 +17,12 @@ public class Server extends Thread{
 	private ServerModel serverModel;
 	private QueryManager queryManager;
 	
-	public Server(int portNumber, ServerModel model) throws IOException{
+	public Server(String iNetAddr, int portNumber, ServerModel model) throws IOException{
 		this.serverModel = model;
 		//Create connection to database
 		this.database = new DatabaseConnection(this);
 		//Create server socket to listen for new clients
-		InetAddress addr = InetAddress.getByName("147.188.195.114");
+		InetAddress addr = InetAddress.getByName(iNetAddr);
 		this.serverSocket = new ServerSocket(portNumber, 50, addr);
 		getServerModel().addToText("Server: Listening on port " + portNumber + " and IP: " +serverSocket.getInetAddress().toString() + "\n");
 		//Set the flag that shows the server is active

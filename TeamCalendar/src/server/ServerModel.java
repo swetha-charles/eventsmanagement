@@ -8,10 +8,10 @@ public class ServerModel extends Observable{
 	private String text;
 	private Server server;
 	
-	public ServerModel(int portNumber){
+	public ServerModel(String addr, int portNumber){
 		this.text = "";
 		try {
-			Server serverThread = new Server(portNumber, this);
+			Server serverThread = new Server(addr, portNumber, this);
 			serverThread.start();
 			this.server = serverThread;
 		} catch (IOException e) {
