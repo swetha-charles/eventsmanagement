@@ -55,7 +55,7 @@ public class LoginPanel extends JPanel{
 	public LoginPanel(Client client, Model model){
 		this.client= client;
 		this.model = model;
-		setBorder(new OvalBorder(10, 10));
+//		setBorder(new OvalBorder(10, 10));
 		//sets a character limit on username textfield
 		AbstractDocument usernameDoc = (AbstractDocument) username.getDocument();
 		if (usernameDoc instanceof AbstractDocument) {

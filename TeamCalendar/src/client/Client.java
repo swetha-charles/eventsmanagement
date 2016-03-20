@@ -500,7 +500,7 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-		Client C = new Client(50280, "147.188.195.134");
+		Client C = new Client(50280, "147.188.195.114");
 	}
 
 }
