@@ -111,13 +111,19 @@ public class PasswordPanel extends JPanel{
 				String password1 = new String(confirmNewA.getPassword());
 				String password2 = new String(newPasswordA.getPassword());
 				if(password1.equals(password2)){
-					this.model.updatePassword(password1);
-					if(this.model.getUpdatePasswordSuccess()){
-						this.model.changeCurrentState(ModelState.PROFILE);
-						JOptionPane.showMessageDialog(model.getCurrentInnerPanel(), "Password has been reset");
+					if(this.model.validatePassword(password1.toCharArray())){
+						this.model.updatePassword(password1);
+						if(this.model.getUpdatePasswordSuccess()){
+							this.model.changeCurrentState(ModelState.PROFILE);
+							JOptionPane.showMessageDialog(model.getCurrentInnerPanel(), "Password has been reset");
+						} else {
+							JOptionPane.showMessageDialog(this, "Could not update password, check fields and try again");
+						}
 					} else {
-						JOptionPane.showMessageDialog(this, "Could not update password, check fields and try again");
+						JOptionPane.showMessageDialog(this, "Your new password must be greater than 6 characters. \n"
+								+ "It also cannot be greater than 60 characters");
 					}
+					
 				} else {
 					JOptionPane.showMessageDialog(this, "Your new passwords do not match");
 				}
