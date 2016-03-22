@@ -36,7 +36,7 @@ public class Login extends JPanel {
 		this.client = client;
 		this.model = model;
 
-		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+		setPreferredSize(new Dimension(1000, 650));
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(layout);
@@ -45,10 +45,11 @@ public class Login extends JPanel {
 			background = new JLabel() {
 				
 				private static final long serialVersionUID = 1L;
-				private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
+				private Image backgroundImage = ImageIO.read(new File("rsz_1calendar.jpg"));
+				Image scaled = backgroundImage.getScaledInstance(1200, 670, Image.SCALE_DEFAULT);
 				public void paint( Graphics g ) { 
 				    super.paint(g);
-				    g.drawImage(backgroundImage, 0, 0, null);
+				    g.drawImage(scaled, 0, 0, null);
 				  }
 				};
 		} catch (IOException e) {
@@ -56,7 +57,6 @@ public class Login extends JPanel {
 			e.printStackTrace();
 		}
 
-		background.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
 		LoginPanel loginPanel = new LoginPanel(this.client, this.model);
 
@@ -74,22 +74,5 @@ public class Login extends JPanel {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		add(background, gbc);
-	}
-
-
-
-	public static void main(String[] args) throws IOException {
-
-		/*JFrame frame = new JFrame();
-		Client c1 = new Client();
-
-		Login loginPanel = new Login(c1);
-
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(loginPanel);
-		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		frame.setResizable(true);
-		frame.setVisible(true);*/
 	}
 }

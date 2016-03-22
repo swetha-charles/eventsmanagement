@@ -32,7 +32,7 @@ public class Registration extends JPanel{
 		
 		this.controller = controller2;
 		this.model = model;
-		setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+		setPreferredSize(new Dimension(1000,650));
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(layout);
@@ -42,10 +42,11 @@ public class Registration extends JPanel{
 			background = new JPanel() {
 				
 				private static final long serialVersionUID = 1L;
-				private Image backgroundImage = ImageIO.read(new File("calendar.jpg"));
+				private Image backgroundImage = ImageIO.read(new File("rsz_1calendar.jpg"));
+				Image scaled = backgroundImage.getScaledInstance(1000, 650, Image.SCALE_DEFAULT);
 				public void paint( Graphics g ) { 
 				    super.paint(g);
-				    g.drawImage(backgroundImage, 0, 0, null);
+				    g.drawImage(scaled, 0, 0, null);
 				  }
 				};
 				this.add(background, gbc);
@@ -53,8 +54,6 @@ public class Registration extends JPanel{
 			//File could not be found
 			background = null;
 		}
-
-		background.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 		
 		rp = new RegistrationPanel(controller2, model);
 
@@ -78,22 +77,6 @@ public class Registration extends JPanel{
 	public RegistrationPanel getRegistrationPanel(){
 		return this.rp;
 	}
-	
-	
-	public static void main(String[] args) throws IOException {
-		
-		JFrame frame = new JFrame();
-		Client controller = new Client();
-		
-		
-		//Registration r = new Registration(listener.interfaces, model);
-		
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//frame.setContentPane(r);
-		frame.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		frame.setResizable(true);
-		frame.setVisible(true);
-	}
+
 }
 
