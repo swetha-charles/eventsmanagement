@@ -349,7 +349,7 @@ public class Client {
 			System.out.println("Should never be received by client\n " + "Reserved for client-sending use only");
 			break;
 		case "0022":
-			// Sent by server to indcate that the profile changes have
+			// Sent by server to indicate that the profile changes have
 			// been successful.
 			OTUpdateUserProfileSuccessful updateProfileSuccess = (OTUpdateUserProfileSuccessful) receivedOperation;
 			this.model.setUpdateProfileSuccess(true);
@@ -368,6 +368,7 @@ public class Client {
 			// succesful,
 			// an OTErrorResponse is received instead.
 			this.model.setUpdatePasswordSuccess(true);
+			this.model.moveIntermediatePwStorageToPermanent();
 			System.out.println("Client: Password has been updated");
 			break;
 		}

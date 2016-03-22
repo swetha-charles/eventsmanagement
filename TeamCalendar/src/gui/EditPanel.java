@@ -24,8 +24,8 @@ import model.Model;
 import model.ModelState;
 import objectTransferrable.OTUpdateUserProfile;
 
-public class EditPanel extends JPanel{
-	
+public class EditPanel extends JPanel {
+
 	/**
 	 * 
 	 */
@@ -45,43 +45,45 @@ public class EditPanel extends JPanel{
 	JTextField lastNameA;
 	JTextField emailA;
 	JPasswordField passwordA = new JPasswordField();
-	
+
 	JButton submit = new JButton("Confirm Changes");
 	JButton cancel = new JButton("Cancel");
-	
-	/** constructor to build panel to edit profile information
+
+	/**
+	 * constructor to build panel to edit profile information
 	 * 
-	 * @param controller an object that connects the view to the server
-	 * @param model an object that contains the methods to update the view
+	 * @param controller
+	 *            an object that connects the view to the server
+	 * @param model
+	 *            an object that contains the methods to update the view
 	 */
-	public EditPanel(Client controller, Model model){
-		
+	public EditPanel(Client controller, Model model) {
+
 		this.controller = controller;
 		this.model = model;
 		firstNameA = new JTextField();
 		firstNameA.setDocument(new JTextFieldLimit(30));
 		firstNameA.setText(model.getFirstName());
-		
+
 		lastNameA = new JTextField();
 		lastNameA.setDocument(new JTextFieldLimit(30));
 		lastNameA.setText(model.getLastname());
-	
+
 		emailA = new JTextField();
 		emailA.setDocument(new JTextFieldLimit(30));
 		emailA.setText(model.getEmail());
-		
-		
-		setPreferredSize(new Dimension(1000,580));
-		setMaximumSize(new Dimension(1000,580));
-		setMinimumSize(new Dimension(1000,580));
-	
+
+		setPreferredSize(new Dimension(1000, 580));
+		setMaximumSize(new Dimension(1000, 580));
+		setMinimumSize(new Dimension(1000, 580));
+
 		hello.setForeground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
 		lastName.setForeground(Color.DARK_GRAY);
 		email.setForeground(Color.DARK_GRAY);
 		password.setForeground(Color.DARK_GRAY);
 		comment.setForeground(Color.GRAY);
-		
+
 		hello.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 30));
 		firstName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		firstNameA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
@@ -94,9 +96,9 @@ public class EditPanel extends JPanel{
 		comment.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
-		
-		detailsPanel.setLayout(new GridLayout(6,2));
-		detailsPanel.setPreferredSize(new Dimension(700,150));
+
+		detailsPanel.setLayout(new GridLayout(6, 2));
+		detailsPanel.setPreferredSize(new Dimension(700, 150));
 		detailsPanel.add(firstName);
 		detailsPanel.add(firstNameA);
 		detailsPanel.add(lastName);
@@ -107,52 +109,72 @@ public class EditPanel extends JPanel{
 		detailsPanel.add(empty);
 		detailsPanel.add(password);
 		detailsPanel.add(passwordA);
-		
+
 		SpringLayout layout = new SpringLayout();
 		setLayout(layout);
-		
+
 		add(hello);
 		add(detailsPanel);
 		add(submit);
 		add(cancel);
-		
+
 		layout.putConstraint(SpringLayout.WEST, hello, 70, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, hello, 50, SpringLayout.NORTH, this);
-		
+
 		layout.putConstraint(SpringLayout.WEST, detailsPanel, 80, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, detailsPanel, 20, SpringLayout.SOUTH, hello);
-		
+
 		layout.putConstraint(SpringLayout.WEST, submit, 70, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, submit, 20, SpringLayout.SOUTH, detailsPanel);
-		
+
 		layout.putConstraint(SpringLayout.WEST, cancel, 10, SpringLayout.EAST, submit);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 20, SpringLayout.SOUTH, detailsPanel);
-		
-		//----------------------Listeners----------------------//
-		
+
+		// ----------------------Listeners----------------------//
+
 		submit.addActionListener((e) -> {
+			
+			if (firstNameA.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "First name  cannot be empty");
+				return;
+			}
+			if (lastNameA.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "Last name  cannot be empty");
+				return;
+			}
+			if(!this.model.checkEmail(emailA.getText())){
+				JOptionPane.showMessageDialog(this, "Email input is invalid");
+				return;
+			}
 			String password = new String(this.passwordA.getPassword());
-			if(model.checkPassword(password)){
-				this.model.updateProfile(firstNameA.getText(),lastNameA.getText(),emailA.getText());
-				if(this.model.getUpdateProfileSuccess()){
-					JOptionPane.showMessageDialog(this, "Update Successful!");
-					this.model.changeCurrentState(ModelState.PROFILE);
+			if (model.checkPassword(password)) {			
+				if (model.validateFirstName(firstNameA.getText()) && model.validateLastName(lastNameA.getText())) {
+					this.model.updateProfile(firstNameA.getText(), lastNameA.getText(), emailA.getText());
+					if (this.model.getUpdateProfileSuccess()) {
+						JOptionPane.showMessageDialog(this, "Update Successful");
+						this.model.changeCurrentState(ModelState.PROFILE);
+						this.model.setUpdateProfileSuccess(false);
+					} else {
+						JOptionPane.showMessageDialog(this, "Update unsuccessful, check inputs and try again");
+					}
 				} else {
-					JOptionPane.showMessageDialog(this, "Update unsuccessful, connection may be down");
+					JOptionPane.showMessageDialog(this, "Current input for first name/last name invalid");
 				}
-			}else {
+			} else {
 				JOptionPane.showMessageDialog(this, "Incorrect password");
 			}
+
 		});
-		
+
 		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				model.changeCurrentState(ModelState.PROFILE);
 			}
 		});
 	}
-	
-	/** Inner class to limit the number of characters in the text fields
+
+	/**
+	 * Inner class to limit the number of characters in the text fields
 	 * 
 	 * @author nataliemcdonnell
 	 *
@@ -177,4 +199,3 @@ public class EditPanel extends JPanel{
 		}
 	}
 }
-

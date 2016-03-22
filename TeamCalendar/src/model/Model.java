@@ -42,7 +42,7 @@ public class Model extends Observable {
 	private Profile profileView;
 	private Edit editView;
 	private Password passwordView;
-	private Calendar currentCalendarBorrowedFromListPanel =  new GregorianCalendar();
+	private Calendar currentCalendarBorrowedFromListPanel = new GregorianCalendar();
 
 	// ----------- Regex's and other formatting information-------//
 	// http://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/
@@ -81,15 +81,15 @@ public class Model extends Observable {
 	// ------------------Event view information--------------------//
 	private ArrayList<Event> meetings = new ArrayList<Event>();
 
-	//--------------------Event editing-------------------//
-		//--Data here has passed Validation-----//
+	// --------------------Event editing-------------------//
+	// --Data here has passed Validation-----//
 
 	private String changedEventStartTimeHours;
 	private String changedEventStartTimeMinutes;
 	private String changedEventEndTimeHours;
 	private String changedEventTimeMinutes;
 	private java.util.Date changedDate;
-	
+
 	// ------------------Event create/update/delete--------------------//
 	private boolean meetingCreationSuccessful = false;
 	private boolean meetingUpdateSuccessful = false;
@@ -108,10 +108,11 @@ public class Model extends Observable {
 		currentScrollPanel = new JScrollPane(loginView);
 
 	}
-	
+
 	/**
-	 * This method is used to change the model's state. 
-	 * This then affects the view that the user sees. 
+	 * This method is used to change the model's state. This then affects the
+	 * view that the user sees.
+	 * 
 	 * @param state
 	 */
 	public synchronized void changeCurrentState(ModelState state) {
@@ -147,6 +148,12 @@ public class Model extends Observable {
 			setPanel(this.errorView);
 			break;
 
+		case ERRORSERVERDOWN:
+			this.errorView = new ErrorConnectionDown(this);
+			this.errorView.serverDown();
+			setPanel(this.errorView);
+			break;
+
 		case ERRORCONNECTIONDOWNSTILL:
 			System.out.println("Connection still down");
 			this.errorView.connectionStillDown();
@@ -158,7 +165,7 @@ public class Model extends Observable {
 			break;
 
 		case EXIT:
-			//by this time, the windows is closed. 
+			// by this time, the windows is closed.
 			this.client.exitGracefully();
 			break;
 
@@ -186,16 +193,17 @@ public class Model extends Observable {
 			this.passwordView = new Password(client, this);
 			this.setPanel(passwordView);
 			break;
-			
+
 		case LOGOUT:
-			clearAllFields();			
+			clearAllFields();
 			this.loginView = new Login(client, this);
 			setPanel(this.loginView);
 			break;
 		}
 
 	}
-	public void clearAllFields(){
+
+	public void clearAllFields() {
 		this.username = null;
 		this.email = null;
 		this.firstName = null;
@@ -223,15 +231,14 @@ public class Model extends Observable {
 		// ------------------Event view information--------------------//
 		this.meetings = new ArrayList<Event>();
 
-		//--------------------Event editing-------------------//
-			
+		// --------------------Event editing-------------------//
 
 		this.changedEventStartTimeHours = null;
 		this.changedEventStartTimeMinutes = null;
 		this.changedEventEndTimeHours = null;
 		this.changedEventTimeMinutes = null;
 		this.changedDate = null;
-		
+
 		// ------------------Event create/update/delete--------------------//
 		this.meetingCreationSuccessful = false;
 		this.meetingUpdateSuccessful = false;
@@ -242,7 +249,7 @@ public class Model extends Observable {
 		this.updatePasswordSuccess = false;
 		this.intermediateHashedPwStorage = null;
 	}
-	
+
 	public void setPanel(JPanel panel) {
 		setCurrentInnerPanel(panel);
 		setCurrentScrollPanel(new JScrollPane(panel));
@@ -270,7 +277,7 @@ public class Model extends Observable {
 	}
 
 	// Checks if email matches regex, then check if email is in in the database
-	public void checkEmail(String email) {
+	public void checkEmailReg(String email) {
 		this.email = email;
 		if (emailRegex.matcher(email).matches()) {
 			this.emailMatchesRegex = true;
@@ -284,9 +291,15 @@ public class Model extends Observable {
 		}
 
 	}
+	
+	// Checks if email matches regex, then check if email is in in the database
+		public boolean checkEmail(String email) {
+			 return emailRegex.matcher(email).matches();
+
+		}
 
 	// checks whether firstname <= 30 char
-	public void validateFirstName(String name) {
+	public void validateFirstNameReg(String name) {
 		this.firstName = name;
 		if (DataValidation.checkLessThanThirty(name)) {
 			this.firstNameLessThan30 = true;
@@ -299,8 +312,13 @@ public class Model extends Observable {
 		}
 	}
 
+	// checks whether firstname <= 30 char && updates name
+	public boolean validateFirstName(String name) {
+		return DataValidation.checkLessThanThirty(name);
+	}
+
 	// checks whether lastname <= 30 char
-	public void validateLastName(String name) {
+	public void validateLastNameReg(String name) {
 		this.lastname = name;
 		if (DataValidation.checkLessThanThirty(name)) {
 			this.lastNameNameLessThan30 = true;
@@ -311,6 +329,11 @@ public class Model extends Observable {
 			this.registrationView.getRegistrationPanel().setLastLabel("Last Name*: incorrect format");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
 		}
+	}
+
+	// checks whether lastname <= 30 char
+	public boolean validateLastName(String name) {
+		return DataValidation.checkLessThanThirty(name);
 	}
 
 	// checks confirm matches password field
@@ -355,11 +378,11 @@ public class Model extends Observable {
 		}
 
 	}
-	 
+
 	/**
-	 * This method is used to validate password. 
-	 * Note the user's password is never stored as plain text. 
-	 * A hashed version is stored. 
+	 * This method is used to validate password. Note the user's password is
+	 * never stored as plain text. A hashed version is stored.
+	 * 
 	 * @param password
 	 */
 	public void validatePassword(char[] password) {
@@ -383,6 +406,7 @@ public class Model extends Observable {
 
 	/**
 	 * This method used to check whether user's data has been validated
+	 * 
 	 * @return
 	 */
 	private boolean registrationDataValidated() {
@@ -395,9 +419,9 @@ public class Model extends Observable {
 		}
 
 	}
-	
+
 	/**
-	 * This method sends of registration information to the server. 
+	 * This method sends of registration information to the server.
 	 */
 	public void checkRegistrationInformation() {
 		if (this.usernameUnique && this.emailUnique && registrationDataValidated()) {
@@ -431,8 +455,10 @@ public class Model extends Observable {
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
-	public void updateMeetings(){
-		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(new Date(this.getCalendar().getTimeInMillis()));
+
+	public void updateMeetings() {
+		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(
+				new Date(this.getCalendar().getTimeInMillis()));
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
 
@@ -446,8 +472,8 @@ public class Model extends Observable {
 		this.client.restart();
 	}
 
-	public boolean validateChangedStartTime(String hours, String minutes){
-		if(DataValidation.isThisTimeValid(hours, minutes)){
+	public boolean validateChangedStartTime(String hours, String minutes) {
+		if (DataValidation.isThisTimeValid(hours, minutes)) {
 			this.changedEventStartTimeHours = hours;
 			this.changedEventStartTimeMinutes = minutes;
 			return true;
@@ -455,17 +481,18 @@ public class Model extends Observable {
 			return false;
 		}
 	}
-	//left in this format, incase we want to store the event's details. 
-	public boolean validateNewStartTime(String hours, String minutes){
-		if(DataValidation.isThisTimeValid(hours, minutes)){
+
+	// left in this format, incase we want to store the event's details.
+	public boolean validateNewStartTime(String hours, String minutes) {
+		if (DataValidation.isThisTimeValid(hours, minutes)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
-	public boolean validateChangedEndTime(String hours, String minutes){
-		if(DataValidation.isThisTimeValid(hours, minutes)){
+
+	public boolean validateChangedEndTime(String hours, String minutes) {
+		if (DataValidation.isThisTimeValid(hours, minutes)) {
 			this.changedEventEndTimeHours = hours;
 			this.changedEventTimeMinutes = minutes;
 			return true;
@@ -473,45 +500,46 @@ public class Model extends Observable {
 			return false;
 		}
 	}
-	
-	//left in this format, incase we want to store the event's details.
-	public boolean validateNewEndTime(String hours, String minutes){
-		if(DataValidation.isThisTimeValid(hours, minutes)){
+
+	// left in this format, incase we want to store the event's details.
+	public boolean validateNewEndTime(String hours, String minutes) {
+		if (DataValidation.isThisTimeValid(hours, minutes)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
-	public boolean validateChangedDate(String day, String month, String year){
-		if(DataValidation.isThisDateValid(day, month, year)){
+
+	public boolean validateChangedDate(String day, String month, String year) {
+		if (DataValidation.isThisDateValid(day, month, year)) {
 			java.util.Date sanitizedDate = (java.util.Date) DataValidation.sanitizeDate(day, month, year);
 			this.changedDate = sanitizedDate;
 			return true;
 		}
 		return false;
 	}
-	
-	//left in this format, incase we want to store the event's details.
-	public boolean validateNewDate(String day, String month, String year){
-		if(DataValidation.isThisDateValid(day, month, year)){
+
+	// left in this format, incase we want to store the event's details.
+	public boolean validateNewDate(String day, String month, String year) {
+		if (DataValidation.isThisDateValid(day, month, year)) {
 			return true;
 		}
 		return false;
 	}
+
 	/**
-	 * returns null if date is not valid 
+	 * returns null if date is not valid
+	 * 
 	 * @param day
 	 * @param month
 	 * @param year
 	 * @return
 	 */
-	public Date sanitizeDateAndMakeSQLDate(String day, String month, String year){
+	public Date sanitizeDateAndMakeSQLDate(String day, String month, String year) {
 		java.util.Date utilDate = DataValidation.sanitizeDate(day, month, year);
-		 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-		return sqlDate ;
+		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+		return sqlDate;
 	}
-	
 
 	// ------------------Profile editing------------//
 	public void updateProfile(String firstName, String lastName, String email) {
@@ -528,28 +556,28 @@ public class Model extends Observable {
 
 	}
 
-	//------------Login----------------------------//
+	// ------------Login----------------------------//
 	public void login(String username, char[] password) {
 		OTLogin loginObject = new OTLogin(username);
 		setUsername(username);
 		this.client.checkLoginDetails(loginObject);// this will set model's
 													// hashed password
 		OTLoginSuccessful returnObject;
-		if(this.hashedPassword == null){
+		if (this.hashedPassword == null) {
 			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGUSERNAME);
 			return;
 		} else if (checkPassword(new String(password))) {
 			returnObject = new OTLoginSuccessful(this.username);
 			this.client.informServerLoginSuccess(returnObject);
-			//this method
-			//will populate events
-		} else if(!checkPassword(new String(password))){
+			// this method
+			// will populate events
+		} else if (!checkPassword(new String(password))) {
 			this.changeCurrentState(ModelState.LOGINUNSUCCESSFULWRONGPASSWORD);
 		}
-		
+
 	}
-	
-	//----------Password checking--------------//
+
+	// ----------Password checking--------------//
 	public boolean checkPassword(String password) {
 		return BCrypt.checkpw(password, this.hashedPassword);
 	}
@@ -673,7 +701,7 @@ public class Model extends Observable {
 
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
-		this.listView.getListPanel().addMeetings(this.meetings); 
+		this.listView.getListPanel().addMeetings(this.meetings);
 		this.changeCurrentState(ModelState.EVENTSUPDATE);
 	}
 
@@ -708,7 +736,7 @@ public class Model extends Observable {
 
 	public void setUpdateProfileSuccess(boolean updateProfileSuccess) {
 		this.updateProfileSuccess = updateProfileSuccess;
-		
+
 	}
 
 	public boolean getUpdatePasswordSuccess() {
@@ -717,37 +745,41 @@ public class Model extends Observable {
 
 	public void setUpdatePasswordSuccess(boolean updatePasswordSuccess) {
 		this.updatePasswordSuccess = updatePasswordSuccess;
-		JOptionPane.showMessageDialog(this.currentScrollPanel, "Password successfully changed!");
-		this.changeCurrentState(ModelState.PROFILE);
+		
+	}
+	
+	public void moveIntermediatePwStorageToPermanent(){
+		this.hashedPassword = this.intermediateHashedPwStorage;
+		this.intermediateHashedPwStorage = "";
 	}
 
 	public void setIntermediatePwStorage(String intermediatePwStorage) {
 		this.intermediateHashedPwStorage = intermediatePwStorage;
 	}
 
-	
-	public void setCalendar(Calendar calendar){
+	public void setCalendar(Calendar calendar) {
 		this.currentCalendarBorrowedFromListPanel = calendar;
-		
+
 	}
-	
-	public Calendar getCalendar(){
+
+	public Calendar getCalendar() {
 		return this.currentCalendarBorrowedFromListPanel;
 	}
-	public void setCurrentScrollPanel(JScrollPane jsp){
+
+	public void setCurrentScrollPanel(JScrollPane jsp) {
 		this.currentScrollPanel = jsp;
 	}
+
 	public JScrollPane getCurrentScrollPanel() {
 		return this.currentScrollPanel;
 	}
-	
-	public void setCurrentInnerPanel(JPanel panel){
+
+	public void setCurrentInnerPanel(JPanel panel) {
 		this.currentInnerPanel = panel;
 	}
-	public JPanel getCurrentInnerPanel(){
+
+	public JPanel getCurrentInnerPanel() {
 		return this.currentInnerPanel;
 	}
-	
-	
 
 }
