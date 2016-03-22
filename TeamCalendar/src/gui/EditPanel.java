@@ -15,6 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import client.Client;
 import model.Model;
@@ -46,17 +49,25 @@ public class EditPanel extends JPanel{
 	JButton submit = new JButton("Confirm Changes");
 	JButton cancel = new JButton("Cancel");
 	
-	
+	/** constructor to build panel to edit profile information
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 */
 	public EditPanel(Client controller, Model model){
 		
 		this.controller = controller;
 		this.model = model;
+		firstNameA.setDocument(new JTextFieldLimit(30));
 		firstNameA = new JTextField(model.getFirstName());
+		lastNameA.setDocument(new JTextFieldLimit(30));
 		lastNameA = new JTextField(model.getLastname());
+		emailA.setDocument(new JTextFieldLimit(30));
 		emailA = new JTextField(model.getEmail());
 		
-		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
+		setPreferredSize(new Dimension(1000,580));
+		setMaximumSize(new Dimension(1000,580));
+		setMinimumSize(new Dimension(1000,580));
 	
 		hello.setForeground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
@@ -135,21 +146,29 @@ public class EditPanel extends JPanel{
 		});
 	}
 	
-//public static void main(String[] args) {
-//		
-//		JFrame frame = new JFrame();
-//		Client controller = new Client();
-//		
-//		EditPanel menu = new EditPanel(controller);
-//		
-//		JFrame.setDefaultLookAndFeelDecorated(true);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setContentPane(menu);
-//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-//		frame.setResizable(true);
-//		frame.setVisible(true);
-//	}
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
+	public class JTextFieldLimit extends PlainDocument {
 
+		private static final long serialVersionUID = 3693304660903406545L;
+		private int limit;
 
+		JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
+			}
+		}
+	}
 }
 
