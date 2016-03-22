@@ -58,12 +58,18 @@ public class EditPanel extends JPanel{
 		
 		this.controller = controller;
 		this.model = model;
+		firstNameA = new JTextField();
 		firstNameA.setDocument(new JTextFieldLimit(30));
-		firstNameA = new JTextField(model.getFirstName());
+		firstNameA.setText(model.getFirstName());
+		
+		lastNameA = new JTextField();
 		lastNameA.setDocument(new JTextFieldLimit(30));
-		lastNameA = new JTextField(model.getLastname());
+		lastNameA.setText(model.getLastname());
+	
+		emailA = new JTextField();
 		emailA.setDocument(new JTextFieldLimit(30));
-		emailA = new JTextField(model.getEmail());
+		emailA.setText(model.getEmail());
+		
 		
 		setPreferredSize(new Dimension(1000,580));
 		setMaximumSize(new Dimension(1000,580));
