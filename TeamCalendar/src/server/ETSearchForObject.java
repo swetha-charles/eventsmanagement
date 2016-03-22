@@ -36,13 +36,26 @@ public class ETSearchForObject implements ExecutableTask {
 			} catch (SocketTimeoutException e) {
 			} catch (IOException e2) {
 				getMasterServer().getServerModel().addToText("\nServer (ETSFO) - IOException");
+				getMasterServer().getServerModel().addToText("\nServer (ETSFO) - IOException \n");
+				getMasterServer().getServerModel().addToText("\nServer (ETSFO) - will close streams\n");
 				try {
 					getClientInfo().getClientInput().close();
-					getClientInfo().getClientOutput().close();
-					getClientInfo().getClientSocket().close();
-					return;
+					getMasterServer().getServerModel().addToText("ETSFO: input closed\n");
 				} catch (IOException e) {
-					e.printStackTrace();
+					getMasterServer().getServerModel().addToText("ETSFO: could not close input\n");
+				}
+				try {
+					getClientInfo().getClientOutput().close();
+					getMasterServer().getServerModel().addToText("ETSFO: output closed\n");
+				} catch (IOException e) {
+					getMasterServer().getServerModel().addToText("ETSFO: could not close output\n");
+				}
+
+				try {
+					getClientInfo().getClientSocket().close();
+					getMasterServer().getServerModel().addToText("ETSFO: socket closed\n");
+				} catch (IOException e) {
+					getMasterServer().getServerModel().addToText("ETSFO: could not close socket\n");
 				}
 			}
 
