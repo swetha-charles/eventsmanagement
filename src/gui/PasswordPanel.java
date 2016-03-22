@@ -112,6 +112,12 @@ public class PasswordPanel extends JPanel{
 				String password2 = new String(newPasswordA.getPassword());
 				if(password1.equals(password2)){
 					this.model.updatePassword(password1);
+					if(this.model.getUpdatePasswordSuccess()){
+						this.model.changeCurrentState(ModelState.PROFILE);
+						JOptionPane.showMessageDialog(model.getCurrentInnerPanel(), "Password has been reset");
+					} else {
+						JOptionPane.showMessageDialog(this, "Could not update password, check fields and try again");
+					}
 				} else {
 					JOptionPane.showMessageDialog(this, "Your new passwords do not match");
 				}
