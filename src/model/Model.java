@@ -291,12 +291,12 @@ public class Model extends Observable {
 		}
 
 	}
-	
-	// Checks if email matches regex, then check if email is in in the database
-		public boolean checkEmail(String email) {
-			 return emailRegex.matcher(email).matches();
 
-		}
+	// Checks if email matches regex, then check if email is in in the database
+	public boolean checkEmail(String email) {
+		return emailRegex.matcher(email).matches();
+
+	}
 
 	// checks whether firstname <= 30 char
 	public void validateFirstNameReg(String name) {
@@ -385,7 +385,7 @@ public class Model extends Observable {
 	 * 
 	 * @param password
 	 */
-	public void validatePassword(char[] password) {
+	public void validatePasswordReg(char[] password) {
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
 			this.registrationView.getRegistrationPanel()
@@ -402,6 +402,16 @@ public class Model extends Observable {
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+	}
+
+	public boolean validatePassword(char[] password) {
+		if (password.length <= 7) {
+			return false;
+		} else if (password.length > 60) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -745,10 +755,10 @@ public class Model extends Observable {
 
 	public void setUpdatePasswordSuccess(boolean updatePasswordSuccess) {
 		this.updatePasswordSuccess = updatePasswordSuccess;
-		
+
 	}
-	
-	public void moveIntermediatePwStorageToPermanent(){
+
+	public void moveIntermediatePwStorageToPermanent() {
 		this.hashedPassword = this.intermediateHashedPwStorage;
 		this.intermediateHashedPwStorage = "";
 	}
