@@ -59,12 +59,17 @@ public class Client {
 		try {
 
 			InetAddress addr = InetAddress.getByName(url);
-			s = new Socket(addr, portnumber);		
+			s = new Socket(addr, portnumber);
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
 			this.hb = new HeartBeatThread(this);
 			(new Thread(this.hb)).start();
+
+		} catch (java.net.ConnectException e1) {
+			error = true;
+			model.changeCurrentState(ModelState.ERRORSERVERDOWN);
+			e1.printStackTrace();
 
 		} catch (IOException e) {
 			error = true;
@@ -81,7 +86,6 @@ public class Client {
 
 	}
 
-	
 	/**
 	 * This is the only way to send object transferables from the client. It is
 	 * a private method.
@@ -107,7 +111,8 @@ public class Client {
 	}
 
 	/**
-	 * This is the only way to read objects from server. It is a private method. 
+	 * This is the only way to read objects from server. It is a private method.
+	 * 
 	 * @param waitingForOpcode
 	 */
 	private synchronized void readFromServer(String waitingForOpcode) {
@@ -126,6 +131,11 @@ public class Client {
 					receivedOperation = (ObjectTransferrable) this.fromServer.readObject();
 					System.out.println("Messaged receieved from server with opcode " + receivedOperation.getOpCode());
 					receivedOperation.get(5000, TimeUnit.MILLISECONDS);
+				} catch (java.net.ConnectException e1) {
+					error = true;
+					model.changeCurrentState(ModelState.ERRORSERVERDOWN);
+					e1.printStackTrace();
+
 				} catch (ClassNotFoundException e) {
 					// When the object recieved is not an Object Transferrable.
 					// Likely to be that an exception thrown from server side.
@@ -134,13 +144,7 @@ public class Client {
 					this.cleanUpAndPromptUserToRestart();
 					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
 
-				} catch (IOException e2) {
-					this.error = true;
-					System.out.println("Server connection is down");
-					this.cleanUpAndPromptUserToRestart();
-					this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWN);
-
-				} catch (InterruptedException | ExecutionException | TimeoutException e) {
+				} catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
 					this.error = true;
 					System.out.println("Server has now responded in time!");
 					this.cleanUpAndPromptUserToRestart();
@@ -153,7 +157,7 @@ public class Client {
 					System.out.println("Client received error message from server: " + oter.getErrorDescription());
 				} else if (!receivedOperation.getOpCode().equals(waitingForOpcode)) {
 					// not an error message and not what was expected either
-					//Throw an exception?
+					// Throw an exception?
 					throw new UnexpectedOTReceivedException();
 				} else if (receivedOperation.getOpCode().equals(waitingForOpcode)) {
 					// what was expected, then run.
@@ -164,8 +168,6 @@ public class Client {
 		}
 
 	}
-
-
 
 	/**
 	 * This method runs the object received from server
@@ -300,8 +302,8 @@ public class Client {
 				this.model.setEmail(proceedOrNot.getEmail());
 				this.model.updateMeetings();
 				this.model.changeCurrentState(ModelState.EVENTS);
-				JOptionPane.showMessageDialog(model.getCurrentInnerPanel(),"Login successful!");
-				
+				JOptionPane.showMessageDialog(model.getCurrentInnerPanel(), "Login successful!");
+
 			} else {
 				this.model.setSuccessfulLogin(false);
 				this.model.setFirstName(null);
@@ -371,12 +373,12 @@ public class Client {
 		}
 
 	}
-	
+
 	/**
-	 * This read from server call is used in special cases of heartbeats.
-	 * A heartbeat is a simple object for the server to construct and send back. 
+	 * This read from server call is used in special cases of heartbeats. A
+	 * heartbeat is a simple object for the server to construct and send back.
 	 * With this in mind, the wait on this operation is 200ms. When the client
-	 * sends more database heavy operations, it waits on the server for longer. 
+	 * sends more database heavy operations, it waits on the server for longer.
 	 */
 	private synchronized void waitForHeartBeat() {
 		OTHeartBeat OT = null;
@@ -384,16 +386,21 @@ public class Client {
 			OT = (OTHeartBeat) this.fromServer.readObject();
 			OT.get(200, TimeUnit.MILLISECONDS);
 
+		} catch (java.net.ConnectException e) {
+			error = true;
+			model.changeCurrentState(ModelState.ERRORSERVERDOWN);
+			e.printStackTrace();
+			return;
 		} catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException
-				| TimeoutException e) {
-			System.out.println("Hearbeat may be dead, client encountered an error of type " + e.getClass());
+				| TimeoutException e1) {
+			System.out.println("Hearbeat may be dead, client encountered an error of type " + e1.getClass());
 			this.cleanUpAndPromptUserToRestart();
 		}
 	}
-	
+
 	/**
-	 * This read from server call is used in special cases of waiting for exit confirmation.
-	 * Again the wait is quite short - 200s. 
+	 * This read from server call is used in special cases of waiting for exit
+	 * confirmation. Again the wait is quite short - 200s.
 	 */
 	private synchronized void waitForExitConfirmation() {
 		OTExitGracefully OTExitGracefullyConfirmation;
@@ -504,11 +511,9 @@ public class Client {
 	}
 
 	// -------------writeToServer calls end---------------------------//
-	
-	
-	
+
 	// --------------------- Clean Exit -------------------//
-	
+
 	/**
 	 * When the user closes the window, the client runs this method
 	 */
@@ -526,9 +531,9 @@ public class Client {
 			this.attemptToCloseConnections();
 		}
 	}
-	
+
 	/**
-	 * This method closes the connections	
+	 * This method closes the connections
 	 */
 	private void attemptToCloseConnections() {
 
@@ -562,18 +567,17 @@ public class Client {
 
 	}
 
-	
-	//---------------Not so clean exit-------------------//
-	
+	// ---------------Not so clean exit-------------------//
 
 	/**
-	 * After an error or lack of hearbeat, client runs this private method. 
-	 * Changing the mode's state to ErrorConnection down displays a suitable message. 
+	 * After an error or lack of hearbeat, client runs this private method.
+	 * Changing the mode's state to ErrorConnection down displays a suitable
+	 * message.
 	 * 
-	 * After connections are closed, the model.promptUserToRestart() is run. 
-	 * This displays a restart button to the user. 
+	 * After connections are closed, the model.promptUserToRestart() is run.
+	 * This displays a restart button to the user.
 	 * 
-	 * If that restart button is pressed, the client's restart() method is run. 
+	 * If that restart button is pressed, the client's restart() method is run.
 	 */
 	private void cleanUpAndPromptUserToRestart() {
 		System.out.println("Client is attempting recovery");
@@ -590,13 +594,14 @@ public class Client {
 	}
 
 	/**
-	 * When the user presses the restart button on the error page, this method is run.
+	 * When the user presses the restart button on the error page, this method
+	 * is run.
 	 */
 	public void restart() {
 		System.out.println("Client will attempt to reopen connections");
 		attemptToOpenConnections();
 	}
-	
+
 	/**
 	 * This is a private method used to reopen connnections .
 	 */
@@ -617,43 +622,47 @@ public class Client {
 			this.hb = new HeartBeatThread(this);
 			(new Thread(this.hb)).start();
 			System.out.println("New heartbeat started");
-			//New connections have been started, 
-			//set error to false!
+			// New connections have been started,
+			// set error to false!
 			this.error = false;
+		} catch (java.net.ConnectException e1) {
+			error = true;
+			model.changeCurrentState(ModelState.ERRORSERVERDOWN);
+			return;
 		} catch (IOException e) {
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
 			try {
 				Thread.currentThread();
-				Thread.sleep(4000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
 				System.out.println("Client was interrupted");
 			}
 			System.out.println("Hey, the server or internet connection is not working!");
 		}
 	}
-	
+
 	/**
-	 * A getter that returns the boolean value of whether 
-	 * the client is in error state. 
+	 * A getter that returns the boolean value of whether the client is in error
+	 * state.
+	 * 
 	 * @return
 	 */
 	public boolean getError() {
 		return this.error;
 	}
+
 	public static void main(String[] args) {
 
 		int port = 50280;
-		String iNetAddress = "localhost" ; 
-		if (args.length == 1){
-				System.out.println("No port specified, using default");
-				iNetAddress = args[0];
-		}
-		else if (args.length >= 2){
+		String iNetAddress = "localhost";
+		if (args.length == 1) {
+			System.out.println("No port specified, using default");
+			iNetAddress = args[0];
+		} else if (args.length >= 2) {
 			iNetAddress = args[0];
 			port = Integer.parseInt(args[1]);
-		}
-		else{
-			System.out.println("No arguements supplied, using default address " + iNetAddress + "and port " + port); 
+		} else {
+			System.out.println("No arguements supplied, using default address " + iNetAddress + "and port " + port);
 		}
 		Client C = new Client(port, iNetAddress);
 
