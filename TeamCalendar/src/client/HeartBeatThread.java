@@ -14,7 +14,7 @@ public class HeartBeatThread implements Runnable {
 			try {
 				// send heartbeat every 1 second
 				Thread.currentThread();
-				Thread.sleep(500);
+				Thread.sleep(1000);
 				this.client.sendHeartBeat();
 			} catch (InterruptedException e) {
 				System.out.println("Heartbeat was interrupted and is going to sleep");
