@@ -626,7 +626,7 @@ public class Client {
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
 			try {
 				Thread.currentThread();
-				Thread.sleep(4000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
 				System.out.println("Client was interrupted");
 			}
