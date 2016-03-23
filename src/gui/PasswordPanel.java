@@ -111,7 +111,13 @@ public class PasswordPanel extends JPanel{
 				String password1 = new String(confirmNewA.getPassword());
 				String password2 = new String(newPasswordA.getPassword());
 				if(password1.equals(password2)){
-					this.model.updatePassword(password1);
+					if(model.validatePassword(password1.toCharArray())){
+						this.model.updatePassword(password1);
+					} else {
+						JOptionPane.showMessageDialog(this, "Password input is invalid. \n"
+								+ "Must be greater than 6 and less than 60");
+					}
+					
 				} else {
 					JOptionPane.showMessageDialog(this, "Your new passwords do not match");
 				}

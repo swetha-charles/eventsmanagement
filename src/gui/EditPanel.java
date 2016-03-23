@@ -142,9 +142,13 @@ public class EditPanel extends JPanel {
 				JOptionPane.showMessageDialog(this, "Last name  cannot be empty");
 				return;
 			}
+			if(!model.checkEmail(emailA.getText())){
+				JOptionPane.showMessageDialog(this, "Email input is invalid");
+				return;
+			}
 			
 			String password = new String(this.passwordA.getPassword());
-			if(model.checkPassword(password)){
+			if(model.checkPassword(password))){
 				this.model.updateProfile(firstNameA.getText(),lastNameA.getText(),emailA.getText());
 				if(this.model.getUpdateProfileSuccess()){
 					JOptionPane.showMessageDialog(this, "Update Successful!");
