@@ -15,14 +15,17 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import client.Client;
 import model.Model;
 import model.ModelState;
 import objectTransferrable.OTUpdateUserProfile;
 
-public class EditPanel extends JPanel{
-	
+public class EditPanel extends JPanel {
+
 	/**
 	 * 
 	 */
@@ -42,29 +45,45 @@ public class EditPanel extends JPanel{
 	JTextField lastNameA;
 	JTextField emailA;
 	JPasswordField passwordA = new JPasswordField();
-	
+
 	JButton submit = new JButton("Confirm Changes");
 	JButton cancel = new JButton("Cancel");
-	
-	
-	public EditPanel(Client controller, Model model){
-		
+
+	/**
+	 * constructor to build panel to edit profile information
+	 * 
+	 * @param controller
+	 *            an object that connects the view to the server
+	 * @param model
+	 *            an object that contains the methods to update the view
+	 */
+	public EditPanel(Client controller, Model model) {
+
 		this.controller = controller;
 		this.model = model;
-		firstNameA = new JTextField(model.getFirstName());
-		lastNameA = new JTextField(model.getLastname());
-		emailA = new JTextField(model.getEmail());
-		
-		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
-	
+		firstNameA = new JTextField();
+		firstNameA.setDocument(new JTextFieldLimit(30));
+		firstNameA.setText(model.getFirstName());
+
+		lastNameA = new JTextField();
+		lastNameA.setDocument(new JTextFieldLimit(30));
+		lastNameA.setText(model.getLastname());
+
+		emailA = new JTextField();
+		emailA.setDocument(new JTextFieldLimit(30));
+		emailA.setText(model.getEmail());
+
+		setPreferredSize(new Dimension(1000, 580));
+		setMaximumSize(new Dimension(1000, 580));
+		setMinimumSize(new Dimension(1000, 580));
+
 		hello.setForeground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
 		lastName.setForeground(Color.DARK_GRAY);
 		email.setForeground(Color.DARK_GRAY);
 		password.setForeground(Color.DARK_GRAY);
 		comment.setForeground(Color.GRAY);
-		
+
 		hello.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 30));
 		firstName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
 		firstNameA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 15));
@@ -77,9 +96,9 @@ public class EditPanel extends JPanel{
 		comment.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
-		
-		detailsPanel.setLayout(new GridLayout(6,2));
-		detailsPanel.setPreferredSize(new Dimension(700,150));
+
+		detailsPanel.setLayout(new GridLayout(6, 2));
+		detailsPanel.setPreferredSize(new Dimension(700, 150));
 		detailsPanel.add(firstName);
 		detailsPanel.add(firstNameA);
 		detailsPanel.add(lastName);
@@ -90,30 +109,40 @@ public class EditPanel extends JPanel{
 		detailsPanel.add(empty);
 		detailsPanel.add(password);
 		detailsPanel.add(passwordA);
-		
+
 		SpringLayout layout = new SpringLayout();
 		setLayout(layout);
-		
+
 		add(hello);
 		add(detailsPanel);
 		add(submit);
 		add(cancel);
-		
+
 		layout.putConstraint(SpringLayout.WEST, hello, 70, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, hello, 50, SpringLayout.NORTH, this);
-		
+
 		layout.putConstraint(SpringLayout.WEST, detailsPanel, 80, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, detailsPanel, 20, SpringLayout.SOUTH, hello);
-		
+
 		layout.putConstraint(SpringLayout.WEST, submit, 70, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, submit, 20, SpringLayout.SOUTH, detailsPanel);
-		
+
 		layout.putConstraint(SpringLayout.WEST, cancel, 10, SpringLayout.EAST, submit);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 20, SpringLayout.SOUTH, detailsPanel);
-		
-		//----------------------Listeners----------------------//
-		
+
+		// ----------------------Listeners----------------------//
+
 		submit.addActionListener((e) -> {
+			
+			if (firstNameA.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "First name  cannot be empty");
+				return;
+			}
+			if (lastNameA.getText().length() == 0) {
+				JOptionPane.showMessageDialog(this, "Last name  cannot be empty");
+				return;
+			}
+			
 			String password = new String(this.passwordA.getPassword());
 			if(model.checkPassword(password)){
 				this.model.updateProfile(firstNameA.getText(),lastNameA.getText(),emailA.getText());
@@ -127,29 +156,37 @@ public class EditPanel extends JPanel{
 				JOptionPane.showMessageDialog(this, "Incorrect password");
 			}
 		});
-		
+
 		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				model.changeCurrentState(ModelState.PROFILE);
 			}
 		});
 	}
-	
-//public static void main(String[] args) {
-//		
-//		JFrame frame = new JFrame();
-//		Client controller = new Client();
-//		
-//		EditPanel menu = new EditPanel(controller);
-//		
-//		JFrame.setDefaultLookAndFeelDecorated(true);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setContentPane(menu);
-//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-//		frame.setResizable(true);
-//		frame.setVisible(true);
-//	}
 
+	/**
+	 * Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
+	public class JTextFieldLimit extends PlainDocument {
 
+		private static final long serialVersionUID = 3693304660903406545L;
+		private int limit;
+
+		JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
+			}
+		}
+	}
 }
-

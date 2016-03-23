@@ -32,6 +32,11 @@ import model.Model;
 import model.ModelState;
 import objectTransferrable.Event;
 
+/**
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class EditEventPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -68,12 +73,20 @@ public class EditEventPanel extends JPanel {
 	JButton submit = new JButton("Confirm Changes");
 	JButton cancel = new JButton("Cancel");
 
+	/** Constructor to build popup panel shown when editing an event
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 * @param event an Event object that contains information about the event being deleted
+	 * @param listPanel a JPanel that contains the view of the meetings
+	 */
 	public EditEventPanel(Client controller, Model model, Event event, ListPanel listPanel) {
 		this.controller = controller;
 		this.model = model;
 		this.event = event;
 		this.listPanel = listPanel;
 
+		// creates text fields with character limits and event info stored
 		nameA = new JTextField();
 		nameA.setDocument(new JTextFieldLimit(50));
 		nameA.setText(event.getEventTitle());
@@ -112,8 +125,10 @@ public class EditEventPanel extends JPanel {
 		notesA.setDocument(new JTextFieldLimit(200));
 		notesA.setText(event.getEventDescription());
 
+		// Sets size of panel
 		setPreferredSize(new Dimension(600, 350));
 
+		// Sets colours of labels
 		hello.setForeground(Color.WHITE);
 		comment.setBackground(Color.DARK_GRAY);
 		firstName.setForeground(Color.DARK_GRAY);
@@ -121,8 +136,9 @@ public class EditEventPanel extends JPanel {
 		lastName.setForeground(Color.DARK_GRAY);
 		email.setForeground(Color.DARK_GRAY);
 		password.setForeground(Color.DARK_GRAY);
-		notes.setForeground(Color.GRAY);
+		notes.setForeground(Color.DARK_GRAY);
 
+		// Sets fonts of labels
 		hello.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 17));
 		firstName.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		nameA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
@@ -141,6 +157,7 @@ public class EditEventPanel extends JPanel {
 		notes.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		notesA.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 
+		// Adds date and times to panels
 		fullDate.setLayout(new BoxLayout(fullDate, BoxLayout.LINE_AXIS));
 		fullDate.add(dateA);
 		fullDate.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -158,6 +175,9 @@ public class EditEventPanel extends JPanel {
 
 		userResponse = new JPanel();
 		submit = new JButton("Submit");
+		submit.setBackground(Color.DARK_GRAY);
+		submit.setForeground(new Color(255, 255, 245));
+		
 		submit.addActionListener((e1) -> {
 			
 			if(nameA.getText().length() != 0){
@@ -237,6 +257,9 @@ public class EditEventPanel extends JPanel {
 		});
 
 		cancel = new JButton("Cancel");
+		cancel.setBackground(Color.DARK_GRAY);
+		cancel.setForeground(new Color(255, 255, 245));
+		
 		cancel.addActionListener((e2) -> {
 			this.setVisible(false);
 			this.setEnabled(false);
@@ -245,6 +268,7 @@ public class EditEventPanel extends JPanel {
 		userResponse.add(submit);
 		userResponse.add(cancel);
 
+		// Adds input details to a panel
 		detailsPanel.setLayout(new GridLayout(5, 2));
 		detailsPanel.setPreferredSize(new Dimension(500, 170));
 		detailsPanel.setMaximumSize(new Dimension(500, 170));
@@ -260,6 +284,7 @@ public class EditEventPanel extends JPanel {
 		detailsPanel.add(password);
 		detailsPanel.add(locationA);
 		
+		//adds notes to a seperate panel
 		Border line = BorderFactory.createLineBorder(Color.GRAY);
 		JPanel notesPanel = new JPanel();
 		notesA.setBorder(line);
@@ -279,58 +304,107 @@ public class EditEventPanel extends JPanel {
 		BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		setLayout(layout);
 
+		// Adds smaller panels to this panel
 		add(comment);
 		add(detailsPanel);
 		add(notesPanel);
 		add(userResponse);
-							
-
 	}
 
+	/** Getter for event object
+	 * 
+	 * @return event object
+	 */
 	public Event getEvent() {
 		return event;
 	}
 
+	/** Getter for event name text field
+	 * 
+	 * @return JTextField for event name
+	 */
 	public JTextField getNameA() {
 		return nameA;
 	}
 
+	/** Getter for date text field
+	 * 
+	 * @return JTextfield for date
+	 */
 	public JTextField getDateA() {
 		return dateA;
 	}
 
+	/** Getter for month text field
+	 * 
+	 * @return JTextfield for month
+	 */
 	public JTextField getMonthA() {
 		return monthA;
 	}
 
+	/** Getter for year text field
+	 * 
+	 * @return JTextfield for year
+	 */
 	public JTextField getYearA() {
 		return yearA;
 	}
 
+	/** Getter for start time hours text field
+	 * 
+	 * @return JTextfield for start time hours
+	 */
 	public JTextField getShoursA() {
 		return shoursA;
 	}
 
+	/** Getter for start time minutes text field
+	 * 
+	 * @return JTextfield for start time minutes
+	 */
 	public JTextField getSminutesA() {
 		return sminutesA;
 	}
 
+	/** Getter for end time hours text field
+	 * 
+	 * @return JTextField for end time hours
+	 */
 	public JTextField getEhoursA() {
 		return ehoursA;
 	}
 
+	/** Getter for end time minutes text field
+	 * 
+	 * @return JTextField for end time minutes
+	 */
 	public JTextField getEminutesA() {
 		return eminutesA;
 	}
 
+	/** Getter for location text field
+	 * 
+	 * @return JTextField for location
+	 */
 	public JTextField getLocationA() {
 		return locationA;
 	}
 
+	/** Getter for notes text field
+	 * 
+	 * @return JTextField for notes
+	 */
 	public JTextArea getNotesA() {
 		return notesA;
 	}
 
+	/** Changes the time from a string to an sql Time object
+	 * 
+	 * @param hours string for number of hours
+	 * @param minutes string for number of minutes
+	 * @return Time object formed from the hours and minutes
+	 */
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
@@ -338,11 +412,23 @@ public class EditEventPanel extends JPanel {
 		return time;
 	}
 
+	/** Changes the date from a string to an swl date object
+	 * 
+	 * @param day string for day of month
+	 * @param month string for month
+	 * @param year string for year
+	 * @return Date object formed from the date
+	 */
 	public Date stringToDate(String day, String month, String year) {
 		return this.model.sanitizeDateAndMakeSQLDate(day, month, year);
 
 	}
 
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
 	public class JTextFieldLimit extends PlainDocument {
 
 		private static final long serialVersionUID = 3693304660903406545L;
