@@ -108,9 +108,13 @@ public class ListPanel extends JPanel {
 		addEvent.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
 		addEvent.setMinimumSize(new Dimension(35, 35));
 		addEvent.setMaximumSize(new Dimension(35, 35));
+		addEvent.setBackground(Color.DARK_GRAY);
+		addEvent.setForeground(new Color(255, 255, 245));
 		refresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		refresh.setMinimumSize(new Dimension(100, 35));
 		refresh.setMaximumSize(new Dimension(100, 35));
+		refresh.setBackground(Color.DARK_GRAY);
+		refresh.setForeground(new Color(255, 255, 245));
 
 		// creates panel containing date label and addEvent button
 		top.setMaximumSize(new Dimension(900, 70));
@@ -135,6 +139,10 @@ public class ListPanel extends JPanel {
 		listscroll.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		// creates panel for next and previous buttons
+		next.setBackground(Color.DARK_GRAY);
+		next.setForeground(new Color(255, 255, 245));
+		previous.setBackground(Color.DARK_GRAY);
+		previous.setForeground(new Color(255, 255, 245));
 		changeDay.setPreferredSize(new Dimension(900, 50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
 		changeDay.add(previous);
@@ -242,11 +250,11 @@ public class ListPanel extends JPanel {
 					String s = arraylist.get(i).getEventTitle() + " - Global Event!";
 					title.setText(s);
 					title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
-					title.setForeground(Color.ORANGE);
+					title.setForeground(new Color(92, 181, 47));
 				} else {
 					title.setText(arraylist.get(i).getEventTitle());
 					title.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
-					title.setForeground(Color.RED);
+					title.setForeground(new Color(218, 78, 8));
 				}
 
 				// creates new JLabel of event name for each event
@@ -258,22 +266,12 @@ public class ListPanel extends JPanel {
 				JTextArea description = new JTextArea(a, notesLength, 62);
 				description.setLineWrap(true);
 				description.setEditable(false);
-
-
-				//				description.setPreferredSize(new Dimension(880,30));
-				//				description.setMaximumSize(new Dimension(880,200));
-				//				description.setMinimumSize(new Dimension(880,30));
-
 				
 				String b = "Location :  " + arraylist.get(i).getLocation();
 				int locationLength = (int)b.length()/62;
 				JTextArea location = new JTextArea(b, locationLength, 62);
 				location.setLineWrap(true);
 				location.setEditable(false);
-
-				//				location.setPreferredSize(new Dimension(880,30));
-				//				location.setMaximumSize(new Dimension(880,200));
-				//				location.setMinimumSize(new Dimension(880,30));
 
 				JButton edit = new JButton("Edit event");
 				JButton delete = new JButton("Delete event");
@@ -282,6 +280,10 @@ public class ListPanel extends JPanel {
 				location.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				delete.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
+				edit.setBackground(Color.DARK_GRAY);
+				edit.setForeground(new Color(255, 255, 245));
+				delete.setBackground(Color.DARK_GRAY);
+				delete.setForeground(new Color(255, 255, 245));
 
 				description.setForeground(Color.DARK_GRAY);
 				location.setForeground(Color.DARK_GRAY);
@@ -422,11 +424,11 @@ public class ListPanel extends JPanel {
 
 		s.append(date);
 
-		if (date == 1) {
+		if (date == 1 || date == 21 || date == 31) {
 			s.append("st ");
-		} else if (date == 2) {
+		} else if (date == 2 || date == 22) {
 			s.append("nd ");
-		} else if (date == 3) {
+		} else if (date == 3 || date == 23) {
 			s.append("rd ");
 		} else {
 			s.append("th ");

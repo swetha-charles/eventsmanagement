@@ -97,6 +97,11 @@ public class EditPanel extends JPanel {
 		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 
+		submit.setBackground(Color.DARK_GRAY);
+		submit.setForeground(new Color(255, 255, 245));
+		cancel.setBackground(Color.DARK_GRAY);
+		cancel.setForeground(new Color(255, 255, 245));
+		
 		detailsPanel.setLayout(new GridLayout(6, 2));
 		detailsPanel.setPreferredSize(new Dimension(700, 150));
 		detailsPanel.add(firstName);

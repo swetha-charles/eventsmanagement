@@ -75,6 +75,11 @@ public class PasswordPanel extends JPanel{
 		submit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		cancel.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		
+		submit.setBackground(Color.DARK_GRAY);
+		submit.setForeground(new Color(255, 255, 245));
+		cancel.setBackground(Color.DARK_GRAY);
+		cancel.setForeground(new Color(255, 255, 245));
+		
 		detailsPanel.setLayout(new GridLayout(3,2));
 		detailsPanel.setPreferredSize(new Dimension(700,100));
 		detailsPanel.add(oldPassword);

@@ -70,6 +70,11 @@ public class ProfilePanel extends JPanel{
 		editDetails.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		editPassword.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		
+		editDetails.setBackground(Color.DARK_GRAY);
+		editDetails.setForeground(new Color(255, 255, 245));
+		editPassword.setBackground(Color.DARK_GRAY);
+		editPassword.setForeground(new Color(255, 255, 245));
+		
 		detailsPanel.setLayout(new GridLayout(3,2));
 		detailsPanel.setPreferredSize(new Dimension(700,100));
 		detailsPanel.add(name);
