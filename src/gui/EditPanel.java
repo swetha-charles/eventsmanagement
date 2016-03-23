@@ -148,7 +148,7 @@ public class EditPanel extends JPanel {
 			}
 			
 			String password = new String(this.passwordA.getPassword());
-			if(model.checkPassword(password))){
+			if(model.checkPassword(password)){
 				this.model.updateProfile(firstNameA.getText(),lastNameA.getText(),emailA.getText());
 				if(this.model.getUpdateProfileSuccess()){
 					JOptionPane.showMessageDialog(this, "Update Successful!");
