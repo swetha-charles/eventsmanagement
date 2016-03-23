@@ -20,12 +20,12 @@ public class Profile extends JPanel{
 	MenuPanel bar;
 	ProfilePanel profile;
 	
-	public Profile(Client controller, Model model){
+	public Profile(Client controller, Model model, MenuPanel menuPanel){
 		
 		this.controller = controller;
 		this.model = model;
-		bar = new MenuPanel(controller, model);
-		profile = new ProfilePanel(controller, model);
+		this.bar = menuPanel;
+		this.profile = new ProfilePanel(controller, model);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setPreferredSize(new Dimension(1000,650));
@@ -34,6 +34,12 @@ public class Profile extends JPanel{
 
 		add(bar);
 		add(profile);
+	}
+	
+	public void refresh(){
+		this.removeAll();
+		this.add(bar);
+		this.add(profile);
 	}
 
 }

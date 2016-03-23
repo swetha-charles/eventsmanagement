@@ -247,6 +247,7 @@ public class Client {
 			// was successful or not
 			OTCreateEventSucessful successfullyAddedEvent = (OTCreateEventSucessful) receivedOperation;
 			this.model.setMeetingCreationSuccessful(true);
+			System.out.println("Meeting creation was successful: model's meetings will be updated");
 			model.updateMeetings(new Date(model.getCalendar().getTimeInMillis()));
 			try {
 				((gui.List) (this.model.getCurrentInnerPanel())).getListPanel().addMeetings(model.getMeetings());
@@ -271,7 +272,7 @@ public class Client {
 			System.err.println("WARNING: Received heartbeat in main runOT(). \n" + "This should never happen");
 			break;
 		case "0015":
-			// sent by server. Includes the hashed password ofthe user
+			// sent by server. Includes the hashed password of the user
 			// trying to login.
 			OTHashToClient userHash = (OTHashToClient) receivedOperation;
 			boolean userExists = userHash.getUserExists();
@@ -298,6 +299,8 @@ public class Client {
 				this.model.setFirstName(proceedOrNot.getFirstName());
 				this.model.setLastname(proceedOrNot.getLastName());
 				this.model.setEmail(proceedOrNot.getEmail());
+				//the only place Model State is changed to EVENTS, everywhere else should be
+				//EventsUpdate
 				this.model.changeCurrentState(ModelState.EVENTS);
 			} else {
 				this.model.setSuccessfulLogin(false);
@@ -648,8 +651,9 @@ public class Client {
 		else if (args.length >= 2){
 			iNetAddress = args[0];
 			port = Integer.parseInt(args[1]);
-		} else {
-			System.out.println("No arguments supplied, using default address " + iNetAddress + " and port " + port);
+		}
+		else{
+			System.out.println("No arguements supplied, using default address " + iNetAddress + "and port " + port); 
 		}
 		Client C = new Client(port, iNetAddress);
 

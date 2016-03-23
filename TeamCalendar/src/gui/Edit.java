@@ -24,13 +24,13 @@ public class Edit extends JPanel{
 	 * @param controller an object that connects the view to the server
 	 * @param model an object that contains the methods to update the view
 	 */
-	public Edit(Client controller, Model model){
+	public Edit(Client controller, Model model, MenuPanel menuPanel){
 		
 		this.controller = controller;
 		
 		this.model = model;
-		bar = new MenuPanel(controller, model);
-		edit = new EditPanel(controller, model);
+		this.bar = menuPanel;
+		this.edit = new EditPanel(controller, model);
 				
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setPreferredSize(new Dimension(1000,650));
@@ -41,4 +41,10 @@ public class Edit extends JPanel{
 		add(edit);
 	}
 
+	public void refresh(){
+		this.removeAll();
+		this.add(bar);
+		this.add(edit);
+	}
+	
 }

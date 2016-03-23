@@ -77,6 +77,24 @@ public class Registration extends JPanel{
 	public RegistrationPanel getRegistrationPanel(){
 		return this.rp;
 	}
-
+	
+	public void refresh(){
+		this.removeAll();
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.gridx = 2;
+		gbc.gridy = 2;
+		add(rp, gbc);
+		
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		add(background, gbc);
+	}
 }
 

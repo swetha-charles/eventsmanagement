@@ -27,8 +27,8 @@ public class List extends JPanel{
 	public List(Client controller, Model model){
 		this.controller = controller;
 		this.model = model;
-		bar = new MenuPanel(controller, model);
 		list = new ListPanel(controller, model);
+		bar = new MenuPanel(controller, model, list);
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		setPreferredSize(new Dimension(1000,650));
 		setMaximumSize(new Dimension(1000,650));
@@ -46,4 +46,13 @@ public class List extends JPanel{
 		return this.list;
 	}
 
+	public MenuPanel getMenuPanel(){
+		return this.bar;
+	}
+	
+	public void refresh(){
+		this.removeAll();
+		this.add(bar);
+		this.add(list);
+	}
 }

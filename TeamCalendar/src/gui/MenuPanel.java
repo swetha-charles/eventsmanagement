@@ -28,15 +28,17 @@ public class MenuPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private Client client = null;
 	private Model model = null;
+	private ListPanel listPanel;
 	JPanel menuBar = new JPanel();
 	public static JLabel home = new JLabel("Home");
 	public static JLabel profile = new JLabel("Profile");
 	public static JLabel logout = new JLabel("Logout");
 
-	public MenuPanel(Client client, Model model){
+	public MenuPanel(Client client, Model model, ListPanel listPanel){
 		
 		this.client = client;
 		this.model = model;
+		this.listPanel = listPanel;
 		
 		setPreferredSize(new Dimension(1100, 70));
 		setMinimumSize(new Dimension(1100, 70));
@@ -50,10 +52,6 @@ public class MenuPanel extends JPanel{
 		home.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		profile.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		logout.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
-		
-		home.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here 
-		profile.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
-		logout.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
 		
 		GridBagLayout grid = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -80,16 +78,16 @@ public class MenuPanel extends JPanel{
 		
 		//------------------Action Listeners---------------------//
 		
-		home.addMouseListener((MouseClickedListener) (e) -> {
-			this.model.changeCurrentState(ModelState.EVENTS);
-		});
-		profile.addMouseListener((MouseClickedListener) (e) -> {
-			this.model.changeCurrentState(ModelState.PROFILE);
-		});
-		logout.addMouseListener((MouseClickedListener) (e) -> {
-			this.model.changeCurrentState(ModelState.LOGIN);
-//			need to clear all details in model
-		});
+		MenuPanelMouseListener menuMouseListener = new MenuPanelMouseListener(this.model, this.listPanel);
+		
+		home.setName("home");
+		home.addMouseListener(menuMouseListener);
+		
+		profile.setName("profile");
+		profile.addMouseListener(menuMouseListener);
+		
+		logout.setName("logout");
+		logout.addMouseListener(menuMouseListener);
 
 	}
 

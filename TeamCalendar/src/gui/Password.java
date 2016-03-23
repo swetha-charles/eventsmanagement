@@ -20,11 +20,11 @@ public class Password extends JPanel{
 	MenuPanel bar;
 	PasswordPanel password;
 	
-	public Password(Client controller, Model model){
+	public Password(Client controller, Model model, MenuPanel menuPanel){
 		
 		this.controller = controller;
 		this.model = model;
-		bar = new MenuPanel(controller, model);
+		bar = menuPanel;
 		password = new PasswordPanel(controller, model);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -34,6 +34,13 @@ public class Password extends JPanel{
 
 		add(bar);
 		add(password);
+	}
+
+	public void refresh() {
+		this.removeAll();
+		this.add(bar);
+		this.add(password);
+		
 	}
 
 }
