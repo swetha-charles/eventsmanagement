@@ -33,17 +33,10 @@ public class ErrorConnectionDown extends JPanel {
 		warning.setText("Attempting to revive connection...");
 		this.remove(restart);
 	}
-	
-	public void serverDown(){
-		warning.setText("We apologize, the server is down! \n Try back in a few minutes");
-		this.add(restart, BorderLayout.SOUTH);	
-		
-			
-	}
-
 	public void connectionStillDown(){
+		
 		this.warning.setText("Your connection is still down, we apologize for the inconvenience." + 
-	"\n Press restart to try again.");
+	"\n If your internet is connected, then the server is down. Press restart to try again.");
 		this.add(restart,  BorderLayout.SOUTH);
 		revalidate();
 	}

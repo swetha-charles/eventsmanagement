@@ -3,15 +3,8 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,7 +19,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import client.Client;
-import gui.LoginPanel.JTextFieldLimit;
 import listener.interfaces.FocusLostListener;
 import model.Model;
 import model.ModelState;
@@ -72,8 +64,6 @@ public class RegistrationPanel extends JPanel {
 	String dayInput = "";
 	String monthInput = "";
 	String yearInput = "";
-	JLabel logo;
-	JPanel logoPanel = new JPanel();
 
 	/**
 	 * This constructor builds a login panel where the user can input their
@@ -82,33 +72,53 @@ public class RegistrationPanel extends JPanel {
 	public RegistrationPanel(Client client, Model model) {
 		this.client = client;
 		this.model = model;
-		
-		try {
-			logo = new JLabel() {
-				
-				private static final long serialVersionUID = 1L;
-				private Image backgroundImage = ImageIO.read(new File("eventually3.png"));
-				Image scaled = backgroundImage.getScaledInstance(200, 100, Image.SCALE_DEFAULT);
-				public void paint( Graphics g ) { 
-				    super.paint(g);
-				    g.drawImage(scaled, 0, 0, null);
-				  }
-				};
-		} catch (IOException e) {
-			// no biggie, just couldn't find a file. 
-			e.printStackTrace();
-		}
-		
 		// sets the dimension of the login panel
 		setPreferredSize(new Dimension(800, 500));
 		setMinimumSize(new Dimension(800, 500));
+
+		// sets a character limit on username textfield (limit 20)
+		AbstractDocument usernameDoc = (AbstractDocument) username.getDocument();
+		if (usernameDoc instanceof AbstractDocument) {
+			usernameDoc = (AbstractDocument) usernameDoc;
+			usernameDoc.setDocumentFilter(new DocumentSizeFilter(20));
+		}
+
+		// sets a character limit on password textfield (limit 60)
+		AbstractDocument passwordDoc = (AbstractDocument) password.getDocument();
+		if (passwordDoc instanceof AbstractDocument) {
+			passwordDoc = (AbstractDocument) passwordDoc;
+			passwordDoc.setDocumentFilter(new DocumentSizeFilter(60));
+		}
 		
-		username.setDocument(new JTextFieldLimit(20));
-		password.setDocument(new JTextFieldLimit(60));
-		confirm.setDocument(new JTextFieldLimit(60));
-		firstName.setDocument(new JTextFieldLimit(30));
-		lastName.setDocument(new JTextFieldLimit(30));
-		email.setDocument(new JTextFieldLimit(30));
+		// sets a character limit on password textfield (limit 30)
+		AbstractDocument confirmDoc = (AbstractDocument) confirm.getDocument();
+		if (confirmDoc instanceof AbstractDocument) {
+			confirmDoc = (AbstractDocument) confirmDoc;
+			confirmDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+
+		// sets a character limit on first name textfield (limit 30)
+		AbstractDocument firstnameDoc = (AbstractDocument) firstName.getDocument();
+		if (firstnameDoc instanceof AbstractDocument) {
+			firstnameDoc = (AbstractDocument) firstnameDoc;
+			firstnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+
+		// sets a character limit on last name textfield (limit 30)
+		AbstractDocument lastnameDoc = (AbstractDocument) lastName.getDocument();
+		if (lastnameDoc instanceof AbstractDocument) {
+			lastnameDoc = (AbstractDocument) lastnameDoc;
+			lastnameDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+
+		// sets a character limit on email textfield (limit 30)
+		AbstractDocument emailDoc = (AbstractDocument) email.getDocument();
+		if (emailDoc instanceof AbstractDocument) {
+			emailDoc = (AbstractDocument) emailDoc;
+			emailDoc.setDocumentFilter(new DocumentSizeFilter(30));
+		}
+		
+		
 
 		// sets the dimension of the user and password panels
 		Dimension size2 = new Dimension(350, 50);
@@ -217,29 +227,10 @@ public class RegistrationPanel extends JPanel {
 		SpringLayout mainlayout = new SpringLayout();
 		setLayout(mainlayout);
 
-		logoPanel.setMinimumSize(new Dimension(200, 100));
-		logoPanel.setMaximumSize(new Dimension(200, 100));
-		logoPanel.setPreferredSize(new Dimension(200, 100));
-		logoPanel.setLayout(new GridBagLayout());
-		GridBagConstraints gBC = new GridBagConstraints();
-		gBC.weightx = 1;
-		gBC.weighty = 1;
-		gBC.fill = GridBagConstraints.BOTH;
-		gBC.gridwidth = 3;
-		gBC.gridheight = 3;
-		gBC.gridx = 0;
-		gBC.gridy = 0;
-		logoPanel.add(logo, gBC);
-		
-		add(logoPanel);
 		add(fields);
 		add(submit);
 		add(cancel);
 
-		// sets  position of logo
-		mainlayout.putConstraint(SpringLayout.NORTH, logoPanel, 40, SpringLayout.NORTH, this);
-		mainlayout.putConstraint(SpringLayout.WEST, logoPanel, 280, SpringLayout.WEST, this);
-		
 		// sets position of userPanel
 		mainlayout.putConstraint(SpringLayout.NORTH, fields, 150, SpringLayout.NORTH, this);
 		mainlayout.putConstraint(SpringLayout.WEST, fields, 40, SpringLayout.WEST, this);
@@ -254,11 +245,11 @@ public class RegistrationPanel extends JPanel {
 
 		// ------- Lambda Listeners----------//
 		firstName.addFocusListener((FocusLostListener) (e) -> {
-			this.model.validateFirstNameReg(firstName.getText());
+			this.model.validateFirstName(firstName.getText());
 		});
 
 		lastName.addFocusListener((FocusLostListener) (e) -> {
-			this.model.validateLastNameReg(lastName.getText());
+			this.model.validateLastName(lastName.getText());
 		});
 
 		username.addFocusListener((FocusLostListener) (e) -> this.model.checkUsername(username.getText()));
@@ -346,9 +337,9 @@ public class RegistrationPanel extends JPanel {
 		// dob.addFocusListener((FocusLostListener) (e) ->
 		// this.model.validateDOB(dob.getText()));
 
-		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmailReg(email.getText()));
+		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
 
-		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePasswordReg(password.getPassword()));
+		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePassword(password.getPassword()));
 
 		// confirm listener
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
@@ -468,4 +459,19 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 
+	public static void main(String[] args) {
+
+		JFrame frame = new JFrame();
+		Client client = new Client();
+
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Model model = new Model(client);
+
+		RegistrationPanel reg = new RegistrationPanel(client, model);
+		frame.add(reg);
+		frame.setSize(1000, 650);
+		frame.setResizable(true);
+		frame.setVisible(true);
+	}
 }

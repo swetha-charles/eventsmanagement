@@ -40,6 +40,9 @@ import objectTransferrable.Event;
 
 public class ListPanel extends JPanel {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -3193985081542643253L;
 	Client controller;
 	Model model;
@@ -62,7 +65,7 @@ public class ListPanel extends JPanel {
 	JButton edit = new JButton("Edit Event");
 	JButton submit = new JButton("Add Event");
 
-	Calendar c;
+	Calendar c = new GregorianCalendar();
 
 	JPanel top = new JPanel();
 	JLabel date;
@@ -80,21 +83,17 @@ public class ListPanel extends JPanel {
 
 	// ----------------------Constructor------------------------------//
 
-	/** Constructor to create the home panel that contains the list of meetings
-	 * 
-	 * @param controller an object that connects the view to the server
-	 * @param model an object that contains the methods to update the view
-	 */
 	public ListPanel(Client controller, Model model) {
 
 		this.controller = controller;
 		this.model = model;
-		this.c = model.getCalendar();
+		this.model.setCalendar(this.c);
 
 		// sets dimension and layout of the panel
-		setPreferredSize(new Dimension(1000,580));
-		setMaximumSize(new Dimension(1000,580));
-		setMinimumSize(new Dimension(1000,580));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int) dimension.getWidth(), (int) (dimension.getHeight() - 200)));
+		setMinimumSize(new Dimension((int) dimension.getWidth(), (int) dimension.getHeight() - 200));
+		setMaximumSize(new Dimension((int) dimension.getWidth(), (int) dimension.getHeight() - 200));
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		// creates JLabel with the date on
@@ -119,10 +118,11 @@ public class ListPanel extends JPanel {
 		top.add(date);
 		top.add(Box.createRigidArea(new Dimension(20, 0)));
 		top.add(addEvent);
-		refresh.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		top.add(Box.createRigidArea(new Dimension(420, 0)));
 		top.add(refresh);
 
 		// updates model with the meetings for today and adds them to panel list
+		model.updateMeetings(new Date(c.getTimeInMillis()));
 		addMeetings(model.getMeetings());
 
 		// adds list to listscroll and sets the size
@@ -186,7 +186,6 @@ public class ListPanel extends JPanel {
 			final int y = (screenSize.height - dialog.getHeight()) / 2;
 			dialog.setLocation(x, y);
 			dialog.setVisible(true);
-
 		});
 
 		refresh.addActionListener((e) -> {
@@ -200,9 +199,6 @@ public class ListPanel extends JPanel {
 
 	// ---------Change Date at the top of page---------//
 
-	/** Method to update the date for the list view
-	 * 
-	 */
 	public void setDate() {
 		this.date.setText(getDate(c.get(Calendar.DAY_OF_WEEK), c.get(Calendar.DATE), c.get(Calendar.MONTH),
 				c.get(Calendar.YEAR)));
@@ -212,11 +208,6 @@ public class ListPanel extends JPanel {
 
 	// ------------Add meeting panels to listscroll-----------------//
 
-	/** Method the add panels for each meeting to one bigger panel
-	 * 
-	 * @param arraylist an arraylist of events that have been received by the server 
-	 * for the date give
-	 */
 	public void addMeetings(ArrayList<Event> arraylist) {
 
 		list.removeAll();
@@ -254,14 +245,10 @@ public class ListPanel extends JPanel {
 				JTextArea description = new JTextArea(a);
 				description.setLineWrap(true);
 				description.setEditable(false);
-				description.setMaximumSize(new Dimension(600,300));
-				description.setMinimumSize(new Dimension(600,10));
+//				description.setMaximumSize(new Dimension(100,100));
+//				description.setMinimumSize(new Dimension(100,100));
 				String b = "Location :  " + arraylist.get(i).getLocation();
-				JTextArea location = new JTextArea(b);
-				location.setLineWrap(true);
-				location.setEditable(false);
-				location.setMaximumSize(new Dimension(600,300));
-				location.setMinimumSize(new Dimension(600,10));
+				JLabel location = new JLabel(b);
 				JButton edit = new JButton("Edit event");
 				JButton delete = new JButton("Delete event");
 
@@ -281,6 +268,8 @@ public class ListPanel extends JPanel {
 
 				// creates new JPanel with title border
 				JPanel p = new JPanel();
+//				p.setMaximumSize(new Dimension(890, 200));
+//				p.setMinimumSize(new Dimension(890, 200));
 				p.setBorder(border);
 				p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
 				p.setBackground(Color.WHITE);
@@ -322,7 +311,6 @@ public class ListPanel extends JPanel {
 					final int y = (screenSize.height - dialog.getHeight()) / 2;
 					dialog.setLocation(x, y);
 					dialog.setVisible(true);
-//					dialog.setAlwaysOnTop(true);
 
 				});
 
@@ -343,7 +331,7 @@ public class ListPanel extends JPanel {
 					final int x = (screenSize.width - dialog.getWidth()) / 2;
 					final int y = (screenSize.height - dialog.getHeight()) / 2;
 					dialog.setLocation(x, y);
-//					dialog.setVisible(true);
+					dialog.setVisible(true);
 				});
 			}
 
@@ -361,14 +349,6 @@ public class ListPanel extends JPanel {
 
 	// -------------------Creates JLabel for date-----------------------//
 
-	/** Method to create a string for the date
-	 * 
-	 * @param day int of day of week
-	 * @param date int of day of month
-	 * @param month int of month
-	 * @param year int of year
-	 * @return string of full date
-	 */
 	public static String getDate(int day, int date, int month, int year) {
 
 		StringBuffer s = new StringBuffer();
@@ -454,11 +434,6 @@ public class ListPanel extends JPanel {
 
 	}
 
-	/** Inner class to limit the number of characters in the text fields
-	 * 
-	 * @author nataliemcdonnell
-	 *
-	 */
 	public class JTextFieldLimit extends PlainDocument {
 
 		private static final long serialVersionUID = 3693304660903406545L;
@@ -481,25 +456,12 @@ public class ListPanel extends JPanel {
 
 	// --------------------converts string to time and date----------------//
 
-	/** Changes the time from a string to an sql Time object
-	 * 
-	 * @param hours string for number of hours
-	 * @param minutes string for number of minutes
-	 * @return Time object formed from the hours and minutes
-	 */
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
 		return new Time((h * 3600000) + (m * 60000));
 	}
 
-	/** Changes the date from a string to an swl date object
-	 * 
-	 * @param day string for day of month
-	 * @param month string for month
-	 * @param year string for year
-	 * @return Date object formed from the date
-	 */
 	public Date stringToDate(String day, String month, String year) {
 		return this.model.sanitizeDateAndMakeSQLDate(day, month, year);
 
@@ -507,33 +469,19 @@ public class ListPanel extends JPanel {
 
 	// --------------------------getters and setters-------------------------------------//
 
-	/** Getter for calendar
-	 * 
-	 * @return calendar object
-	 */
 	public Calendar getC() {
 		return c;
 	}
 
-	/** Setter for calendar
-	 * 
-	 * @param c Calendar
-	 */
 	public void setC(Calendar c) {
 		this.c = c;
 		this.model.setCalendar(this.c);
 	}
 
-	/**
-	 * 
-	 */
 	public void closeDialog() {
 		this.dialog.dispose();
 	}
 	
-	/**
-	 * 
-	 */
 	public void transferToJFrame(){
 		Container panel = this.dialog.getContentPane();
 		JFrame.setDefaultLookAndFeelDecorated(true);
@@ -544,17 +492,9 @@ public class ListPanel extends JPanel {
 		saveUserEdits.setAlwaysOnTop(true);
 	}
 	
-	/**
-	 * 
-	 * @param bool
-	 */
 	public void changeModality(boolean bool){
 		dialog.setModal(bool);
 	}
-	
-	/**
-	 * 
-	 */
 	public void setModalityModeless(){
 		dialog.setModalityType(ModalityType.MODELESS);
 	}

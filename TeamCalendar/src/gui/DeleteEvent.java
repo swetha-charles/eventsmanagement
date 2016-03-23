@@ -28,13 +28,6 @@ public class DeleteEvent extends JPanel{
 	JButton yes = new JButton("Yes");
 	JButton cancel = new JButton("Cancel");
 	
-	/** constructor to build the popup panel that is seen when deleting an event
-	 * 
-	 * @param controller an object that connects the view to the server
-	 * @param model an object that contains the methods to update the view
-	 * @param event an Event object that contains information about the event being deleted
-	 * @param listPanel a JPanel that contains the view of the meetings
-	 */
 	public DeleteEvent(Client controller, Model model, Event event, ListPanel listPanel){
 		
 		this.controller = controller;
@@ -50,12 +43,6 @@ public class DeleteEvent extends JPanel{
 		
 		comment.setMaximumSize(new Dimension(400,50));
 		comment.setMinimumSize(new Dimension(400,50));
-		
-		yes.setBackground(Color.DARK_GRAY);
-		cancel.setBackground(Color.DARK_GRAY);
-		yes.setForeground(new Color(255, 255, 245));
-		cancel.setForeground(new Color(255, 255, 245));
-		
 		comment.add(headingLabel);
 		
 		yes.addActionListener((e)-> {
@@ -86,10 +73,6 @@ public class DeleteEvent extends JPanel{
 		add(buttons);
 	}
 
-	/** Getter for the event object
-	 * 
-	 * @return event
-	 */
 	public Event getEvent() {
 		return event;
 	}

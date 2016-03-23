@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.sql.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -38,9 +37,10 @@ public class MenuPanel extends JPanel{
 		this.client = client;
 		this.model = model;
 		
-		setPreferredSize(new Dimension(1000, 70));
-		setMinimumSize(new Dimension(1000, 70));
-		setMaximumSize(new Dimension(1000, 70));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int)dimension.getWidth(), 70));
+		setMinimumSize(new Dimension((int)dimension.getWidth(), 70));
+		setMaximumSize(new Dimension((int)dimension.getWidth(), 70));
 		
 		menuBar.setBackground(Color.DARK_GRAY);
 
@@ -51,6 +51,9 @@ public class MenuPanel extends JPanel{
 		profile.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		logout.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		
+		home.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here 
+		profile.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
+		logout.addMouseListener((MouseClickedListener)(e) -> System.out.println("home clicked")); //change the model here
 		
 		GridBagLayout grid = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -78,7 +81,7 @@ public class MenuPanel extends JPanel{
 		//------------------Action Listeners---------------------//
 		
 		home.addMouseListener((MouseClickedListener) (e) -> {
-			this.model.updateMeetings(new Date(this.model.getCalendar().getTimeInMillis()));;
+			this.model.changeCurrentState(ModelState.EVENTS);
 		});
 		profile.addMouseListener((MouseClickedListener) (e) -> {
 			this.model.changeCurrentState(ModelState.PROFILE);
@@ -89,5 +92,20 @@ public class MenuPanel extends JPanel{
 		});
 
 	}
+	
+//	public static void main(String[] args) {
+//		
+//		JFrame frame = new JFrame();
+//		Client controller = new Client();
+//		
+//		MenuPanel menu = new MenuPanel(controller, model);
+//		
+//		JFrame.setDefaultLookAndFeelDecorated(true);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setContentPane(menu);
+//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+//		frame.setResizable(true);
+//		frame.setVisible(true);
+//	}
 
 }

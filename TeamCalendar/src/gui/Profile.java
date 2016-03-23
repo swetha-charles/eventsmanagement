@@ -28,12 +28,24 @@ public class Profile extends JPanel{
 		profile = new ProfilePanel(controller, model);
 		
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setPreferredSize(new Dimension(1000,650));
-		setMaximumSize(new Dimension(1000,650));
-		setMinimumSize(new Dimension(1000,650));
 
 		add(bar);
 		add(profile);
 	}
 
+	public static void main(String[] args) {
+		
+		JFrame frame = new JFrame();
+		Client controller = new Client();
+		Model model = new Model(controller);
+		
+		Profile menu = new Profile(controller, model);
+		
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(menu);
+		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+		frame.setResizable(true);
+		frame.setVisible(true);
+	}
 }
