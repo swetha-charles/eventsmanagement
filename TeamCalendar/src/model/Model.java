@@ -734,7 +734,6 @@ public class Model extends Observable {
 
 	public void setCalendar(Calendar calendar) {
 		this.currentCalendarBorrowedFromListPanel = calendar;
-
 	}
 
 	public Calendar getCalendar() {
