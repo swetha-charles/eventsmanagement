@@ -4,13 +4,30 @@ import java.io.IOException;
 import java.sql.SQLException;
 import objectTransferrable.*;
 
-
+/**
+ * task that is added to the thread pool when an object has been
+ * received from a client. It manages calling the query manager on the
+ * task, and the posting of a response back to the client. If the message
+ * was a log out message, it attempts to close the connection with the 
+ * client
+ * @author Mark
+ *
+ */
 public class ETRunTask implements ExecutableTask{
 
 	private Server masterServer;
 	private ClientInfo clientInfo;
 	private ObjectTransferrable query;
-
+	/**
+	 * constructor for the task. It needs the server so that the query manager
+	 * can fetch the database connection, and write to the GUI. It also needs the
+	 * client info to know where the object came from and where resultant objects
+	 * should be sent to. It also need the object that was given to the server
+	 * by the client
+	 * @param masterServer the instance of the server that is running
+	 * @param clientInfo the client that passed the object
+	 * @param query the object that the client passed
+	 */
 	public ETRunTask(Server masterServer,
 			ClientInfo clientInfo,
 			ObjectTransferrable query) {
@@ -18,20 +35,40 @@ public class ETRunTask implements ExecutableTask{
 		this.clientInfo = clientInfo;
 		this.query = query;
 	}
-
+	/**
+	 * getter for the server
+	 * @return the server
+	 */
 	public Server getMasterServer() {
 		return masterServer;
 	}
-
+	/**
+	 * the getter for the clients info
+	 * @return the clients info
+	 */
 	public ClientInfo getClientInfo() {
 		return clientInfo;
 	}
-
+	/**
+	 * the getter for the object that the client transferred
+	 * @return the object that the client transferred
+	 */
 	public ObjectTransferrable getQuery() {
 		return query;
 	}
 
 	@Override
+	/**
+	 * the main run method for the task. It passes the received object to
+	 * the query manager for processing, and passes the result of the query
+	 * managers processing back to the client.
+	 * 
+	 * If the object that was sent was the log off object, then it closes the
+	 * clients connection
+	 * 
+	 * If the connection hasn't been closed, then it creates a new instance of
+	 * the task that searches for objects from the client that passed this one.
+	 */
 	public void run() {
 		//create a new QueryManager object to handle the execution of the received object
 		QueryManager runQuery = getMasterServer().getQueryManager();
@@ -42,14 +79,14 @@ public class ETRunTask implements ExecutableTask{
 		//get the updated object and pass it back to the client
 		try {
 			if(!returnObject.getOpCode().equals("0014")){
-				getMasterServer().getServerModel().addToText("Sending back Object with opCode " + returnObject.getOpCode() + "\n");
+//				getMasterServer().getServerModel().addToText("Sending back Object with opCode " + returnObject.getOpCode() + "\n");
 			}
 			//write back to client
 			getClientInfo().getClientOutput().writeObject(returnObject);
 			if(!returnObject.getOpCode().equals("0014")){
-				getMasterServer().getServerModel().addToText("SENT" + "\n");
+//				getMasterServer().getServerModel().addToText("SENT" + "\n");
 			} else {
-				getMasterServer().getServerModel().addToText(getMasterServer().getSocketArray().indexOf(getClientInfo()) + "HB\n");
+//				getMasterServer().getServerModel().addToText(getMasterServer().getSocketArray().indexOf(getClientInfo()) + "HB\n");
 			}
 
 		} catch (IOException e) {
