@@ -9,6 +9,7 @@ public class ClientInfo {
 	private Socket clientSocket;
 	private ObjectInputStream clientInput;
 	private ObjectOutputStream clientOutput;
+	long HBReceivedMillis;
 	
 	public ClientInfo(Socket clientSocket,
 					  ObjectInputStream clientInput,
@@ -17,6 +18,15 @@ public class ClientInfo {
 		this.clientSocket = clientSocket;
 		this.clientInput = clientInput;
 		this.clientOutput = clientOutput;
+		this.HBReceivedMillis = System.currentTimeMillis();
+	}
+
+	public long getHBReceivedMillis() {
+		return HBReceivedMillis;
+	}
+
+	public void setHBReceivedMillis(long hBReceivedMillis) {
+		HBReceivedMillis = hBReceivedMillis;
 	}
 
 	public Socket getClientSocket() {

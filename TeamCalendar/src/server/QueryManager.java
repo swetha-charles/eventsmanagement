@@ -94,6 +94,7 @@ public class QueryManager {
 		else if (currentOperation.getOpCode().equals("0013")) {
 			return getUserDetails(dbconnection, currentOperation, client);
 		} else if (currentOperation.getOpCode().equals("0014")) {
+			client.setHBReceivedMillis(System.currentTimeMillis());
 			return new OTHeartBeat();
 			//getServer().getServerModel().addToText(
 			//		"Server received heartbeat and has responded");
