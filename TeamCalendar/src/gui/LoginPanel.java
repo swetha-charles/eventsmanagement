@@ -156,22 +156,26 @@ public class LoginPanel extends JPanel{
 		userAndPasswordPanel.setMaximumSize(new Dimension(350, 100));
 		userAndPasswordPanel.setMinimumSize(new Dimension(350, 100));
 		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0, 0, 0, 10);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.ipadx = 10;
 		userAndPasswordPanel.add(userLabel, gbc);
 		
+		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.ipadx = 0;
 		userAndPasswordPanel.add(username, gbc);
 		
+		gbc.insets = new Insets(0, 0, 0, 10);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.ipadx = 10;	
 		userAndPasswordPanel.add(passwordLabel, gbc);
 		
+		gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		gbc.ipadx = 0;
