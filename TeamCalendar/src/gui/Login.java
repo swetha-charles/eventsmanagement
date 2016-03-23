@@ -28,10 +28,10 @@ public class Login extends JPanel {
 	LoginPanel loginPanel;
 	//TestController Tcontroller;
 
-	/**
-	 * Constructor to create a Login
+	/** Constructor to build Login
 	 * 
-	 * @throws IOException
+	 * @param client an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
 	 */
 	public Login(Client client, Model model) {
 		this.client = client;
@@ -79,6 +79,9 @@ public class Login extends JPanel {
 		add(background, gbc);
 	}
 	
+	/**
+	 * 
+	 */
 	public void refresh(){
 		this.removeAll();
 		

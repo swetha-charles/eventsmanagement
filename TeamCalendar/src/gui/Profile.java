@@ -9,6 +9,11 @@ import javax.swing.JPanel;
 import client.Client;
 import model.Model;
 
+/** Class to build Profile view including menuPanel
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class Profile extends JPanel{
 	
 	/**
@@ -20,6 +25,12 @@ public class Profile extends JPanel{
 	MenuPanel bar;
 	ProfilePanel profile;
 	
+	/**
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 * @param menuPanel a MenuPanel object
+	 */
 	public Profile(Client controller, Model model, MenuPanel menuPanel){
 		
 		this.controller = controller;
@@ -36,6 +47,9 @@ public class Profile extends JPanel{
 		add(profile);
 	}
 	
+	/**
+	 * 
+	 */
 	public void refresh(){
 		this.removeAll();
 		this.add(bar);

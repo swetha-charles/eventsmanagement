@@ -16,6 +16,11 @@ import javax.swing.JPanel;
 import client.Client;
 import model.Model;
 
+/** Class that builds a Registration view including menuPanel
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class Registration extends JPanel{
 
 	private Client controller = null;
@@ -24,13 +29,14 @@ public class Registration extends JPanel{
 	JPanel background;
 	RegistrationPanel rp;
 
-	/**Constructor to create a Login
+	/** Constructor to build Registration
 	 * 
-	 * @throws IOException
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
 	 */
-	public Registration(Client controller2, Model model){
+	public Registration(Client controller, Model model){
 		
-		this.controller = controller2;
+		this.controller = controller;
 		this.model = model;
 		setPreferredSize(new Dimension(1000,650));
 		GridBagLayout layout = new GridBagLayout();
@@ -55,7 +61,7 @@ public class Registration extends JPanel{
 			background = null;
 		}
 		
-		rp = new RegistrationPanel(controller2, model);
+		rp = new RegistrationPanel(controller, model);
 
 		gbc.weightx = 1;
 		gbc.weighty = 1;
@@ -74,10 +80,17 @@ public class Registration extends JPanel{
 	
 	}
 	
+	/** Getter for registrationPanel
+	 * 
+	 * @return rp a RegistrationPanel
+	 */
 	public RegistrationPanel getRegistrationPanel(){
 		return this.rp;
 	}
 	
+	/**
+	 * 
+	 */
 	public void refresh(){
 		this.removeAll();
 		GridBagConstraints gbc = new GridBagConstraints();

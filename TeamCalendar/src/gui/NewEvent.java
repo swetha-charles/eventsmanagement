@@ -28,8 +28,13 @@ import javax.swing.text.PlainDocument;
 import client.Client;
 import model.Model;
 import objectTransferrable.Event;
-
+/** this class builds a panel for a popup window to build a new event
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class NewEvent extends JPanel {
+	
 	public static void main(String[] args) {
 
 		Client client = new Client();
@@ -82,6 +87,12 @@ public class NewEvent extends JPanel {
 	JButton cancel;
 	private ListPanel listPanel;
 
+	/** Constructor to build panel
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 * @param listPanel is an object ListPanel
+	 */
 	public NewEvent(Client controller, Model model, ListPanel listPanel) {
 		this.controller = controller;
 		this.model = model;
@@ -281,50 +292,100 @@ public class NewEvent extends JPanel {
 
 	}
 
+	/** Getter for name textfield
+	 * 
+	 * @return JTextField nameA
+	 */
 	public JTextField getNameA() {
 		return nameA;
 	}
 
+	/** Getter for date textfield
+	 * 
+	 * @return JTextField dateA
+	 */
 	public JTextField getDateA() {
 		return dateA;
 	}
 
+	/** Getter for month textfield
+	 * 
+	 * @return JTextField monthA
+	 */
 	public JTextField getMonthA() {
 		return monthA;
 	}
 
+	/** Getter for year textfield
+	 * 
+	 * @return JTextField yearA
+	 */
 	public JTextField getYearA() {
 		return yearA;
 	}
 
+	/** Getter for start time hours textfield
+	 * 
+	 * @return JTextField shoursA
+	 */
 	public JTextField getShoursA() {
 		return shoursA;
 	}
 
+	/** Getter for start time minutes textfield
+	 * 
+	 * @return JTextField sminutesA
+	 */
 	public JTextField getSminutesA() {
 		return sminutesA;
 	}
 
+	/** Getter for end time hours textfield
+	 * 
+	 * @return JTextField ehoursA
+	 */
 	public JTextField getEhoursA() {
 		return ehoursA;
 	}
 
+	/** Getter for end time minutes textfield
+	 * 
+	 * @return JTextField eminutesA
+	 */
 	public JTextField getEminutesA() {
 		return eminutesA;
 	}
 
+	/** Getter for location textfield
+	 * 
+	 * @return JTextField location
+	 */
 	public JTextField getLocationA() {
 		return locationA;
 	}
 
+	/** Getter for notes textarea
+	 * 
+	 * @return JTextArea of notes
+	 */
 	public JTextArea getNotesA() {
 		return notesA;
 	}
 
+	/** Getter for boolean global
+	 * 
+	 * @return true if checkbox is tick false otherwise
+	 */
 	public boolean getGlobal() {
 		return global.getState();
 	}
 
+	/** Changes the time from a string to an sql Time object
+	 * 
+	 * @param hours string for number of hours
+	 * @param minutes string for number of minutes
+	 * @return Time object formed from the hours and minutes
+	 */
 	public Time stringToTime(String hours, String minutes) {
 		int h = Integer.parseInt(hours);
 		int m = Integer.parseInt(minutes);
@@ -332,11 +393,23 @@ public class NewEvent extends JPanel {
 		return time;
 	}
 
+	/** Changes the date from a string to an swl date object
+	 * 
+	 * @param day string for day of month
+	 * @param month string for month
+	 * @param year string for year
+	 * @return Date object formed from the date
+	 */
 	public Date stringToDate(String day, String month, String year) {
 		return this.model.sanitizeDateAndMakeSQLDate(day, month, year);
 
 	}
 
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
 	public class JTextFieldLimit extends PlainDocument {
 
 		private static final long serialVersionUID = 3693304660903406545L;
