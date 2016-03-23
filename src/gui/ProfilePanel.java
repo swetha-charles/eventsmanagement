@@ -18,6 +18,11 @@ import client.Client;
 import model.Model;
 import model.ModelState;
 
+/** Class that builds JPanel that shows the users information
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class ProfilePanel extends JPanel{
 	
 	/**
@@ -39,7 +44,11 @@ public class ProfilePanel extends JPanel{
 	JButton editDetails = new JButton("Edit Details");
 	JButton editPassword = new JButton("Change Pasword");
 	
-	
+	/**
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 */
 	public ProfilePanel(Client controller, Model model){
 		
 		this.controller = controller;

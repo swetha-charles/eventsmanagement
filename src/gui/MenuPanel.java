@@ -19,7 +19,11 @@ import listener.interfaces.MouseClickedListener;
 import model.Model;
 import model.ModelState;
 
-
+/** Class that builds a JPanel that is used as the menu bar
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class MenuPanel extends JPanel{
 	
 	/**
@@ -34,6 +38,12 @@ public class MenuPanel extends JPanel{
 	public static JLabel profile = new JLabel("Profile");
 	public static JLabel logout = new JLabel("Logout");
 
+	/**
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 * @param listPanel a ListPanel object
+	 */
 	public MenuPanel(Client client, Model model, ListPanel listPanel){
 		
 		this.client = client;

@@ -23,6 +23,11 @@ import client.Client;
 import model.Model;
 import model.ModelState;
 
+/** Class that creates JPanel for user to change password
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class PasswordPanel extends JPanel{
 
 	/**
@@ -46,7 +51,11 @@ public class PasswordPanel extends JPanel{
 	JButton submit = new JButton("Confirm Changes");
 	JButton cancel = new JButton("Cancel");
 	
-	
+	/**
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 */
 	public PasswordPanel(Client controller, Model model){
 		
 		this.controller = controller;
@@ -138,6 +147,11 @@ public class PasswordPanel extends JPanel{
 		});
 	}
 
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
 	public class JTextFieldLimit extends PlainDocument {
 		private int limit;
 

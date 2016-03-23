@@ -9,6 +9,11 @@ import javax.swing.JPanel;
 import client.Client;
 import model.Model;
 
+/** Class that builds a Jpanel that contains menuPanel and PasswordPanel
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class Password extends JPanel{
 	
 	/**
@@ -20,6 +25,12 @@ public class Password extends JPanel{
 	MenuPanel bar;
 	PasswordPanel password;
 	
+	/**
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 * @param menuPanel a MenuPanel object
+	 */
 	public Password(Client controller, Model model, MenuPanel menuPanel){
 		
 		this.controller = controller;
@@ -36,6 +47,9 @@ public class Password extends JPanel{
 		add(password);
 	}
 
+	/**
+	 * 
+	 */
 	public void refresh() {
 		this.removeAll();
 		this.add(bar);

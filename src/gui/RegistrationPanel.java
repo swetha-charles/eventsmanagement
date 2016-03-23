@@ -31,6 +31,11 @@ import listener.interfaces.FocusLostListener;
 import model.Model;
 import model.ModelState;
 
+/** This class builds a JPanel which lets the user input details and register
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class RegistrationPanel extends JPanel {
 
 	/**
@@ -75,9 +80,10 @@ public class RegistrationPanel extends JPanel {
 	JLabel logo;
 	JPanel logoPanel = new JPanel();
 
-	/**
-	 * This constructor builds a login panel where the user can input their
-	 * username and password.
+	/** Constructor to build registrationPanel
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
 	 */
 	public RegistrationPanel(Client client, Model model) {
 		this.client = client;
@@ -385,34 +391,66 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 
+	/** Getter for userLabel
+	 * 
+	 * @return userLabel a JLabel
+	 */
 	public JLabel getUserLabel() {
 		return userLabel;
 	}
 
+	/** Getter for passwordLabel
+	 * 
+	 * @return
+	 */
 	public JLabel getPasswordLabel() {
 		return passwordLabel;
 	}
 
+	/**Getter for confirmLabel
+	 * 
+	 * @return
+	 */
 	public JLabel getConfirmLabel() {
 		return confirmLabel;
 	}
 
+	/** Setter for passwordLabel
+	 * 
+	 * @param passwordLabel a String
+	 */
 	public void setPasswordLabel(String passwordLabel) {
 		this.passwordLabel.setText(passwordLabel);
 	}
 
+	/** Setter for confirmLabel
+	 * 
+	 * @param confirmLabel a String
+	 */
 	public void setConfirmLabel(String confirmLabel) {
 		this.confirmLabel.setText(confirmLabel);
 	}
 
+	/** Getter for emailLabel
+	 * 
+	 * @return emailLabel a JLabel
+	 */
 	public JLabel getEmailLabel() {
 		return emailLabel;
 	}
 
+	/** Getter for firstLabel
+	 * 
+	 * @return firstLabel a JLabel
+	 */
 	public JLabel getFirstLabel() {
 		return firstLabel;
 	}
 
+	/** Setter for firstLabel depends on validity
+	 * 
+	 * @param firstLabel a String
+	 */
 	public void setFirstLabel(String firstLabel) {
 		this.firstLabel.setText(firstLabel);
 		if (firstLabel.contains("incorrect")) {
@@ -422,10 +460,18 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 
+	/** Getter for lastLabel
+	 * 
+	 * @return lastLabel a JLabel
+	 */
 	public JLabel getLastLabel() {
 		return lastLabel;
 	}
 
+	/** Setter for lastLabel depends on validity
+	 * 
+	 * @param lastLabel a String
+	 */
 	public void setLastLabel(String lastLabel) {
 		this.lastLabel.setText(lastLabel);
 		if (lastLabel.contains("incorrect")) {
@@ -435,6 +481,10 @@ public class RegistrationPanel extends JPanel {
 		}
 	};
 
+	/** Setter for userLabel, depends on validity
+	 * 
+	 * @param userLabel a String
+	 */
 	public void setUserLabel(String userLabel) {
 		this.userLabel.setText(userLabel);
 		if (userLabel.contains("exists")) {
@@ -444,6 +494,10 @@ public class RegistrationPanel extends JPanel {
 		}
 	}
 
+	/** Setter for emailLabel, depends on validity
+	 * 
+	 * @param emailLabel a String
+	 */
 	public void setEmailLabel(String emailLabel) {
 		this.emailLabel.setText(emailLabel);
 		if (emailLabel.contains("exists") || emailLabel.contains("incorrect")) {
@@ -454,6 +508,11 @@ public class RegistrationPanel extends JPanel {
 	}
 	// ------ End Email & User labels ---------//
 
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
 	public class JTextFieldLimit extends PlainDocument {
 		private int limit;
 

@@ -36,6 +36,11 @@ import listener.interfaces.MouseClickedListener;
 import model.Model;
 import model.ModelState;
 
+/** Class that builds JPanel for user to input login details
+ * 
+ * @author nataliemcdonnell
+ *
+ */
 public class LoginPanel extends JPanel{
 	
 	/**
@@ -211,16 +216,29 @@ public class LoginPanel extends JPanel{
 	
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public JLabel getError() {
 		return error;
 	}
 
+	/**
+	 * 
+	 * @param error
+	 */
 	public void setError(JLabel error) {
 		error.setText("Incorrect username or password");
 		error.setForeground(Color.RED);
 		this.error = error;
 	}
 	
+	/** Inner class to limit the number of characters in the text fields
+	 * 
+	 * @author nataliemcdonnell
+	 *
+	 */
 	public class JTextFieldLimit extends PlainDocument {
 		/**
 		 * 

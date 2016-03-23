@@ -19,12 +19,21 @@ import listener.interfaces.*;
 import model.Model;
 import model.ModelState;
 
+/** Class which creates a JFrame object which is the view
+ * 
+ * @author swethacharles
+ *
+ */
 public class MainView extends JFrame implements Observer {
 
 	Model model = null;
 	Client client = null;
-;
 
+	/** Constructor to build MainView
+	 * 
+	 * @param client an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 */
 	public MainView(Client client, Model model) {
 		this.client = client;
 		this.model = model;
@@ -60,6 +69,9 @@ public class MainView extends JFrame implements Observer {
 	}
 
 
+	/** Overriding the update method that is used for the observer
+	 * 
+	 */
 	@Override
 	public synchronized void update(Observable o, Object arg) {
 		if (model.getCurrentState().equals(ModelState.EXIT)) {
