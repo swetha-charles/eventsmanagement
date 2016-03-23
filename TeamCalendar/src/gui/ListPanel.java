@@ -123,7 +123,8 @@ public class ListPanel extends JPanel {
 		top.add(date);
 		top.add(Box.createRigidArea(new Dimension(20, 0)));
 		top.add(addEvent);
-		refresh.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		top.add(Box.createRigidArea(new Dimension(20, 0)));
+//		refresh.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		top.add(refresh);
 
 		// updates model with the meetings for today and adds them to panel list
@@ -146,6 +147,7 @@ public class ListPanel extends JPanel {
 		changeDay.setPreferredSize(new Dimension(900, 50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
 		changeDay.add(previous);
+		changeDay.add(Box.createRigidArea(new Dimension(20, 0)));
 		changeDay.add(next);
 
 		// creates
