@@ -49,6 +49,7 @@ public class Client {
 	private Model model;
 	private MainView view;
 	private Socket s;
+	private InetAddress addr;
 	private boolean error = false;
 
 	public Client(int portnumber, String url) {
@@ -58,7 +59,8 @@ public class Client {
 		this.portnumber = portnumber;
 		try {
 
-			InetAddress addr = InetAddress.getByName(url);
+			this.addr = InetAddress.getByName(url);
+			this.portnumber = portnumber;
 			s = new Socket(addr, portnumber);		
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
@@ -602,7 +604,7 @@ public class Client {
 	 */
 	private void attemptToOpenConnections() {
 		try {
-			s = new Socket("localhost", portnumber);
+			s = new Socket(addr, portnumber);
 			System.out.println("Client connected to port " + portnumber);
 			toServer = new ObjectOutputStream(s.getOutputStream());
 			fromServer = new ObjectInputStream(s.getInputStream());
