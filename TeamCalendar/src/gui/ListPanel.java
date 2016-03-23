@@ -63,7 +63,7 @@ public class ListPanel extends JPanel {
 	JButton submit = new JButton("Add Event");
 
 	Calendar c = new GregorianCalendar();
-	
+
 	JPanel top = new JPanel();
 	JLabel date;
 	JButton addEvent = new JButton("+");
@@ -220,11 +220,11 @@ public class ListPanel extends JPanel {
 	 */
 	public void addMeetings(ArrayList<Event> arraylist) {
 
+		//		list.setSize(880, 450);
 		list.removeAll();
 		events.clear();
 		if (arraylist.isEmpty()) {
-
-			list.setPreferredSize(new Dimension(650, 800));
+			//			list.setPreferredSize(new Dimension(880, 450));
 			list.setLayout(new BoxLayout(list, BoxLayout.PAGE_AXIS));
 
 			JLabel l = new JLabel("You have no events right now!");
@@ -251,18 +251,30 @@ public class ListPanel extends JPanel {
 
 				// creates new JLabel of event name for each event
 
+
+
 				String a = "Notes :  " + arraylist.get(i).getEventDescription();
-				JTextArea description = new JTextArea(a);
+				int notesLength = (int)a.length()/62;
+				JTextArea description = new JTextArea(a, notesLength, 62);
 				description.setLineWrap(true);
 				description.setEditable(false);
-				description.setMaximumSize(new Dimension(600,300));
-				description.setMinimumSize(new Dimension(600,10));
+
+
+				//				description.setPreferredSize(new Dimension(880,30));
+				//				description.setMaximumSize(new Dimension(880,200));
+				//				description.setMinimumSize(new Dimension(880,30));
+
+				
 				String b = "Location :  " + arraylist.get(i).getLocation();
-				JTextArea location = new JTextArea(b);
+				int locationLength = (int)b.length()/62;
+				JTextArea location = new JTextArea(b, locationLength, 62);
 				location.setLineWrap(true);
 				location.setEditable(false);
-				location.setMaximumSize(new Dimension(600,300));
-				location.setMinimumSize(new Dimension(600,10));
+
+				//				location.setPreferredSize(new Dimension(880,30));
+				//				location.setMaximumSize(new Dimension(880,200));
+				//				location.setMinimumSize(new Dimension(880,30));
+
 				JButton edit = new JButton("Edit event");
 				JButton delete = new JButton("Delete event");
 
@@ -282,6 +294,13 @@ public class ListPanel extends JPanel {
 
 				// creates new JPanel with title border
 				JPanel p = new JPanel();
+				//				p.setPreferredSize(new Dimension(635, 300));
+
+				System.out.println("Notes" + a);
+				
+
+				p.setMaximumSize(new Dimension(880, 100 + 40 + 35 + 35 + (notesLength+countLines(a)*23) + (locationLength*23)));
+				p.setMinimumSize(new Dimension(880, 100 + 40 + 35 + 35 + (notesLength+countLines(a)*23) + (locationLength*23)));
 				p.setBorder(border);
 				p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
 				p.setBackground(Color.WHITE);
@@ -304,7 +323,7 @@ public class ListPanel extends JPanel {
 				Event clickedevent = arraylist.get(i);
 
 				edit.addActionListener((e) -> {
-					
+
 					JDialog.setDefaultLookAndFeelDecorated(true);
 					JPanel editEventPopup = new EditEventPanel(controller, model, clickedevent, this);
 					event.setPreferredSize(new Dimension(500, 260));
@@ -323,7 +342,6 @@ public class ListPanel extends JPanel {
 					final int y = (screenSize.height - dialog.getHeight()) / 2;
 					dialog.setLocation(x, y);
 					dialog.setVisible(true);
-//					dialog.setAlwaysOnTop(true);
 
 				});
 
@@ -357,6 +375,11 @@ public class ListPanel extends JPanel {
 		}
 		this.repaint();
 		this.revalidate();
+	}
+
+	private static int countLines(String str){
+		String[] lines = str.split("\r\n|\r|\n");
+		return  lines.length -1;
 	}
 
 	// -------------------Creates JLabel for date-----------------------//
@@ -530,7 +553,7 @@ public class ListPanel extends JPanel {
 	public void closeDialog() {
 		this.dialog.dispose();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -543,7 +566,7 @@ public class ListPanel extends JPanel {
 		saveUserEdits.setVisible(true);
 		saveUserEdits.setAlwaysOnTop(true);
 	}
-	
+
 	/**
 	 * 
 	 * @param bool
@@ -551,7 +574,7 @@ public class ListPanel extends JPanel {
 	public void changeModality(boolean bool){
 		dialog.setModal(bool);
 	}
-	
+
 	/**
 	 * 
 	 */

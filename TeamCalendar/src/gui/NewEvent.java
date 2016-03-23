@@ -178,6 +178,7 @@ public class NewEvent extends JPanel {
 						if(startTime.before(endTime)){
 							// Validate Date
 							if (this.model.validateNewDate(day, month, year)) {
+								System.out.println("TRUE");
 								java.sql.Date newDateSQL = stringToDate(day, month, year);
 								if (getGlobal() == true) {
 									newEvent = new Event(startTime, endTime, getNotesA().getText(), getNameA().getText(),
