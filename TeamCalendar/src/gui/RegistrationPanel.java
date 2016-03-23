@@ -346,9 +346,9 @@ public class RegistrationPanel extends JPanel {
 		// dob.addFocusListener((FocusLostListener) (e) ->
 		// this.model.validateDOB(dob.getText()));
 
-		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmail(email.getText()));
+		email.addFocusListener((FocusLostListener) (e) -> this.model.checkEmailReg(email.getText()));
 
-		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePassword(password.getPassword()));
+		password.addFocusListener((FocusLostListener) (e) -> this.model.validatePasswordReg(password.getPassword()));
 
 		// confirm listener
 		cancel.addActionListener((e) -> this.model.changeCurrentState(ModelState.LOGIN));
