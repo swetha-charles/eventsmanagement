@@ -156,6 +156,8 @@ public class NewEvent extends JPanel {
 		global.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 10));
 		userResponse = new JPanel();
 		submit = new JButton("Submit");
+		submit.setBackground(Color.DARK_GRAY);
+		submit.setForeground(new Color(255, 255, 245));
 		submit.addActionListener((e) -> {
 			// editing events!
 			if (nameA.getText().length() != 0) {
@@ -227,6 +229,8 @@ public class NewEvent extends JPanel {
 
 		});
 		cancel = new JButton("Cancel");
+		cancel.setBackground(Color.DARK_GRAY);
+		cancel.setForeground(new Color(255, 255, 245));
 		cancel.addActionListener((e) -> {
 			this.setVisible(false);
 			this.setEnabled(false);
