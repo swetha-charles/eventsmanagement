@@ -2,7 +2,11 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
-
+/**
+ * 
+ * @author Mark
+ *
+ */
 public class ClientInfo {
 
 	private String userName;

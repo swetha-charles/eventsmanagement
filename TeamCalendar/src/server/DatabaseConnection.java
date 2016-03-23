@@ -1,12 +1,21 @@
 package server;
 
 import java.sql.*;
-
+/**
+ * the class the establishes a connection to the database, to be used by the
+ * query manager
+ * @author Mark
+ *
+ */
 public class DatabaseConnection {
 
 	private Connection connection;
 	private Server creatorServer;
-	
+	/**
+	 * the constructor for the class, that creates a connection to the database
+	 * @param creatorServer needs the server information  of the server that
+	 * created this instance of this class to add information to the server GUI
+	 */
 	public DatabaseConnection(Server creatorServer){
 		this.creatorServer = creatorServer;
 		
@@ -64,14 +73,25 @@ public class DatabaseConnection {
 		}
 	}
 
+	/**
+	 * getter for the database connection
+	 * @return the connection to the database
+	 */
 	public Connection getConnection() {
 		return connection;
 	}
 
+	/**
+	 * setter for the database connection
+	 * @param connection the new connection to the database
+	 */
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
-
+	/**
+	 * getter for the server that created this instance of the database
+	 * @return the server that created this class
+	 */
 	public Server getCreatorServer() {
 		return creatorServer;
 	}

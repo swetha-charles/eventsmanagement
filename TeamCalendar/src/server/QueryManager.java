@@ -4,21 +4,43 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 import objectTransferrable.*;
-
+/**
+ * this is the key class to which client input objects should be passed
+ * for processing. It results in an output object when necessary to pass
+ * back to the client. It uses the database connection to process SQL
+ * queries, which are all created using prepared statements. One instance
+ * of this class is shared by all clients, so key methods are synchronised
+ * @author Mark
+ *
+ */
 public class QueryManager {
 
 	private Server server;
-
+	/**
+	 * constructor for the query manager. It only needs the server as the input,
+	 * as everything else should be passed to methods by the task that calls 
+	 * the methods
+	 * @param server
+	 */
 	public QueryManager(Server server) {
 		this.server = server;
-
 	}
-
+	/**
+	 * getter for the server
+	 * @return the server object
+	 */
 	public Server getServer() {
 		return server;
 	}
-
-	public ObjectTransferrable runOperation(ObjectTransferrable currentOperation, ClientInfo client) throws SQLException {
+	/**
+	 * this is the key method that tasks will pass key client and query information
+	 * to, it calls methods that deal with the object that has been passed to the class,
+	 * basing its decision on the opCode of the received object
+	 * @param currentOperation the object that needs to be processed
+	 * @param client the client that passed the object
+	 * @return the result of the object being processed
+	 */
+	public ObjectTransferrable runOperation(ObjectTransferrable currentOperation, ClientInfo client) {
 
 		Connection dbconnection = getServer().getDatabase().getConnection();
 
@@ -184,12 +206,18 @@ public class QueryManager {
 		}
 
 	}
-
+	/**
+	 * the method called to update user passwords
+	 * @param con the database connection
+	 * @param operation the object that contains the password update information
+	 * @param client the client that requested the password change
+	 * @return the object that indicates the success or failure of the databse update
+	 */
 	private ObjectTransferrable updateUserPassword(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdatePassword classifiedOperation = (OTUpdatePassword) operation;
 
-		getServer().getServerModel()
-		.addToText("Attempting to update the following users password: " + client.getUserName() + "\n");
+		//getServer().getServerModel()
+		//.addToText("Attempting to update the following users password: " + client.getUserName() + "\n");
 
 		String update = "UPDATE users " 
 				+"SET password= ? "
@@ -200,11 +228,11 @@ public class QueryManager {
 			updatePassword.setString(1, classifiedOperation.getPwhash());
 			updatePassword.setString(2, client.getUserName());
 
-			getServer().getServerModel()
-			.addToText("Running this update: " + updatePassword + "\n");
+			//getServer().getServerModel()
+			//.addToText("Running this update: " + updatePassword + "\n");
 
 			updatePassword.executeUpdate();
-			getServer().getServerModel().addToText("Successfully updated user password\n");
+			//getServer().getServerModel().addToText("Successfully updated user password\n");
 			return new OTUpdatePasswordSuccessful();
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't update user password\n");
@@ -212,14 +240,22 @@ public class QueryManager {
 			return new OTErrorResponse("Couldn't update user password", false);
 
 		}
-
 	}
 
+	/**
+	 * the method that is called when the client wishes to update their profile
+	 * information
+	 * @param con the database connection
+	 * @param operation the object that contains the information to update the profile 
+	 * of the user
+	 * @param client the client that requested the profile update
+	 * @return the object that indicates the success or failure of the task
+	 */
 	private ObjectTransferrable updateUserProfile(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdateUserProfile classifiedOperation = (OTUpdateUserProfile) operation;
 
-		getServer().getServerModel()
-		.addToText("Attempting to update the following users profile: " + client.getUserName() + "\n");
+//		getServer().getServerModel()
+//		.addToText("Attempting to update the following users profile: " + client.getUserName() + "\n");
 		try {
 			String update = "UPDATE users " 
 					+"SET firstName= ?, lastName= ?, userEmail= ? "
@@ -234,11 +270,11 @@ public class QueryManager {
 			updatePassword.setString(3, classifiedOperation.getEmail());
 			updatePassword.setString(4, client.getUserName());
 
-			getServer().getServerModel()
-			.addToText("Running this update: " + updatePassword + "\n");
+//			getServer().getServerModel()
+//			.addToText("Running this update: " + updatePassword + "\n");
 
 			updatePassword.executeUpdate();
-			getServer().getServerModel().addToText("Successfully updated user profile\n");
+//			getServer().getServerModel().addToText("Successfully updated user profile\n");
 			return new OTUpdateUserProfileSuccessful(classifiedOperation.getFirstName(), classifiedOperation.getLastName(), classifiedOperation.getEmail());
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't update user profile\n");
@@ -246,12 +282,22 @@ public class QueryManager {
 			return new OTErrorResponse("Couldn't update user profile", false);
 		}
 	}
-
-	private ObjectTransferrable deleteEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
+	/**
+	 * the method that allows users to delete events from their calendar. This is synchronized
+	 * so that multiple users can't try and delete the same meeting at once. It shares a call
+	 * to the getAMeeting method with update meeting (getAMeeting us synchronised), this means that
+	 * two clients can't simultaneously try and update and delete an event
+	 * @param con the database connection
+	 * @param operation the object that contains the event to be deleted
+	 * @param client the client that requested the delete
+	 * @return the object to be passed back to the client indicating the success or failure
+	 * of the delete request
+	 */
+	private synchronized ObjectTransferrable deleteEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTDeleteEvent classifiedOperation = (OTDeleteEvent) operation;
 		Event eventToDelete = classifiedOperation.getEvent();
-		getServer().getServerModel().addToText("Event Title: " + eventToDelete.getEventTitle() + "\n");
-		getServer().getServerModel().addToText("Global event marker: " + eventToDelete.getGlobalEvent() + "\n");
+//		getServer().getServerModel().addToText("Event Title: " + eventToDelete.getEventTitle() + "\n");
+//		getServer().getServerModel().addToText("Global event marker: " + eventToDelete.getGlobalEvent() + "\n");
 		try {
 			if(getAMeeting(con, eventToDelete, client)){
 				String creator;
@@ -261,8 +307,8 @@ public class QueryManager {
 					creator = client.getUserName();
 				}
 
-				getServer().getServerModel()
-				.addToText("Attempting to delete a meeting for: " + creator + "\n");
+//				getServer().getServerModel()
+//				.addToText("Attempting to delete a meeting for: " + creator + "\n");
 
 				String update = "DELETE FROM meetings " 
 						+"WHERE creatorID= ? AND meetingDate= ? AND meetingTitle= ?"
@@ -271,8 +317,8 @@ public class QueryManager {
 						+" AND lockVersion= ?"
 						+"";
 
-				getServer().getServerModel()
-				.addToText("Running this update: " + update + "\n");
+//				getServer().getServerModel()
+//				.addToText("Running this update: " + update + "\n");
 
 				PreparedStatement deleteEvent = con.prepareStatement(update);
 
@@ -287,7 +333,7 @@ public class QueryManager {
 
 				deleteEvent.executeUpdate();
 
-				getServer().getServerModel().addToText("Successfully deleted event\n");
+//				getServer().getServerModel().addToText("Successfully deleted event\n");
 				return new OTDeleteEventSuccessful(true);
 			} else {
 				getServer().getServerModel().addToText("Couldn't delete event - stale lock version\n");
@@ -300,7 +346,17 @@ public class QueryManager {
 			return new OTErrorResponse("Couldn't delete event", false);
 		}
 	}
-
+	/**
+	 * the method that allows users to update events from their calendar. This is synchronized
+	 * so that multiple users can't try and update the same meeting at once. It shares a call
+	 * to the getAMeeting method with delete meeting (getAMeeting us synchronised), this means that
+	 * two clients can't simultaneously try and update and delete an event
+	 * @param con the database connection
+	 * @param operation the object that contains the event to be deleted
+	 * @param client the client that requested the delete
+	 * @return the object to be passed back to the client indicating the success or failure
+	 * of the update request
+	 */
 	private synchronized ObjectTransferrable updateEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUpdateEvent classifiedOperation = (OTUpdateEvent) operation;
 		Event oldEvent = classifiedOperation.getOldEvent();
@@ -361,9 +417,9 @@ public class QueryManager {
 				updateEvent.setTime(14, oldEndTime);
 				updateEvent.setInt(15, oldLockVersion);
 
-				getServer().getServerModel().addToText("QUERY: " +updateEvent.toString()+"\n");
+//				getServer().getServerModel().addToText("QUERY: " +updateEvent.toString()+"\n");
 				updateEvent.executeUpdate();
-				getServer().getServerModel().addToText("Successfully updated event\n");
+//				getServer().getServerModel().addToText("Successfully updated event\n");
 				return new OTUpdateEventSuccessful(true);
 			} else {
 				getServer().getServerModel().addToText("Failed to update event - stale lock version\n");
@@ -375,7 +431,15 @@ public class QueryManager {
 			return new OTErrorResponse("Couldn't update meeting - SQL Exception", false);
 		}
 	}
-
+	/**
+	 * a method that checks for the existence of a meeting in the database. It
+	 * primary use is to check for matching lock versions
+	 * @param con the database connection
+	 * @param event the event to search for
+	 * @param client the client that sent the corresponding  object
+	 * @return true if the meeting exists, false if it doesn't
+	 * @throws SQLException should be thrown if there is an issue with the prepared statement
+	 */
 	private boolean getAMeeting(Connection con, Event event, ClientInfo client) throws SQLException{
 		String query = "SELECT * "
 				+"FROM meetings m "
@@ -407,23 +471,30 @@ public class QueryManager {
 		meetingQuery.setTime(7, event.getEndTime());
 		meetingQuery.setInt(8, event.getLockVersion());
 
-		getServer().getServerModel().addToText("Lock Version of received event: " + event.getLockVersion() + "\n");
-		getServer().getServerModel().addToText("Creator of received event: " + creator + "\n");
-		getServer().getServerModel().addToText("QUERY: " + meetingQuery.toString() + "\n");
+//		getServer().getServerModel().addToText("Lock Version of received event: " + event.getLockVersion() + "\n");
+//		getServer().getServerModel().addToText("Creator of received event: " + creator + "\n");
+//		getServer().getServerModel().addToText("QUERY: " + meetingQuery.toString() + "\n");
 
 		ResultSet rs = meetingQuery.executeQuery();
 
 		if (rs.next()) {
-			getServer().getServerModel().addToText("Found matching meeting, returning true.\n");
+//			getServer().getServerModel().addToText("Found matching meeting, returning true.\n");
 			return true;
 		} else {
 
-			getServer().getServerModel().addToText("Found no such meeting, returning false.\n");
+//			getServer().getServerModel().addToText("Found no such meeting, returning false.\n");
 			return false;
 		}
 
 	}
-
+	/**
+	 * a method that creates an event in the database, taking into account the flag
+	 * for global events
+	 * @param con the database connection
+	 * @param operation the object that carries the create event information
+	 * @param client the client that requested the event creation
+	 * @return the object that indicates the success or failure of the create event request
+	 */
 	private ObjectTransferrable createEvent(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTCreateEvent classifiedOperation = (OTCreateEvent) operation;
 
@@ -435,10 +506,10 @@ public class QueryManager {
 		} else {
 			creator = client.getUserName();
 		}
-		getServer().getServerModel()
-		.addToText("Attempting to create a meeting for:"+creator+"\n");
-		getServer().getServerModel()
-		.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
+//		getServer().getServerModel()
+//		.addToText("Attempting to create a meeting for:"+creator+"\n");
+//		getServer().getServerModel()
+//		.addToText("Meeting received has date: " + classifiedOperation.getEvent().getDate().toString() + "\n");
 		update = "INSERT INTO meetings VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, 1)";
 		try {
 			PreparedStatement newEvent = con.prepareStatement(update);
@@ -451,11 +522,11 @@ public class QueryManager {
 			newEvent.setTime(6, classifiedOperation.getEvent().getStartTime());
 			newEvent.setTime(7, classifiedOperation.getEvent().getEndTime());
 
-			getServer().getServerModel()
-			.addToText("Attempting to create a meeting for: " + creator + "\n");
+//			getServer().getServerModel()
+//			.addToText("Attempting to create a meeting for: " + creator + "\n");
 
 			newEvent.executeUpdate();
-			getServer().getServerModel().addToText("Successfully created meeting\n");
+//			getServer().getServerModel().addToText("Successfully created meeting\n");
 			return new OTCreateEventSucessful(classifiedOperation.getEvent());
 		} catch (SQLException e) {
 			getServer().getServerModel().addToText("Couldn't create meeting\n");
@@ -463,7 +534,15 @@ public class QueryManager {
 			return new OTErrorResponse("Couldn't create meeting", false);
 		}
 	}
-
+	/**
+	 * the method for checking if a user is already in the database or not. It is
+	 * not synchronised as it doesn't happen at a point where anything is committed
+	 * to the database
+	 * @param con the database connection
+	 * @param operation the object that carries the username to be checked
+	 * @param client the client that requested the check
+	 * @return the object that indicates whether the user exists or not
+	 */
 	private ObjectTransferrable checkUsername(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTUsernameCheck classifiedOperation = (OTUsernameCheck) operation;
 		try {
@@ -478,10 +557,19 @@ public class QueryManager {
 			return new OTErrorResponse("SQL failed with username query", false);
 		}
 	}
-
+	/**
+	 * a method that checks to see if a user already exists in the database. It is synchronised
+	 * as it is used by key methods that commit user information to the database,
+	 * including information with primary key uniqueness constraints
+	 * @param con the database connection
+	 * @param username the username to check for
+	 * @param client the client that requested the check
+	 * @return true if the username already exists, false if not
+	 * @throws SQLException should only be thrown if the prepared statement fails
+	 */
 	private synchronized boolean checkForUserExistance(Connection con, String username, ClientInfo client) throws SQLException{
-		getServer().getServerModel()
-		.addToText("Checking to see if " + username + " is in the database...\n");
+//		getServer().getServerModel()
+//		.addToText("Checking to see if " + username + " is in the database...\n");
 
 		String query = "SELECT count(u.userName) " + "FROM users u " + "GROUP BY u.userName " + "HAVING u.userName = ?";
 
@@ -492,14 +580,21 @@ public class QueryManager {
 		ResultSet rs = checkUser.executeQuery();
 
 		if (rs.next()) {
-			getServer().getServerModel().addToText("Found matching username, returning true.\n");
+//			getServer().getServerModel().addToText("Found matching username, returning true.\n");
 			return true;
 		} else {
-			getServer().getServerModel().addToText("Found no such user, returning false.\n");
+//			getServer().getServerModel().addToText("Found no such user, returning false.\n");
 			return false;
 		}
 	}
-
+	/**
+	 * a method to check if an email already exists in the database. It is not 
+	 * synchronised as the email isn't committed at this point
+	 * @param con the database connection
+	 * @param operation the object that carries the email to be checked
+	 * @param client the client that requested the check
+	 * @return true if the email already exists, false if not
+	 */
 	private ObjectTransferrable checkEmailvalid(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTEmailCheck classifiedOperation = (OTEmailCheck) operation;
 		try {
@@ -514,9 +609,18 @@ public class QueryManager {
 			return new OTErrorResponse("SQL failed with email query", false);
 		}
 	}
-
+	/**
+	 * a method that checks for an email already existing in the database. It is synchronised
+	 * as it is used by the method that commits user information to the database, and the email
+	 * has a uniqueness constraint
+	 * @param con the database connection
+	 * @param email the email to be checked
+	 * @param client the client that requested the check
+	 * @return true if the email already exists, false if not
+	 * @throws SQLException should only be thrown if the execution of the prepared statement fails
+	 */
 	private synchronized boolean checkForEmailExistance(Connection con, String email, ClientInfo client) throws SQLException {
-		getServer().getServerModel().addToText("Checking to see if: " + email + " is in the database\n");
+//		getServer().getServerModel().addToText("Checking to see if: " + email + " is in the database\n");
 
 		String query = "SELECT count(u.userEmail) " + "FROM users u " + "GROUP BY u.userEmail "
 				+ "HAVING u.userEmail = ?";
@@ -528,17 +632,26 @@ public class QueryManager {
 		ResultSet rs = checkEmail.executeQuery();
 
 		if (rs.next()) {
-			getServer().getServerModel().addToText("Email exists, returning true.\n");
+//			getServer().getServerModel().addToText("Email exists, returning true.\n");
 			return true;
 		} else {
-			getServer().getServerModel().addToText("Email not in use, returning false.\n");
+//			getServer().getServerModel().addToText("Email not in use, returning false.\n");
 			return false;
 		}
 	}
+	/**
+	 * the method that adds registering users to the database. It ensures that uniqueness
+	 * constraints on the username and email are enforced, by synchronising the method
+	 * @param con the database connection
+	 * @param operation the object that carries the registration information
+	 * @param client the client that requested the registration
+	 * @return the object that indicates the success or failure of the registration
+	 * request
+	 */
 	private synchronized ObjectTransferrable checkRegistration(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTRegistrationInformation classifiedOperation = (OTRegistrationInformation) operation;
-		getServer().getServerModel()
-		.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
+//		getServer().getServerModel()
+//		.addToText("Attempting to create a user with name: " + classifiedOperation.getUsername() + "\n");
 		try {
 			if(!checkForUserExistance(con, classifiedOperation.getUsername(), client)){
 				if(!checkForEmailExistance(con, classifiedOperation.getEmail(), client)){
@@ -555,7 +668,7 @@ public class QueryManager {
 					
 					checkUser.executeUpdate();
 					
-					getServer().getServerModel().addToText("Succesfully created user");
+//					getServer().getServerModel().addToText("Succesfully created user");
 					return new OTRegistrationInformationConfirmation(true, null, null);
 				} else {
 					return new OTRegistrationInformationConfirmation(false, null, "Email already exists");
@@ -570,13 +683,19 @@ public class QueryManager {
 		}
 
 	}
-
+	/**
+	 * the method that retrieves a particular users meetings for a particular day
+	 * @param con the database connection
+	 * @param operation the object that contains the request information
+	 * @param client the client that requested the meeting information
+	 * @return an object contains an ArrayList of Event objects for a particular day
+	 */
 	private ObjectTransferrable getMeetings(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTRequestMeetingsOnDay classifiedOperation = (OTRequestMeetingsOnDay) operation;
 
 		try {
 			ArrayList<Event> meetings = retrieveMeetingsFromDB(classifiedOperation.getDate(), client, con);
-			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
+//			getServer().getServerModel().addToText("Returning " + meetings.size() + " meetings to client" + "\n");
 			OTReturnDayEvents returnEvents = new OTReturnDayEvents(meetings);
 			return returnEvents;
 		} catch (SQLException e) {
@@ -585,7 +704,15 @@ public class QueryManager {
 			return new OTErrorResponse("SQL Server failed with meeting request", false);
 		}
 	}
-
+	/**
+	 * a method that gets a users details
+	 * @param con the database connection
+	 * @param operation the object that contains the information needed to make the 
+	 * user details request
+	 * @param client the client that requested the user details
+	 * @return an object that contains the users details, or a failure object if the
+	 * query failed
+	 */
 	private ObjectTransferrable getUserDetails(Connection con, ObjectTransferrable operation, ClientInfo client) {
 
 		OTLoginSuccessful classifiedOperation = (OTLoginSuccessful) operation;
@@ -599,19 +726,19 @@ public class QueryManager {
 			ResultSet rs = userDetails.executeQuery();
 
 			if (rs.next()) {
-				getServer().getServerModel()
-				.addToText("Retrieved user details for " + classifiedOperation.getUsername() + "\n");
+//				getServer().getServerModel()
+//				.addToText("Retrieved user details for " + classifiedOperation.getUsername() + "\n");
 				String firstName, lastName, email;
 				firstName = rs.getString(1);
 				lastName = rs.getString(2);
 				email = rs.getString(3);
-				getServer().getServerModel()
-				.addToText("Set Client username to " + classifiedOperation.getUsername() + "\n");
+//				getServer().getServerModel()
+//				.addToText("Set Client username to " + classifiedOperation.getUsername() + "\n");
 				client.setUserName(classifiedOperation.getUsername());
 				return new OTLoginProceed(true, firstName, lastName, email);
 			} else {
-				getServer().getServerModel()
-				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
+//				getServer().getServerModel()
+//				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
 				return new OTLoginProceed(false, null, null, null);
 			}
 		} catch (SQLException e) {
@@ -620,7 +747,14 @@ public class QueryManager {
 			return new OTErrorResponse("SQL Server failed with user details request", false);
 		}
 	}
-
+	/**
+	 * a method that acquires a hashed version of a users password
+	 * @param con the database connection
+	 * @param operation the object that contains the information of the user
+	 * who has requested the hash
+	 * @param client the client that requested the hash
+	 * @return the users hashed password in a transferable object
+	 */
 	private ObjectTransferrable hashToClient(Connection con, ObjectTransferrable operation, ClientInfo client) {
 		OTLogin classifiedOperation = (OTLogin) operation;
 
@@ -635,12 +769,12 @@ public class QueryManager {
 			if (rs.next()) {
 				String pwFromDB = rs.getString(1);
 
-				getServer().getServerModel().addToText("Sending user following hash: " + pwFromDB + "\n");
+//				getServer().getServerModel().addToText("Sending user following hash: " + pwFromDB + "\n");
 				return new OTHashToClient(true, pwFromDB);
 
 			} else {
-				getServer().getServerModel()
-				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
+//				getServer().getServerModel()
+//				.addToText("User " + classifiedOperation.getUsername() + " does not exist" + "\n");
 				return new OTHashToClient(false, null);
 			}
 		} catch (SQLException e) {
@@ -649,7 +783,15 @@ public class QueryManager {
 			return new OTErrorResponse("SQL Server failed with hash request", false);
 		}
 	}
-
+	/**
+	 * a method that retrieves a users events for a given day from the database
+	 * @param date the date of the events to be gathered
+	 * @param client the client that requested the events
+	 * @param con the database connection
+	 * @return an ArrayList of events ordered by their start time
+	 * @throws SQLException if the request fails for some reason, this error 
+	 * will be thrown
+	 */
 	private ArrayList<Event> retrieveMeetingsFromDB(Date date, ClientInfo client, Connection con) throws SQLException {
 
 		String query = "SELECT m.creatorID, m.meetingtitle, m.meetingdescription, m.meetinglocation, m.meetingstarttime, m.meetingendtime, m.lockVersion "
@@ -665,8 +807,8 @@ public class QueryManager {
 		ResultSet rs = meetingsQuery.executeQuery();
 		
 		ArrayList<Event> meetings = new ArrayList<Event>();
-		getServer().getServerModel()
-		.addToText("Requesting meeting information for " + client.getUserName() + "\n");
+//		getServer().getServerModel()
+//		.addToText("Requesting meeting information for " + client.getUserName() + "\n");
 		while (rs.next()) {
 			String creator = rs.getString(1);
 			String title = rs.getString(2);
