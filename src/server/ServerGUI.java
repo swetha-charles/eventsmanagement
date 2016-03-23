@@ -18,7 +18,7 @@ public class ServerGUI {
 			port = Integer.parseInt(args[1]);
 		}
 		else{
-			System.out.println("No arguements supplied, using default address " + iNetAddress + "and port " + port); 
+			System.out.println("No arguments supplied, using default address " + iNetAddress + " and port " + port); 
 		}
     		
         JFrame frame = new JFrame("Server");

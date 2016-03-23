@@ -648,9 +648,8 @@ public class Client {
 		else if (args.length >= 2){
 			iNetAddress = args[0];
 			port = Integer.parseInt(args[1]);
-		}
-		else{
-			System.out.println("No arguements supplied, using default address " + iNetAddress + "and port " + port); 
+		} else {
+			System.out.println("No arguments supplied, using default address " + iNetAddress + " and port " + port);
 		}
 		Client C = new Client(port, iNetAddress);
 

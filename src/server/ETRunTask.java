@@ -49,6 +49,8 @@ public class ETRunTask implements ExecutableTask{
 				getClientInfo().getClientOutput().writeObject(returnObject);
 				if(!returnObject.getOpCode().equals("0014")){
 					getMasterServer().getServerModel().addToText("SENT" + "\n");
+				} else {
+					getMasterServer().getServerModel().addToText(getMasterServer().getSocketArray().indexOf(getClientInfo()) + "HB\n");
 				}
 				
 			} catch (IOException e) {
@@ -61,25 +63,27 @@ public class ETRunTask implements ExecutableTask{
 		// and do not make a new ETSearchForObject. 
 		if(returnObject.getOpCode().equals("0005")){
 			try {
-				this.clientInfo.getClientSocket().shutdownInput();
+				getClientInfo().getClientSocket().shutdownInput();
 			} catch (IOException e) {
 				getMasterServer().getServerModel()
 				.addToText("Could not close input stream \n");
 			}
 			try {
-				this.clientInfo.getClientSocket().shutdownOutput();
+				getClientInfo().getClientSocket().shutdownOutput();
 			} catch (IOException e) {
 				getMasterServer().getServerModel()
 				.addToText("Could not close output stream \n");
 			}
 			try {
-				this.clientInfo.getClientSocket().close();
+				getClientInfo().getClientSocket().close();
 				getMasterServer().getServerModel()
 				.addToText("Client's socket has been closed \n");
 			} catch (IOException e) {
 				getMasterServer().getServerModel()
 				.addToText("Could not close socket\n");
 			}
+			getMasterServer().removeClient(getClientInfo());
+			
 		} else {
 			//create a new instance of ETSearchForObject so to pick up more queries from this client and pass it to the threadpool
 			ETSearchForObject newSearch = new ETSearchForObject(getMasterServer(), getClientInfo());

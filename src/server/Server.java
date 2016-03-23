@@ -58,9 +58,7 @@ public class Server extends Thread{
 				} catch(SocketException e) {
 					getServerModel().addToText("SOCKET EXCEPTION - Could be normal if stopping server\n");
 				}
-
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -96,15 +94,18 @@ public class Server extends Thread{
 
 	public synchronized void serverStop(){
 		//stopping the while loop that checks for new client connections
-        this.serverActive = false;
+        setServerActive(false);
+        getThreadPool().shutdown();
         //stopping the clients and the server socket
         try {
-        	for(ClientInfo client : socketArray){
+        	for(ClientInfo client : getSocketArray()){
         		client.getClientInput().close();
         		client.getClientOutput().close();
         		client.getClientSocket().close();
+        		getServerModel().addToText("Removing client: " + getSocketArray().indexOf(client) + "\n");
         	}
-            this.serverSocket.close();
+        	getSocketArray().clear();
+            getServerSocket().close();
         } catch (IOException e) {
             System.err.println("Could not close a socket");
         }
@@ -119,6 +120,12 @@ public class Server extends Thread{
 
 	public ExecutorService getThreadPool() {
 		return threadPool;
+	}
+
+	public void removeClient(ClientInfo clientInfo) {
+		getServerModel().addToText("Removing client: " + getSocketArray().indexOf(clientInfo) + "\n");
+		getSocketArray().remove(clientInfo);
+		
 	}
 
 }
