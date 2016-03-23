@@ -130,7 +130,7 @@ public class Model extends Observable {
 		switch (state) {
 
 		case REGISTRATION:
-			if(this.registrationView==null){
+			if (this.registrationView == null) {
 				this.registrationView = new Registration(client, this);
 			} else {
 				this.registrationView.refresh();
@@ -183,9 +183,9 @@ public class Model extends Observable {
 		case EVENTS:
 			System.out.println("State Change: Events");
 			if (this.listView == null) {
-				//first time the MenuPanel is made
+				// first time the MenuPanel is made
 				this.listView = new List(client, this);
-				//set menuPanel for the only time
+				// set menuPanel for the only time
 				this.menuPanel = this.listView.getMenuPanel();
 			} else {
 				this.listView.refresh();
@@ -208,7 +208,7 @@ public class Model extends Observable {
 			break;
 
 		case EDIT:
-			if(this.editView == null){
+			if (this.editView == null) {
 				this.editView = new Edit(client, this, this.menuPanel);
 			} else {
 				this.editView.refresh();
@@ -217,7 +217,7 @@ public class Model extends Observable {
 			break;
 
 		case PASSWORD:
-			if(this.passwordView == null){
+			if (this.passwordView == null) {
 				this.passwordView = new Password(client, this, this.menuPanel);
 			} else {
 				this.passwordView.refresh();
@@ -255,7 +255,7 @@ public class Model extends Observable {
 	}
 
 	// Checks if email matches regex, then check if email is in in the database
-	public void checkEmail(String email) {
+	public void checkEmailReg(String email) {
 		this.email = email;
 		if (emailRegex.matcher(email).matches()) {
 			this.emailMatchesRegex = true;
@@ -266,6 +266,15 @@ public class Model extends Observable {
 			this.emailMatchesRegex = false;
 			this.registrationView.getRegistrationPanel().setEmailLabel("Email*: incorrect format*");
 			this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+		}
+
+	}
+
+	public boolean checkEmail(String email) {
+		if (emailRegex.matcher(email).matches()) {
+			return true;
+		} else {
+			return false;
 		}
 
 	}
@@ -347,7 +356,7 @@ public class Model extends Observable {
 	 * 
 	 * @param password
 	 */
-	public void validatePassword(char[] password) {
+	public void validatePasswordReg(char[] password) {
 		if (password.length <= 7) {
 			this.passwordatleast8 = false;
 			this.registrationView.getRegistrationPanel()
@@ -364,6 +373,18 @@ public class Model extends Observable {
 			this.registrationView.getRegistrationPanel().setPasswordLabel("Password*");
 		}
 		this.changeCurrentState(ModelState.REGISTRATIONUPDATE);
+	}
+
+	public boolean validatePassword(char[] password) {
+		if (password.length <= 7) {
+			return false;
+
+		} else if (password.length > 60) {
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 	/**
