@@ -19,6 +19,11 @@ public class Edit extends JPanel{
 	MenuPanel bar;
 	EditPanel edit;
 	
+	/** Constructor to build panel seen when editing profile information
+	 * 
+	 * @param controller an object that connects the view to the server
+	 * @param model an object that contains the methods to update the view
+	 */
 	public Edit(Client controller, Model model){
 		
 		this.controller = controller;
@@ -28,24 +33,12 @@ public class Edit extends JPanel{
 		edit = new EditPanel(controller, model);
 				
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		setPreferredSize(new Dimension(1000,650));
+		setMaximumSize(new Dimension(1000,650));
+		setMinimumSize(new Dimension(1000,650));
 
 		add(bar);
 		add(edit);
-	}
-
-	public static void main(String[] args) {
-		
-		JFrame frame = new JFrame();
-		Client controller = new Client();
-		Model model = new Model(controller);
-		Edit menu = new Edit(controller, model);
-		
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(menu);
-		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-		frame.setResizable(true);
-		frame.setVisible(true);
 	}
 
 }

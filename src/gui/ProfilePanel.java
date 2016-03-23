@@ -50,8 +50,9 @@ public class ProfilePanel extends JPanel{
 		emailA = new JLabel(model.getEmail());
 		hello = new JLabel("Hello "+ model.getUsername() +"!");
 		
-		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
+		setPreferredSize(new Dimension(1000,580));
+		setMaximumSize(new Dimension(1000,580));
+		setMinimumSize(new Dimension(1000,580));
 	
 		hello.setForeground(Color.DARK_GRAY);
 		details.setForeground(Color.GRAY);
@@ -114,21 +115,6 @@ public class ProfilePanel extends JPanel{
 			}
 		});
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		JFrame frame = new JFrame();
-//		Client controller = new Client();
-//		
-//		ProfilePanel menu = new ProfilePanel(controller);
-//		
-//		JFrame.setDefaultLookAndFeelDecorated(true);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setContentPane(menu);
-//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-//		frame.setResizable(true);
-//		frame.setVisible(true);
-//	}
 
 }
 

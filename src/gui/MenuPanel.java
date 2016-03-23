@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.sql.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -37,10 +38,9 @@ public class MenuPanel extends JPanel{
 		this.client = client;
 		this.model = model;
 		
-		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-		setPreferredSize(new Dimension((int)dimension.getWidth(), 70));
-		setMinimumSize(new Dimension((int)dimension.getWidth(), 70));
-		setMaximumSize(new Dimension((int)dimension.getWidth(), 70));
+		setPreferredSize(new Dimension(1100, 70));
+		setMinimumSize(new Dimension(1100, 70));
+		setMaximumSize(new Dimension(1100, 70));
 		
 		menuBar.setBackground(Color.DARK_GRAY);
 
@@ -92,20 +92,5 @@ public class MenuPanel extends JPanel{
 		});
 
 	}
-	
-//	public static void main(String[] args) {
-//		
-//		JFrame frame = new JFrame();
-//		Client controller = new Client();
-//		
-//		MenuPanel menu = new MenuPanel(controller, model);
-//		
-//		JFrame.setDefaultLookAndFeelDecorated(true);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setContentPane(menu);
-//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
-//		frame.setResizable(true);
-//		frame.setVisible(true);
-//	}
 
 }
