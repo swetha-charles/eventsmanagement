@@ -45,8 +45,10 @@ public class Login extends JPanel {
 			background = new JLabel() {
 				
 				private static final long serialVersionUID = 1L;
+
 				private Image backgroundImage = ImageIO.read(new File("rsz_1calendar.jpg"));
 				Image scaled = backgroundImage.getScaledInstance(1200, 670, Image.SCALE_DEFAULT);
+
 				public void paint( Graphics g ) { 
 				    super.paint(g);
 				    g.drawImage(scaled, 0, 0, null);

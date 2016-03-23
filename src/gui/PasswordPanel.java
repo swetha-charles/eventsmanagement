@@ -15,9 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
 import client.Client;
 import model.Model;
@@ -52,13 +49,8 @@ public class PasswordPanel extends JPanel{
 		this.controller = controller;
 		this.model = model;
 		
-		setPreferredSize(new Dimension(1000,580));
-		setMaximumSize(new Dimension(1000,580));
-		setMinimumSize(new Dimension(1000,58));
-		
-		oldPasswordA.setDocument(new JTextFieldLimit(60));
-		newPasswordA.setDocument(new JTextFieldLimit(60));
-		confirmNewA.setDocument(new JTextFieldLimit(60));
+		Dimension dimension = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+		setPreferredSize(new Dimension((int)dimension.getWidth(), (int)dimension.getHeight()-70));
 	
 		hello.setForeground(Color.DARK_GRAY);
 		oldPassword.setForeground(Color.DARK_GRAY);
@@ -111,19 +103,7 @@ public class PasswordPanel extends JPanel{
 				String password1 = new String(confirmNewA.getPassword());
 				String password2 = new String(newPasswordA.getPassword());
 				if(password1.equals(password2)){
-					if(this.model.validatePassword(password1.toCharArray())){
-						this.model.updatePassword(password1);
-						if(this.model.getUpdatePasswordSuccess()){
-							this.model.changeCurrentState(ModelState.PROFILE);
-							JOptionPane.showMessageDialog(model.getCurrentInnerPanel(), "Password has been reset");
-						} else {
-							JOptionPane.showMessageDialog(this, "Could not update password, check fields and try again");
-						}
-					} else {
-						JOptionPane.showMessageDialog(this, "Your new password must be greater than 6 characters. \n"
-								+ "It also cannot be greater than 60 characters");
-					}
-					
+					this.model.updatePassword(password1);
 				} else {
 					JOptionPane.showMessageDialog(this, "Your new passwords do not match");
 				}
@@ -138,23 +118,21 @@ public class PasswordPanel extends JPanel{
 			}
 		});
 	}
+	
+//public static void main(String[] args) {
+//		
+//		JFrame frame = new JFrame();
+//		Client controller = new Client();
+//		
+//		PasswordPanel menu = new PasswordPanel(controller);
+//		
+//		JFrame.setDefaultLookAndFeelDecorated(true);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setContentPane(menu);
+//		frame.setSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
+//		frame.setResizable(true);
+//		frame.setVisible(true);
+//	}
 
-	public class JTextFieldLimit extends PlainDocument {
-		private int limit;
-
-		JTextFieldLimit(int limit) {
-			super();
-			this.limit = limit;
-		}
-
-		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-			if (str == null)
-				return;
-
-			if ((getLength() + str.length()) <= limit) {
-				super.insertString(offset, str, attr);
-			}
-		}
-	}
 }
 

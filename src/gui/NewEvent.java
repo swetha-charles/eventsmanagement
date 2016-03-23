@@ -197,7 +197,7 @@ public class NewEvent extends JPanel {
 									this.setEnabled(false);
 									this.listPanel.closeDialog();
 								} else {
-									JOptionPane.showMessageDialog(this,
+									JOptionPane.showConfirmDialog(this,
 											"Meeting could not be created");
 									//what do we do here??
 								}

@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 
 import client.Client;
 import listener.interfaces.*;
@@ -32,16 +31,12 @@ public class MainView extends JFrame implements Observer {
 		JPanel login = new Login(this.client, this.model);
 
 		scroll = new JScrollPane(login);
-		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 		setDefaultLookAndFeelDecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(scroll);
-		setPreferredSize(new Dimension(1100,680));
-		setMaximumSize(new Dimension(1100,680));
-		setMinimumSize(new Dimension(1100,680));
-		setResizable(false);
+		setSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+		setResizable(true);
 		setVisible(true);
 
 		// --------------Lambda Listeners-------------------//
