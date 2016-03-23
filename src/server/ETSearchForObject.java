@@ -129,11 +129,11 @@ public class ETSearchForObject implements ExecutableTask {
 			}
 		} else {
 			ObjectTransferrable receivedOperation = (ObjectTransferrable) receivedObject;
-			if (!receivedOperation.getOpCode().equals("0014") && !receivedOperation.getOpCode().equals("0005")) {
-				getMasterServer().getServerModel()
-				.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
-				+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
-			}
+//			if (!receivedOperation.getOpCode().equals("0014") && !receivedOperation.getOpCode().equals("0005")) {
+//				getMasterServer().getServerModel()
+//				.addToText("Received Object with opCode: " + receivedOperation.getOpCode()
+//				+ " from client with port " + getClientInfo().getClientSocket().getPort() + "\n");
+//			}
 			// Create and ETRunTask object, and place it in the
 			// ExecutorService
 			if(getMasterServer().isServerActive()){
