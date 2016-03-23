@@ -109,12 +109,10 @@ public class ListPanel extends JPanel {
 		addEvent.setMinimumSize(new Dimension(35, 35));
 		addEvent.setMaximumSize(new Dimension(35, 35));
 		addEvent.setBackground(Color.LIGHT_GRAY);
-//		addEvent.setForeground(new Color(255, 255, 245));
 		refresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		refresh.setMinimumSize(new Dimension(100, 35));
 		refresh.setMaximumSize(new Dimension(100, 35));
 		refresh.setBackground(Color.LIGHT_GRAY);
-//		refresh.setForeground(new Color(255, 255, 245));
 
 		// creates panel containing date label and addEvent button
 		top.setMaximumSize(new Dimension(900, 70));
@@ -124,7 +122,6 @@ public class ListPanel extends JPanel {
 		top.add(Box.createRigidArea(new Dimension(20, 0)));
 		top.add(addEvent);
 		top.add(Box.createRigidArea(new Dimension(20, 0)));
-//		refresh.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		top.add(refresh);
 
 		// updates model with the meetings for today and adds them to panel list
@@ -141,9 +138,7 @@ public class ListPanel extends JPanel {
 
 		// creates panel for next and previous buttons
 		next.setBackground(Color.LIGHT_GRAY);
-//		next.setForeground(new Color(255, 255, 245));
 		previous.setBackground(Color.LIGHT_GRAY);
-//		previous.setForeground(new Color(255, 255, 245));
 		changeDay.setPreferredSize(new Dimension(900, 50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
 		changeDay.add(previous);
@@ -319,6 +314,7 @@ public class ListPanel extends JPanel {
 				p.add(Box.createRigidArea(new Dimension(0, 10)));
 				p.add(edit);
 				edit.setAlignmentX(Component.LEFT_ALIGNMENT);
+				p.add(Box.createRigidArea(new Dimension(0, 10)));
 				p.add(delete);
 				delete.setAlignmentX(Component.LEFT_ALIGNMENT);
 				events.add(p);
