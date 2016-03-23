@@ -157,6 +157,10 @@ public class RegistrationPanel extends JPanel {
 		// sets dimension of button
 		submit.setPreferredSize(new Dimension(100, 40));
 		cancel.setPreferredSize(new Dimension(100, 40));
+		submit.setForeground(Color.DARK_GRAY);
+		submit.setBackground(new Color(255, 255, 245));
+		cancel.setForeground(Color.DARK_GRAY);;
+		cancel.setBackground(new Color(255, 255, 245));
 
 		JPanel dob = new JPanel();
 		JLabel empty = new JLabel();
