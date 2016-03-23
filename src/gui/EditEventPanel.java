@@ -57,6 +57,8 @@ public class EditEventPanel extends JPanel {
 	JLabel password = new JLabel("Location");
 	JLabel notes = new JLabel("Notes");
 	JLabel empty = new JLabel();
+	
+	JPanel notesPanel;
 
 	JTextField nameA;
 	JTextField dateA;
@@ -286,7 +288,7 @@ public class EditEventPanel extends JPanel {
 		
 		//adds notes to a seperate panel
 		Border line = BorderFactory.createLineBorder(Color.GRAY);
-		JPanel notesPanel = new JPanel();
+		notesPanel = new JPanel();
 		notesA.setBorder(line);
 		notesA.setLineWrap(true);
 		notesPanel.setLayout(new GridLayout(1, 2));
@@ -424,6 +426,15 @@ public class EditEventPanel extends JPanel {
 
 	}
 
+	public void removeSubmitButton(){
+		this.removeAll();
+		add(comment);
+		add(detailsPanel);
+		add(notesPanel);
+	//	add(userResponse);
+		this.revalidate();
+	}
+	
 	/** Inner class to limit the number of characters in the text fields
 	 * 
 	 * @author nataliemcdonnell

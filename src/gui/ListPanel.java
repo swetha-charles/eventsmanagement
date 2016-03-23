@@ -50,6 +50,7 @@ public class ListPanel extends JPanel {
 
 	JDialog dialog;
 	JFrame saveUserEdits;
+	EditEventPanel editEventPopup;
 
 	JPanel event = new JPanel();
 	JLabel name = new JLabel("Event title");
@@ -323,7 +324,7 @@ public class ListPanel extends JPanel {
 				edit.addActionListener((e) -> {
 
 					JDialog.setDefaultLookAndFeelDecorated(true);
-					JPanel editEventPopup = new EditEventPanel(controller, model, clickedevent, this);
+					editEventPopup = new EditEventPanel(controller, model, clickedevent, this);
 					event.setPreferredSize(new Dimension(500, 260));
 					event.setMinimumSize(new Dimension(500, 260));
 					event.setMaximumSize(new Dimension(500, 260));
@@ -556,13 +557,18 @@ public class ListPanel extends JPanel {
 	 * 
 	 */
 	public void transferToJFrame(){
-		Container panel = this.dialog.getContentPane();
+		editEventPopup.removeSubmitButton();
+		editEventPopup.setSize(500, 500);
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		this.saveUserEdits = new JFrame();
-		saveUserEdits.add(panel);
-		saveUserEdits.setSize(500, 300);
-		saveUserEdits.setVisible(true);
-		saveUserEdits.setAlwaysOnTop(true);
+		JFrame newFrame = new JFrame();
+		newFrame.setSize(500, 500);
+		JPanel panel = new JPanel();
+		panel.setSize(500,500);
+		panel.add(editEventPopup);
+		newFrame.add(panel);
+		newFrame.setVisible(true);
+		newFrame.setAlwaysOnTop(true);
+		newFrame.revalidate();
 	}
 
 	/**
