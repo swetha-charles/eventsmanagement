@@ -108,13 +108,13 @@ public class ListPanel extends JPanel {
 		addEvent.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 24));
 		addEvent.setMinimumSize(new Dimension(35, 35));
 		addEvent.setMaximumSize(new Dimension(35, 35));
-		addEvent.setBackground(Color.GRAY);
-		addEvent.setForeground(new Color(255, 255, 245));
+		addEvent.setBackground(Color.LIGHT_GRAY);
+//		addEvent.setForeground(new Color(255, 255, 245));
 		refresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 		refresh.setMinimumSize(new Dimension(100, 35));
 		refresh.setMaximumSize(new Dimension(100, 35));
-		refresh.setBackground(Color.GRAY);
-		refresh.setForeground(new Color(255, 255, 245));
+		refresh.setBackground(Color.LIGHT_GRAY);
+//		refresh.setForeground(new Color(255, 255, 245));
 
 		// creates panel containing date label and addEvent button
 		top.setMaximumSize(new Dimension(900, 70));
@@ -139,10 +139,10 @@ public class ListPanel extends JPanel {
 		listscroll.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		// creates panel for next and previous buttons
-		next.setBackground(Color.GRAY);
-		next.setForeground(new Color(255, 255, 245));
-		previous.setBackground(Color.GRAY);
-		previous.setForeground(new Color(255, 255, 245));
+		next.setBackground(Color.LIGHT_GRAY);
+//		next.setForeground(new Color(255, 255, 245));
+		previous.setBackground(Color.LIGHT_GRAY);
+//		previous.setForeground(new Color(255, 255, 245));
 		changeDay.setPreferredSize(new Dimension(900, 50));
 		changeDay.setLayout(new BoxLayout(changeDay, BoxLayout.LINE_AXIS));
 		changeDay.add(previous);
@@ -280,10 +280,10 @@ public class ListPanel extends JPanel {
 				location.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 16));
 				edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				delete.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
-				edit.setBackground(Color.GRAY);
-				edit.setForeground(new Color(255, 255, 245));
-				delete.setBackground(Color.GRAY);
-				delete.setForeground(new Color(255, 255, 245));
+				edit.setBackground(Color.LIGHT_GRAY);
+//				edit.setForeground(new Color(255, 255, 245));
+				delete.setBackground(Color.LIGHT_GRAY);
+//				delete.setForeground(new Color(255, 255, 245));
 
 				description.setForeground(Color.DARK_GRAY);
 				location.setForeground(Color.DARK_GRAY);
