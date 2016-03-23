@@ -147,6 +147,8 @@ public class LoginPanel extends JPanel{
 		login.setPreferredSize(new Dimension(100,40));
 		login.setMaximumSize(new Dimension(100,40));
 		login.setMinimumSize(new Dimension(100,40));
+		login.setBackground(new Color(255, 255, 245));
+		login.setForeground(Color.DARK_GRAY);
 		
 		//adds Labels and text fields to user and password panels
 		userAndPasswordPanel.setLayout(new GridBagLayout());

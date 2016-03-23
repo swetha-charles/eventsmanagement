@@ -281,9 +281,7 @@ public class ListPanel extends JPanel {
 				edit.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				delete.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 13));
 				edit.setBackground(Color.LIGHT_GRAY);
-//				edit.setForeground(new Color(255, 255, 245));
 				delete.setBackground(Color.LIGHT_GRAY);
-//				delete.setForeground(new Color(255, 255, 245));
 
 				description.setForeground(Color.DARK_GRAY);
 				location.setForeground(Color.DARK_GRAY);
