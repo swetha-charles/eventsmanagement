@@ -25,6 +25,7 @@ public class Login extends JPanel {
 	JLabel background;
 	Client client;
 	Model model;
+	LoginPanel loginPanel;
 	//TestController Tcontroller;
 
 	/**
@@ -60,7 +61,7 @@ public class Login extends JPanel {
 		}
 
 		
-		LoginPanel loginPanel = new LoginPanel(this.client, this.model);
+		loginPanel = new LoginPanel(this.client, this.model);
 
 		gbc.weightx = 1;
 		gbc.weighty = 1;
@@ -77,4 +78,24 @@ public class Login extends JPanel {
 		gbc.gridy = 0;
 		add(background, gbc);
 	}
-}
+	
+	public void refresh(){
+		this.removeAll();
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.gridx = 2;
+		gbc.gridy = 2;
+		add(loginPanel, gbc);
+		
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 3;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		add(background, gbc);
+	}
+}	
