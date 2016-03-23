@@ -152,9 +152,9 @@ public class LoginPanel extends JPanel{
 		
 		//adds Labels and text fields to user and password panels
 		userAndPasswordPanel.setLayout(new GridBagLayout());
-		userAndPasswordPanel.setPreferredSize(new Dimension(350, 100));
-		userAndPasswordPanel.setMaximumSize(new Dimension(350, 100));
-		userAndPasswordPanel.setMinimumSize(new Dimension(350, 100));
+		userAndPasswordPanel.setPreferredSize(new Dimension(400, 100));
+		userAndPasswordPanel.setMaximumSize(new Dimension(400, 100));
+		userAndPasswordPanel.setMinimumSize(new Dimension(400, 100));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(0, 0, 0, 10);
 		
