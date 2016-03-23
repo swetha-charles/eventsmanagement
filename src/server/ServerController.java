@@ -11,9 +11,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-
+/**
+ * this class specifies the look and feel of the server window, and also
+ * creates the button that allows the user to safely close the server and its
+ * connections
+ * @author Mark
+ *
+ */
 public class ServerController extends JPanel {
-
+	/**
+	 * this constructor intialises the model and view for the server, as well
+	 * as setting up the window layout. It creates the control (listeners) and
+	 * buttons that allow for the server to be closed.
+	 * @param addr the address of the server as a String
+	 * @param portNumber the port that the server will listen for connections on
+	 */
 	public ServerController(String addr, int portNumber){
 
 		super();

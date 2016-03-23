@@ -3,9 +3,20 @@ package server;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-
+/**
+ * a class the establishes the frame for the server GUI to be held in.
+ * It also contains the main method that sets the entire server process
+ * in motion
+ * @author Mark
+ *
+ */
 public class ServerGUI {
-	
+	/**
+	 * the main method for initialising the server. For when the server is
+	 * packaged as a jar file, it makes allowance for the Server IP and port
+	 * number being specific as main method arguments
+	 * @param args
+	 */
     public static void main(String[] args) {
     	int port = 50280;
 		String iNetAddress = "localhost" ; 

@@ -38,25 +38,21 @@ public class ETRunTask implements ExecutableTask{
 		ObjectTransferrable returnObject = null;
 
 		//execute the query, updating the object
+		returnObject = runQuery.runOperation(getQuery(), getClientInfo());
+		//get the updated object and pass it back to the client
 		try {
-			returnObject = runQuery.runOperation(getQuery(), getClientInfo());
-			//get the updated object and pass it back to the client
-			try {
-				if(!returnObject.getOpCode().equals("0014")){
-					getMasterServer().getServerModel().addToText("Sending back Object with opCode " + returnObject.getOpCode() + "\n");
-				}
-				//write back to client
-				getClientInfo().getClientOutput().writeObject(returnObject);
-				if(!returnObject.getOpCode().equals("0014")){
-					getMasterServer().getServerModel().addToText("SENT" + "\n");
-				} else {
-					getMasterServer().getServerModel().addToText(getMasterServer().getSocketArray().indexOf(getClientInfo()) + "HB\n");
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(!returnObject.getOpCode().equals("0014")){
+				getMasterServer().getServerModel().addToText("Sending back Object with opCode " + returnObject.getOpCode() + "\n");
 			}
-		} catch (SQLException e) {
+			//write back to client
+			getClientInfo().getClientOutput().writeObject(returnObject);
+			if(!returnObject.getOpCode().equals("0014")){
+				getMasterServer().getServerModel().addToText("SENT" + "\n");
+			} else {
+				getMasterServer().getServerModel().addToText(getMasterServer().getSocketArray().indexOf(getClientInfo()) + "HB\n");
+			}
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		//in case of exit, close down all inputs and outputs 
@@ -83,13 +79,13 @@ public class ETRunTask implements ExecutableTask{
 				.addToText("Could not close socket\n");
 			}
 			getMasterServer().removeClient(getClientInfo());
-			
+
 		} else {
 			//create a new instance of ETSearchForObject so to pick up more queries from this client and pass it to the threadpool
 			ETSearchForObject newSearch = new ETSearchForObject(getMasterServer(), getClientInfo());
 			getMasterServer().getThreadPool().execute(newSearch);
 		}
-		
+
 	}
 
 }
