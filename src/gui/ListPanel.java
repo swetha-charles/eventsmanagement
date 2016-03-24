@@ -235,7 +235,7 @@ public class ListPanel extends JPanel {
 
 			JLabel l = new JLabel("You have no events right now!");
 			l.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 20));
-			l.setForeground(Color.RED);
+			l.setForeground(new Color(92, 181, 47));
 			list.add(l);
 
 		} else {
