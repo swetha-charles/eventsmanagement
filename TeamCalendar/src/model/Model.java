@@ -170,7 +170,13 @@ public class Model extends Observable {
 			this.errorView.connectionStillDown();
 			setPanel(this.errorView);
 			break;
-
+		
+		case ERRORSERVERDOWN:
+			this.errorView.serverDown();
+			setPanel(this.errorView);
+			break; 
+			
+			
 		case PROMPTRELOAD:
 			setPanel(this.errorView);
 			break;
