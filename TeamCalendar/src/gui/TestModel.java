@@ -7,11 +7,11 @@ public class TestModel extends Observable {
 	
 	public void changeState(){
 		setChanged();
-		System.out.println("testModel: changed state");
-		System.out.println("tstModel: observer count"+this.countObservers());
+//		System.out.println("testModel: changed state");
+//		System.out.println("tstModel: observer count"+this.countObservers());
 		//System.out.println());
 		super.notifyObservers();
-		System.out.println("TestModel: Notified observers");
+//		System.out.println("TestModel: Notified observers");
 	}
 	
 }

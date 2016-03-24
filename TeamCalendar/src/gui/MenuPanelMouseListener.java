@@ -21,15 +21,15 @@ public class MenuPanelMouseListener implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		JLabel l = (JLabel) e.getSource();
 		if (l.getName().equals("home")) {
-			System.out.println("Home clicked");
+//			System.out.println("Home clicked");
 			this.model.updateMeetings();
 			this.listPanel.addMeetings(this.model.getMeetings());
 			this.model.changeCurrentState(ModelState.EVENTSUPDATE);
 		} else if (l.getName().equals("profile")) {
-			System.out.println("Profile clicked");
+//			System.out.println("Profile clicked");
 			this.model.changeCurrentState(ModelState.PROFILE);
 		} else if (l.getName().equals("logout")) {
-			System.out.println("Log out clicked");
+//			System.out.println("Log out clicked");
 			this.model.changeCurrentState(ModelState.LOGIN);
 		}
 
