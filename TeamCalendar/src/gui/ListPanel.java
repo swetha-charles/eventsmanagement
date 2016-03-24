@@ -294,7 +294,7 @@ public class ListPanel extends JPanel {
 				JPanel p = new JPanel();
 				//				p.setPreferredSize(new Dimension(635, 300));
 
-				System.out.println("Notes" + a);
+//				System.out.println("Notes" + a);
 				
 
 				p.setMaximumSize(new Dimension(880, 100 + 40 + 35 + 35 + (notesLength+countLines(a)*23) + (locationLength*23)));
