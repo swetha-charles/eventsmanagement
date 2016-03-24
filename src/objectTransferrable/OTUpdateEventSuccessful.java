@@ -1,5 +1,12 @@
 package objectTransferrable;
 
+/**
+ * Response from server indicating that 
+ * the event has either been modified or 
+ * the edit was not successful.  
+ * @author swetha
+ *
+ */
 public class OTUpdateEventSuccessful extends ObjectTransferrable {
 	
 	private boolean successful;

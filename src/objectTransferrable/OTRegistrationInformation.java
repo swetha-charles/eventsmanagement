@@ -10,6 +10,14 @@ public class OTRegistrationInformation extends ObjectTransferrable{
 	private String lastname;
 	private String pwHash;
 	
+	/**
+	 * This is send by the client to the server to request a new user creation.  
+	 * @param username
+	 * @param email
+	 * @param firstname
+	 * @param lastname
+	 * @param pwHash
+	 */
 	public OTRegistrationInformation(String username, String email, String firstname, String lastname, String pwHash){
 		super("0003");
 		this.username = username;

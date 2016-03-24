@@ -1,5 +1,10 @@
 package objectTransferrable;
 
+/**
+ * Sent by server to client to signfy successful deletion of an event. 
+ * @author swetha
+ *
+ */
 public class OTDeleteEventSuccessful extends ObjectTransferrable {
 	private boolean successful;
 	
