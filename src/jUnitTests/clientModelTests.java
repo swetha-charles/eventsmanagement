@@ -1,5 +1,7 @@
 package jUnitTests;
-
+/**
+ * These JUnit tests are now deprecated due to changes to the client
+ */
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -47,9 +49,5 @@ public class clientModelTests {
 		model.changeCurrentState(ModelState.PASSWORD);
 		assertTrue(model.getCurrentState().equals(ModelState.PASSWORD));
 	}
-	@Test
-	public void testStatesThatCauseThings() {
-		model.changeCurrentState(ModelState.EVENTS);
-		assertTrue(model.getCurrentState().equals(ModelState.EVENTS));
-	}
+	
 }

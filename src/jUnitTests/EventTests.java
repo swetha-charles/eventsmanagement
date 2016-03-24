@@ -16,6 +16,8 @@ public class EventTests {
 	private Time endTime;
 	private String description, title, location;
 	private Date date;
+	private boolean globalEvent;
+	private int lockVersion;
 	
 	@Before
 	public void setup(){
@@ -25,7 +27,9 @@ public class EventTests {
 		title = "test title";
 		location = "test location";
 		date = Date.valueOf("2016-06-15");
-		testEvent = new Event(startTime, endTime, description, title, location, date);
+		globalEvent = false;
+		lockVersion = 0;
+		testEvent = new Event(startTime, endTime, description, title, location, date, globalEvent, lockVersion);
 	}
 	
 	@Test
@@ -36,7 +40,8 @@ public class EventTests {
 		assertTrue(testEvent.getEventTitle().equals(title));
 		assertTrue(testEvent.getLocation().equals(location));
 		assertTrue(testEvent.getDate().equals(date));
-		
+		assertTrue(testEvent.getGlobalEvent() == (globalEvent));
+		assertTrue(testEvent.getLockVersion() == 0);
 		
 	}
 
