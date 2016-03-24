@@ -40,8 +40,7 @@ public class DataValidation {
 		try {
 			// if not valid, it will throw ParseException
 			Date date = sdf.parse(dateToValidate);
-			System.out.println(date);
-		} catch (ParseException e) {
+			} catch (ParseException e) {
 			return false;
 		}
 		return true;
@@ -113,10 +112,8 @@ public class DataValidation {
 	public static boolean isThisTimeValid(String hours, String minutes) {
 		try {
 			// hours and minutes are both numbers
-			System.out.println(hours + ":" + minutes);
 			int hoursInt = Integer.parseInt(hours);
 			int minutesInt = Integer.parseInt(minutes);
-			System.out.println(hoursInt + ":" + minutesInt);
 			// check hours:
 			if (hoursInt >= 0 && hoursInt < 24) {
 				if (minutesInt >= 0 && minutesInt < 60) {
