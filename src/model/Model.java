@@ -187,7 +187,7 @@ public class Model extends Observable {
 			break;
 
 		case EVENTS:
-			System.out.println("State Change: Events");
+//			System.out.println("State Change: Events");
 			if (this.listView == null) {
 				// first time the MenuPanel is made
 				this.listView = new List(client, this);
@@ -441,13 +441,13 @@ public class Model extends Observable {
 	}
 
 	public void updateMeetings(Date date) {
-		System.out.println("Model asked to update meetings");
+//		System.out.println("Model asked to update meetings");
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(date);
 		this.client.getMeetingsForDay(meetingsRequest);
 	}
 
 	public void updateMeetings() {
-		System.out.println("Model asked to update meetings");
+//		System.out.println("Model asked to update meetings");
 		OTRequestMeetingsOnDay meetingsRequest = new OTRequestMeetingsOnDay(
 				new Date(this.getCalendar().getTimeInMillis()));
 		this.client.getMeetingsForDay(meetingsRequest);
@@ -687,7 +687,7 @@ public class Model extends Observable {
 
 	public void setMeetings(ArrayList<Event> meetings) {
 		this.meetings = meetings;
-		System.out.println("Model's meetings set");
+//		System.out.println("Model's meetings set");
 	}
 
 	public boolean getMeetingCreationSuccessful() {

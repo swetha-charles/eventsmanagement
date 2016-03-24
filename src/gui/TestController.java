@@ -10,7 +10,7 @@ public class TestController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Test controller: action performed");
+//		System.out.println("Test controller: action performed");
 		model.changeState();
 		
 	}
