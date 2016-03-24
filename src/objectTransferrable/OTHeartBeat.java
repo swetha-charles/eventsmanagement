@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package objectTransferrable;
 
 import java.util.concurrent.ExecutionException;
