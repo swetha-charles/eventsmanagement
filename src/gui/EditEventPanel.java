@@ -431,7 +431,6 @@ public class EditEventPanel extends JPanel {
 		add(comment);
 		add(detailsPanel);
 		add(notesPanel);
-	//	add(userResponse);
 		this.revalidate();
 	}
 	

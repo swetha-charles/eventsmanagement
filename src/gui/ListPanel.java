@@ -294,7 +294,7 @@ public class ListPanel extends JPanel {
 				JPanel p = new JPanel();
 				//				p.setPreferredSize(new Dimension(635, 300));
 
-//				System.out.println("Notes" + a);
+	//			System.out.println("Notes" + a);
 				
 
 				p.setMaximumSize(new Dimension(880, 100 + 40 + 35 + 35 + (notesLength+countLines(a)*23) + (locationLength*23)));
@@ -557,19 +557,21 @@ public class ListPanel extends JPanel {
 	 * 
 	 */
 	public void transferToJFrame(){
+		JFrame newFrame = null;
 		editEventPopup.removeSubmitButton();
-		editEventPopup.setSize(500, 500);
+		editEventPopup.setSize(550, 450);
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		JFrame newFrame = new JFrame();
-		newFrame.setSize(500, 500);
+		newFrame = new JFrame();
+		newFrame.setSize(550, 450);
 		JPanel panel = new JPanel();
-		panel.setSize(500,500);
+		panel.setSize(550,450);
 		panel.add(editEventPopup);
 		newFrame.add(panel);
 		newFrame.setVisible(true);
 		newFrame.setAlwaysOnTop(true);
 		newFrame.revalidate();
-	}
+		newFrame.setResizable(false);
+		}
 
 	/**
 	 * 
