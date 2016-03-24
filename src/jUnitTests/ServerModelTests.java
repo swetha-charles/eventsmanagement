@@ -1,6 +1,6 @@
 package jUnitTests;
 /**
- * Tests depricated due to changes to the server model
+ * Tests of the server model
  */
 import static org.junit.Assert.*;
 
