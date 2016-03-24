@@ -5,6 +5,14 @@ public class OTUsernameCheck  extends ObjectTransferrable{
 	private String username;
 	private boolean alreadyExists;
 	
+	/**
+	 * Initially sent by client to check whether username entered 
+	 * in the registration page already exists. 
+	 * 
+	 * It is pinged back by the server with the alreadyExists boolean
+	 * value already filled. 
+	 * @param username
+	 */
 	public OTUsernameCheck(String username){
 		super("0001");
 		this.username= username;

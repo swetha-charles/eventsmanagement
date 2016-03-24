@@ -7,7 +7,9 @@ import java.sql.Date;
 import java.util.Calendar;
 
 /**
- * @author tmd668
+ * This is sent by the client to the server to request 
+ * meetings for a particular date. 
+ * @author swetha
  *
  */
 public class OTRequestMeetingsOnDay extends ObjectTransferrable {

@@ -1,5 +1,11 @@
 package objectTransferrable;
 
+/**
+ * This is a request from client to server. Attempts 
+ * to update an event. 
+ * @author swetha
+ *
+ */
 public class OTUpdateEvent extends ObjectTransferrable {
 
 	private Event oldEvent;
