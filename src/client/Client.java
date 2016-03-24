@@ -331,7 +331,7 @@ public class Client {
 			// view
 			OTLoginProceed proceedOrNot = (OTLoginProceed) receivedOperation;
 			boolean proceed = proceedOrNot.getLoginProceed();
-			System.out.println("Proceed was: " + proceed);
+			//System.out.println("Proceed was: " + proceed);
 			if (proceed) {
 				this.model.setSuccessfulLogin(true);
 				this.model.setFirstName(proceedOrNot.getFirstName());
@@ -721,7 +721,7 @@ public class Client {
 			this.model.changeCurrentState(ModelState.ERRORSERVERDOWN);
 			try {
 				Thread.currentThread();
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException e1) {
 				System.out.println("Client was interrupted");
 			}
@@ -732,7 +732,7 @@ public class Client {
 			this.model.changeCurrentState(ModelState.ERRORCONNECTIONDOWNSTILL);
 			try {
 				Thread.currentThread();
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException e2) {
 				System.out.println("Client was interrupted");
 			}
